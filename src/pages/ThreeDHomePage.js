@@ -3,6 +3,7 @@ import { getCurrentHomeStatus } from '../api/eventApi.js';
 import { getDeviceAgents } from '../api/deviceAgentApi.js';
 import { getLatestApplianceMeasurement, isTelemetryStale } from '../api/applianceMeasurementApi.js';
 import { createSoundCareScene } from '../three/scene.js';
+import { escapeHtml } from '../utils/html.js';
 
 let sceneController = null;
 
@@ -28,10 +29,10 @@ export async function renderThreeDHomePage() {
         <aside class="three-side-panel">
           <h2>현재 이벤트</h2>
           <dl>
-            <div><dt>서비스 라벨</dt><dd>${status.currentServiceLabel}</dd></div>
-            <div><dt>방</dt><dd>${status.roomName ?? '미지정'}</dd></div>
-            <div><dt>dB Max</dt><dd>${status.decibelMax} dB</dd></div>
-            <div><dt>신뢰도</dt><dd>${Math.round(status.confidence * 100)}%</dd></div>
+            <div><dt>서비스 라벨</dt><dd>${escapeHtml(status.currentServiceLabel)}</dd></div>
+            <div><dt>방</dt><dd>${escapeHtml(status.roomName ?? '미지정')}</dd></div>
+            <div><dt>dB Max</dt><dd>${escapeHtml(status.decibelMax)} dB</dd></div>
+            <div><dt>신뢰도</dt><dd>${escapeHtml(Math.round(status.confidence * 100))}%</dd></div>
           </dl>
           <p id="three-status-message">3D 장면 준비 중...</p>
         </aside>

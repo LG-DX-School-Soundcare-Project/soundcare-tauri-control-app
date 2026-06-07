@@ -11,6 +11,7 @@ import { mountNotificationCenterPage, renderNotificationCenterPage } from './pag
 import { mountRoutineRecommendationPage, renderRoutineRecommendationPage } from './pages/RoutineRecommendationPage.js';
 import { mountReportPage, renderReportPage } from './pages/ReportPage.js';
 import { mountSettingsPage, renderSettingsPage } from './pages/SettingsPage.js';
+import { escapeHtml } from './utils/html.js';
 
 const app = document.querySelector('#root');
 const env = import.meta.env ?? {};
@@ -61,7 +62,7 @@ function shell(content, routeTitle) {
         <aside class="sidebar">
           <div class="brand"><span>SC</span><strong>SoundCare</strong></div>
           <nav>${nav}</nav>
-          <p class="sidebar-note">Tauri/Web 제어 화면 · ${routeTitle}</p>
+          <p class="sidebar-note">Tauri/Web 제어 화면 · ${escapeHtml(routeTitle)}</p>
         </aside>
       `}
       <main class="main-content">${content}</main>
@@ -95,7 +96,7 @@ async function renderRoute() {
       <section class="page">
         <div class="warning-box">
           <h1>화면 로딩 실패</h1>
-          <p>${error.message}</p>
+          <p>${escapeHtml(error.message)}</p>
         </div>
       </section>
     `, route.title);
@@ -109,7 +110,7 @@ async function pollNotifications() {
     const latest = notifications?.[0];
     const toastRoot = document.querySelector('#toast-root');
     if (latest && toastRoot) {
-      toastRoot.innerHTML = `<div class="toast"><strong>${latest.title}</strong><span>${latest.message}</span></div>`;
+      toastRoot.innerHTML = `<div class="toast"><strong>${escapeHtml(latest.title)}</strong><span>${escapeHtml(latest.message)}</span></div>`;
       window.setTimeout(() => { toastRoot.innerHTML = ''; }, 5000);
     }
   } catch {

@@ -1,3 +1,5 @@
+import { escapeHtml } from '../utils/html.js';
+
 const deviceTypeText = {
   IOT_HUB_PHONE: 'IoT Hub 스마트폰',
   USER_DEVICE_PHONE: '사용자 스마트폰',
@@ -14,13 +16,13 @@ export function DeviceCard(device) {
   const state = connected ? '연결됨' : '연결 끊김';
   const tone = connected ? 'online' : 'offline';
   return `
-    <article class="device-card device-card--${tone}" data-device-id="${id}">
+    <article class="device-card device-card--${tone}" data-device-id="${escapeHtml(id)}">
       <div>
-        <strong>${device.name}</strong>
-        <p>${deviceTypeText[type] ?? type} · ${device.roomName ?? '방 미지정'}</p>
+        <strong>${escapeHtml(device.name)}</strong>
+        <p>${escapeHtml(deviceTypeText[type] ?? type)} · ${escapeHtml(device.roomName ?? '방 미지정')}</p>
       </div>
       <span>${state}</span>
-      <small>마지막 확인: ${device.lastSeenAt ?? '-'}</small>
+      <small>마지막 확인: ${escapeHtml(device.lastSeenAt ?? '-')}</small>
     </article>
   `;
 }

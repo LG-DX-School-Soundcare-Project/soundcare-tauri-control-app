@@ -1,4 +1,5 @@
 import { getSensitiveAppliances, saveSensitiveAppliances } from '../api/settingsApi.js';
+import { escapeHtml } from '../utils/html.js';
 
 const policyDescriptions = {
   robot_vacuum: '로봇청소기: 3D 화면에서 회피 경로를 시뮬레이션합니다.',
@@ -8,12 +9,14 @@ const policyDescriptions = {
 };
 
 function applianceRow(item) {
+  const automaticResponseMode = item.automaticResponseMode ?? '';
+  const notificationMode = item.notificationMode ?? '';
   return `
-    <article class="settings-row" data-service-label="${item.serviceLabel}">
+    <article class="settings-row" data-service-label="${escapeHtml(item.serviceLabel)}">
       <div class="settings-row__header">
         <div>
-          <h3>${item.displayName}</h3>
-          <p>${policyDescriptions[item.serviceLabel] ?? '민감 가전 정책을 설정합니다.'}</p>
+          <h3>${escapeHtml(item.displayName)}</h3>
+          <p>${escapeHtml(policyDescriptions[item.serviceLabel] ?? '민감 가전 정책을 설정합니다.')}</p>
         </div>
         <label class="toggle">
           <input type="checkbox" name="enabled" ${item.enabled ? 'checked' : ''} />
@@ -21,24 +24,24 @@ function applianceRow(item) {
         </label>
       </div>
       <div class="form-grid">
-        <label>기본 dB 기준<input type="number" name="baseDbThreshold" value="${item.baseDbThreshold}" min="30" max="100" /></label>
-        <label>가전별 대응 dB<input type="number" name="responseDbThreshold" value="${item.responseDbThreshold}" min="30" max="100" /></label>
-        <label>신뢰도 기준<input type="number" name="confidenceThreshold" value="${item.confidenceThreshold}" min="0" max="1" step="0.01" /></label>
+        <label>기본 dB 기준<input type="number" name="baseDbThreshold" value="${escapeHtml(item.baseDbThreshold)}" min="30" max="100" /></label>
+        <label>가전별 대응 dB<input type="number" name="responseDbThreshold" value="${escapeHtml(item.responseDbThreshold)}" min="30" max="100" /></label>
+        <label>신뢰도 기준<input type="number" name="confidenceThreshold" value="${escapeHtml(item.confidenceThreshold)}" min="0" max="1" step="0.01" /></label>
         <label>자동 대응
           <select name="automaticResponseMode">
-            <option value="NOTIFICATION_ONLY" ${item.automaticResponseMode === 'NOTIFICATION_ONLY' ? 'selected' : ''}>알림만</option>
-            <option value="CONFIRM_BEFORE_APPLY" ${item.automaticResponseMode === 'CONFIRM_BEFORE_APPLY' ? 'selected' : ''}>확인 후 적용</option>
-            <option value="AUTO_APPLY_SIMULATION" ${item.automaticResponseMode === 'AUTO_APPLY_SIMULATION' ? 'selected' : ''}>자동 시뮬레이션</option>
-            <option value="ROUTINE_SUGGESTION" ${item.automaticResponseMode === 'ROUTINE_SUGGESTION' ? 'selected' : ''}>루틴 추천</option>
-            <option value="WARNING_ONLY" ${item.automaticResponseMode === 'WARNING_ONLY' ? 'selected' : ''}>주의 알림만</option>
-            <option value="DISABLED" ${item.automaticResponseMode === 'DISABLED' ? 'selected' : ''}>비활성</option>
+            <option value="NOTIFICATION_ONLY" ${automaticResponseMode === 'NOTIFICATION_ONLY' ? 'selected' : ''}>알림만</option>
+            <option value="CONFIRM_BEFORE_APPLY" ${automaticResponseMode === 'CONFIRM_BEFORE_APPLY' ? 'selected' : ''}>확인 후 적용</option>
+            <option value="AUTO_APPLY_SIMULATION" ${automaticResponseMode === 'AUTO_APPLY_SIMULATION' ? 'selected' : ''}>자동 시뮬레이션</option>
+            <option value="ROUTINE_SUGGESTION" ${automaticResponseMode === 'ROUTINE_SUGGESTION' ? 'selected' : ''}>루틴 추천</option>
+            <option value="WARNING_ONLY" ${automaticResponseMode === 'WARNING_ONLY' ? 'selected' : ''}>주의 알림만</option>
+            <option value="DISABLED" ${automaticResponseMode === 'DISABLED' ? 'selected' : ''}>비활성</option>
           </select>
         </label>
         <label>알림 방식
           <select name="notificationMode">
-            <option value="IMMEDIATE" ${item.notificationMode === 'IMMEDIATE' ? 'selected' : ''}>즉시</option>
-            <option value="SUMMARY" ${item.notificationMode === 'SUMMARY' ? 'selected' : ''}>요약</option>
-            <option value="GUARDIAN_ESCALATION" ${item.notificationMode === 'GUARDIAN_ESCALATION' ? 'selected' : ''}>보호자 공유 후보</option>
+            <option value="IMMEDIATE" ${notificationMode === 'IMMEDIATE' ? 'selected' : ''}>즉시</option>
+            <option value="SUMMARY" ${notificationMode === 'SUMMARY' ? 'selected' : ''}>요약</option>
+            <option value="GUARDIAN_ESCALATION" ${notificationMode === 'GUARDIAN_ESCALATION' ? 'selected' : ''}>보호자 공유 후보</option>
           </select>
         </label>
         <label class="checkbox-row"><input type="checkbox" name="includeInReport" ${item.includeInReport ? 'checked' : ''} /> 리포트 포함</label>

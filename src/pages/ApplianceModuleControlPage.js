@@ -12,6 +12,7 @@ import {
   isTelemetryStale
 } from '../api/applianceMeasurementApi.js';
 import { isApiFallbackEnabled, isMockApiEnabled } from '../api/client.js';
+import { escapeHtml } from '../utils/html.js';
 
 const env = import.meta.env ?? {};
 const MEASUREMENT_POLL_MS = Number(env.VITE_APPLIANCE_MEASUREMENT_POLL_INTERVAL_MS ?? 1000);
@@ -47,11 +48,11 @@ export function agentStatusCard(agent) {
       <span class="status-card__title">Appliance Controller Agent</span>
       <strong class="status-card__value">${online ? '온라인' : '오프라인'}</strong>
       <div class="definition-list" style="margin-top:0.5rem">
-        <div><dt>agentId</dt><dd>${agent.agentId ?? '-'}</dd></div>
-        <div><dt>hostName</dt><dd>${agent.hostName ?? '-'}</dd></div>
-        <div><dt>lastSeenAt</dt><dd>${agent.lastSeenAt ?? '-'}</dd></div>
-        <div><dt>connectedModuleIds</dt><dd>${(agent.connectedModuleIds ?? []).join(', ') || '-'}</dd></div>
-        <div><dt>lastSerialPort</dt><dd>${agent.lastSerialPort ?? '-'}</dd></div>
+        <div><dt>agentId</dt><dd>${escapeHtml(agent.agentId ?? '-')}</dd></div>
+        <div><dt>hostName</dt><dd>${escapeHtml(agent.hostName ?? '-')}</dd></div>
+        <div><dt>lastSeenAt</dt><dd>${escapeHtml(agent.lastSeenAt ?? '-')}</dd></div>
+        <div><dt>connectedModuleIds</dt><dd>${escapeHtml((agent.connectedModuleIds ?? []).join(', ') || '-')}</dd></div>
+        <div><dt>lastSerialPort</dt><dd>${escapeHtml(agent.lastSerialPort ?? '-')}</dd></div>
       </div>
       ${online ? '' : '<small class="status-card__meta">오프라인 상태에서는 명령이 전달되지 않을 수 있습니다.</small>'}
     </article>
@@ -64,10 +65,10 @@ export function commandStatusPanel(command) {
   }
   return `
     <div class="definition-list">
-      <div><dt>command ID</dt><dd>${command.commandId ?? '-'}</dd></div>
-      <div><dt>command type</dt><dd>${command.commandType ?? '-'}</dd></div>
-      <div><dt>status</dt><dd><span class="badge">${command.status ?? '-'}</span></dd></div>
-      <div><dt>result message</dt><dd>${command.resultMessage ?? '-'}</dd></div>
+      <div><dt>command ID</dt><dd>${escapeHtml(command.commandId ?? '-')}</dd></div>
+      <div><dt>command type</dt><dd>${escapeHtml(command.commandType ?? '-')}</dd></div>
+      <div><dt>status</dt><dd><span class="badge">${escapeHtml(command.status ?? '-')}</span></dd></div>
+      <div><dt>result message</dt><dd>${escapeHtml(command.resultMessage ?? '-')}</dd></div>
     </div>
   `;
 }
@@ -79,18 +80,18 @@ export function telemetryPanel(telemetry, stale) {
   return `
     ${stale ? '<div class="warning-box">텔레메트리가 오래되었습니다(stale). 표시 값은 최신이 아닐 수 있습니다.</div>' : ''}
     <div class="definition-list">
-      <div><dt>moduleId</dt><dd>${telemetry.moduleId ?? '-'}</dd></div>
-      <div><dt>applianceType</dt><dd>${telemetry.applianceType ?? '-'}</dd></div>
-      <div><dt>playbackState</dt><dd>${telemetry.playbackState ?? '-'}</dd></div>
-      <div><dt>sampleName</dt><dd>${telemetry.sampleName ?? '-'}</dd></div>
-      <div><dt>volumePercent</dt><dd>${telemetry.volumePercent ?? '-'}%</dd></div>
-      <div><dt>relativeDb</dt><dd>${telemetry.relativeDb ?? '-'} dB</dd></div>
-      <div><dt>decibelAvg</dt><dd>${telemetry.decibelAvg ?? '-'} dB</dd></div>
-      <div><dt>decibelMax</dt><dd>${telemetry.decibelMax ?? '-'} dB</dd></div>
-      <div><dt>rms</dt><dd>${telemetry.rms ?? '-'}</dd></div>
-      <div><dt>measuredBy</dt><dd>${telemetry.measuredBy ?? '-'}</dd></div>
-      <div><dt>moduleTimestampMs</dt><dd>${telemetry.moduleTimestampMs ?? '-'}</dd></div>
-      <div><dt>received / uploaded</dt><dd>${telemetry.receivedAt ?? telemetry.uploadedAt ?? '-'}</dd></div>
+      <div><dt>moduleId</dt><dd>${escapeHtml(telemetry.moduleId ?? '-')}</dd></div>
+      <div><dt>applianceType</dt><dd>${escapeHtml(telemetry.applianceType ?? '-')}</dd></div>
+      <div><dt>playbackState</dt><dd>${escapeHtml(telemetry.playbackState ?? '-')}</dd></div>
+      <div><dt>sampleName</dt><dd>${escapeHtml(telemetry.sampleName ?? '-')}</dd></div>
+      <div><dt>volumePercent</dt><dd>${escapeHtml(telemetry.volumePercent ?? '-')}%</dd></div>
+      <div><dt>relativeDb</dt><dd>${escapeHtml(telemetry.relativeDb ?? '-')} dB</dd></div>
+      <div><dt>decibelAvg</dt><dd>${escapeHtml(telemetry.decibelAvg ?? '-')} dB</dd></div>
+      <div><dt>decibelMax</dt><dd>${escapeHtml(telemetry.decibelMax ?? '-')} dB</dd></div>
+      <div><dt>rms</dt><dd>${escapeHtml(telemetry.rms ?? '-')}</dd></div>
+      <div><dt>measuredBy</dt><dd>${escapeHtml(telemetry.measuredBy ?? '-')}</dd></div>
+      <div><dt>moduleTimestampMs</dt><dd>${escapeHtml(telemetry.moduleTimestampMs ?? '-')}</dd></div>
+      <div><dt>received / uploaded</dt><dd>${escapeHtml(telemetry.receivedAt ?? telemetry.uploadedAt ?? '-')}</dd></div>
     </div>
   `;
 }

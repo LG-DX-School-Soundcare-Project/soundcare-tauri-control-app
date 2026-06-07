@@ -1,13 +1,14 @@
 import { getNotifications, markNotificationRead } from '../api/notificationApi.js';
+import { escapeHtml } from '../utils/html.js';
 
 function notificationRow(notification) {
   return `
-    <article class="notification-row ${notification.read ? 'is-read' : ''}" data-notification-id="${notification.id}">
+    <article class="notification-row ${notification.read ? 'is-read' : ''}" data-notification-id="${escapeHtml(notification.id)}">
       <div>
-        <span class="badge">${notification.type}</span>
-        <h3>${notification.title}</h3>
-        <p>${notification.message}</p>
-        <small>${notification.createdAt ?? ''}</small>
+        <span class="badge">${escapeHtml(notification.type)}</span>
+        <h3>${escapeHtml(notification.title)}</h3>
+        <p>${escapeHtml(notification.message)}</p>
+        <small>${escapeHtml(notification.createdAt ?? '')}</small>
       </div>
       <button data-action="mark-read" ${notification.read ? 'disabled' : ''}>읽음 처리</button>
     </article>

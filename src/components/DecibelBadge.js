@@ -1,3 +1,5 @@
+import { escapeHtml } from '../utils/html.js';
+
 export function getDecibelTone(decibel) {
   if (decibel >= 70) return 'danger';
   if (decibel >= 60) return 'warning';
@@ -5,11 +7,13 @@ export function getDecibelTone(decibel) {
 }
 
 export function DecibelBadge({ decibel, label = '현재 dB' }) {
-  const tone = getDecibelTone(Number(decibel));
+  const numeric = Number(decibel);
+  const tone = getDecibelTone(numeric);
+  const displayValue = Number.isFinite(numeric) ? numeric.toFixed(1) : '-';
   return `
-    <div class="decibel-badge decibel-badge--${tone}" aria-label="${label}">
-      <span>${label}</span>
-      <strong>${Number(decibel).toFixed(1)} dB</strong>
+    <div class="decibel-badge decibel-badge--${tone}" aria-label="${escapeHtml(label)}">
+      <span>${escapeHtml(label)}</span>
+      <strong>${displayValue} dB</strong>
     </div>
   `;
 }

@@ -1,5 +1,11 @@
-import { API_BASE_URL, TOKEN_STORAGE_KEY, isApiFallbackEnabled, isMockApiEnabled } from '../api/client.js';
+import {
+  API_BASE_URL,
+  TOKEN_STORAGE_KEY,
+  isApiFallbackEnabled,
+  isMockApiEnabled
+} from '../api/client.js';
 import { logout } from '../api/authApi.js';
+import { escapeHtml } from '../utils/html.js';
 
 export function renderSettingsPage() {
   return `
@@ -14,10 +20,10 @@ export function renderSettingsPage() {
       <section class="section-block">
         <h2>연동 상태</h2>
         <dl class="definition-list">
-          <div><dt>API Base URL</dt><dd>${API_BASE_URL}</dd></div>
+          <div><dt>API Base URL</dt><dd>${escapeHtml(API_BASE_URL)}</dd></div>
           <div><dt>Mock API</dt><dd>${isMockApiEnabled() ? '사용 중' : '사용 안 함'}</dd></div>
           <div><dt>API Fallback</dt><dd>${isApiFallbackEnabled() ? '사용 중' : '사용 안 함'}</dd></div>
-          <div><dt>토큰 저장 키</dt><dd>${TOKEN_STORAGE_KEY}</dd></div>
+          <div><dt>토큰 저장 키</dt><dd>${escapeHtml(TOKEN_STORAGE_KEY)}</dd></div>
         </dl>
       </section>
       <section class="section-block warning-box">

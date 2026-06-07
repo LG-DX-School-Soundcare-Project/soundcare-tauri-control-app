@@ -1,6 +1,7 @@
 import { getBasicReport, grantGptReportConsent, requestDetailedReport } from '../api/reportApi.js';
 import { ConsentModal } from '../components/ConsentModal.js';
 import { ReportCard } from '../components/ReportCard.js';
+import { escapeHtml } from '../utils/html.js';
 
 let modalVisible = false;
 
@@ -54,7 +55,7 @@ function bindModalEvents() {
     const detailed = await requestDetailedReport({ period: 'LAST_7_DAYS', includeOriginalAudio: false });
     const resultEl = document.querySelector('#detailed-report-result');
     resultEl.classList.remove('hidden');
-    resultEl.innerHTML = `<h2>GPT 상세 리포트</h2><p>${detailed.text}</p><pre class="code-block">${JSON.stringify(detailed.metadata, null, 2)}</pre>`;
+    resultEl.innerHTML = `<h2>GPT 상세 리포트</h2><p>${escapeHtml(detailed.text)}</p><pre class="code-block">${escapeHtml(JSON.stringify(detailed.metadata, null, 2))}</pre>`;
     modalVisible = false;
     rerenderModal();
   });

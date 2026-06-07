@@ -13,7 +13,7 @@ export async function renderDeviceListPage() {
         </div>
       </div>
       <div class="card-list card-list--wide">
-        ${devices.map((device) => `<a class="card-link" href="#/devices/${device.id ?? device.deviceId}">${DeviceCard(device)}</a>`).join('')}
+        ${devices.map((device) => `<a class="card-link" href="#/devices/${encodeURIComponent(device.id ?? '')}">${DeviceCard(device)}</a>`).join('')}
       </div>
     </section>
   `;

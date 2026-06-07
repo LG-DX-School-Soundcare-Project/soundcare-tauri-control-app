@@ -1,19 +1,19 @@
+import { escapeHtml } from '../utils/html.js';
+
 export function RoutineCard(routine, { compact = false } = {}) {
-  const id = routine.id ?? routine.routineId;
-  const reason = routine.reason ?? routine.description ?? routine.triggerRule ?? '-';
-  const targetServiceLabel = routine.targetServiceLabel ?? routine.serviceLabel ?? '-';
+  const routineId = escapeHtml(routine.id);
   return `
-    <article class="routine-card" data-routine-id="${id}">
+    <article class="routine-card" data-routine-id="${routineId}">
       <div>
-        <span class="badge">${routine.status}</span>
-        <strong>${routine.title}</strong>
-        <p>${reason}</p>
-        <small>대상: ${targetServiceLabel}</small>
+        <span class="badge">${escapeHtml(routine.status)}</span>
+        <strong>${escapeHtml(routine.title)}</strong>
+        <p>${escapeHtml(routine.reason)}</p>
+        <small>대상: ${escapeHtml(routine.targetServiceLabel)}</small>
       </div>
       ${compact ? '' : `
         <div class="routine-card__actions">
-          <button data-action="apply-routine" data-routine-id="${id}">적용</button>
-          <button class="secondary" data-action="dismiss-routine" data-routine-id="${id}">숨기기</button>
+          <button data-action="apply-routine" data-routine-id="${routineId}">적용</button>
+          <button class="secondary" data-action="dismiss-routine" data-routine-id="${routineId}">숨기기</button>
         </div>
       `}
     </article>

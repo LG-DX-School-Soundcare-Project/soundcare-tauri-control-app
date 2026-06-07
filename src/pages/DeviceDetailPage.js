@@ -1,7 +1,8 @@
 import { getDevice, getRuntimeSettings } from '../api/deviceApi.js';
+import { escapeHtml } from '../utils/html.js';
 
 export async function renderDeviceDetailPage({ params }) {
-  const deviceId = params.deviceId;
+  const deviceId = decodeURIComponent(params.deviceId ?? '');
   const device = await getDevice(deviceId);
   const runtimeSettings = await getRuntimeSettings(deviceId);
   if (!device) {
@@ -12,15 +13,15 @@ export async function renderDeviceDetailPage({ params }) {
       <div class="page-header">
         <div>
           <p class="eyebrow">Device Detail</p>
-          <h1>${device.name}</h1>
-          <p>${device.type ?? device.deviceType} · ${device.roomName ?? '방 미지정'}</p>
+          <h1>${escapeHtml(device.name)}</h1>
+          <p>${escapeHtml(device.type)} · ${escapeHtml(device.roomName ?? '방 미지정')}</p>
         </div>
         <span class="badge">${device.connected ? '연결됨' : '연결 끊김'}</span>
       </div>
       <section class="section-block">
         <h2>런타임 설정 동기화</h2>
         <p>Flutter IoT Hub Mode와 User Device Mode는 이 설정을 주기적으로 동기화합니다.</p>
-        <pre class="code-block">${JSON.stringify(runtimeSettings, null, 2)}</pre>
+        <pre class="code-block">${escapeHtml(JSON.stringify(runtimeSettings, null, 2))}</pre>
       </section>
     </section>
   `;
