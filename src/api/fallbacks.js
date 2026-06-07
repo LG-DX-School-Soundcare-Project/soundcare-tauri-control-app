@@ -2,7 +2,6 @@ import mockHomeStatus from '../data/mockHomeStatus.json';
 import mockTelemetry from '../data/mockApplianceModuleTelemetry.json';
 import { DEV_AUTH_PROFILE, isApiFallbackEnabled } from './client.js';
 
-export const DEMO_CONTROLLER_DEVICE_ID = 'aa42b70f-9d83-4de4-969c-2e355b22c689';
 export const DEMO_AUTH_TOKEN = 'dev-placeholder-jwt-token';
 
 function clone(value) {
@@ -77,22 +76,6 @@ export function defaultDeviceAgents() {
   return clone(mockTelemetry.deviceAgents);
 }
 
-export function defaultControlCommands() {
-  return clone(mockTelemetry.controlCommands);
-}
-
 export function defaultLatestTelemetry() {
   return clone(mockTelemetry.latestTelemetry);
-}
-
-export function defaultCommandResponse(command) {
-  const now = new Date().toISOString();
-  return {
-    commandId: `cmd-local-${Date.now()}`,
-    ...command,
-    status: 'PENDING',
-    resultMessage: 'Local fallback: API is unavailable, so this command was not sent to Spring Boot.',
-    createdAt: now,
-    updatedAt: now
-  };
 }

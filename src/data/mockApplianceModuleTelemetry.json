@@ -10,39 +10,6 @@
       "targetDeviceId": "esp32s3-appliance-controller-device-uuid"
     }
   ],
-  "controlCommands": [
-    {
-      "commandId": "cmd-1001",
-      "targetDeviceId": "esp32s3-appliance-controller-device-uuid",
-      "targetModuleId": "esp32s3-appliance-01",
-      "agentId": "appliance-controller-pc-01",
-      "commandType": "PLAY_SAMPLE",
-      "payload": {
-        "applianceType": "robot_vacuum",
-        "sampleName": "robot_vacuum.wav",
-        "volumePercent": 70,
-        "mode": "single"
-      },
-      "status": "APPLIED",
-      "resultMessage": "ESP32-S3 모듈이 robot_vacuum.wav 재생을 시작했습니다.",
-      "createdAt": "2026-06-03T12:14:55+09:00",
-      "updatedAt": "2026-06-03T12:14:57+09:00"
-    },
-    {
-      "commandId": "cmd-1000",
-      "targetDeviceId": "esp32s3-appliance-controller-device-uuid",
-      "targetModuleId": "esp32s3-appliance-01",
-      "agentId": "appliance-controller-pc-01",
-      "commandType": "SET_VOLUME",
-      "payload": {
-        "volumePercent": 70
-      },
-      "status": "APPLIED",
-      "resultMessage": "볼륨이 70%로 설정되었습니다.",
-      "createdAt": "2026-06-03T12:14:40+09:00",
-      "updatedAt": "2026-06-03T12:14:41+09:00"
-    }
-  ],
   "latestTelemetry": {
     "moduleId": "esp32s3-appliance-01",
     "agentId": "appliance-controller-pc-01",

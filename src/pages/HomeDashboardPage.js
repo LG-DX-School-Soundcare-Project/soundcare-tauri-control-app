@@ -36,7 +36,6 @@ export async function renderHomeDashboardPage() {
         <div>
           <div class="section-title-row">
             <h2>기기 연결 상태</h2>
-            <a href="#/devices">전체 보기</a>
           </div>
           <div class="card-list">
             ${status.devices.map((device) => DeviceCard(device)).join('')}
@@ -45,7 +44,6 @@ export async function renderHomeDashboardPage() {
         <div>
           <div class="section-title-row">
             <h2>루틴 추천 요약</h2>
-            <a href="#/routines">관리</a>
           </div>
           <div class="card-list">
             ${status.routineRecommendations.map((routine) => RoutineCard(routine, { compact: true })).join('')}

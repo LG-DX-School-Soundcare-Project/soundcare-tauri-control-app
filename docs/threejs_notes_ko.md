@@ -55,19 +55,19 @@ smartphone_device.glb
 
 ## 가전 모형 텔레메트리 연동
 
-3D 홈 화면은 Appliance Controller Agent가 Spring Boot에 업로드한 ESP32-S3 텔레메트리를 반영한다.
+3D 홈 화면은 별도 ESP 측정 노트북/Agent가 Spring Boot에 업로드한 ESP32-S3 텔레메트리를 선택적으로 반영한다. Tauri/Web은 이 값을 조회해 시각화할 뿐 제어 명령을 만들지 않는다.
 
 1. 로봇청소기 재생 텔레메트리의 `relativeDb` 또는 `decibelAvg`로 소음 파동 강도를 조절한다.
 2. 최신 `relativeDb` 또는 `decibelAvg`를 dB 라벨로 표시한다.
 3. `serviceLabel`이 `robot_vacuum`이고 경로 변경 정책이 활성화된 경우에도 GLB 경로 변경은 프론트엔드 시뮬레이션 이벤트로 유지한다.
 4. 텔레메트리가 오래되면(stale) stale/unknown 상태를 표시한다.
-5. Appliance Controller Agent가 오프라인이면 하드웨어 컨트롤러 사용 불가 상태를 표시한다.
+5. ESP 측정 Agent가 오프라인이면 최신 ESP 측정값 없이 시뮬레이션을 표시한다.
 
 `scene.js`의 `applyTelemetry(telemetry, { agentOnline, stale })` 메서드가 위 처리를 담당하며, dB → 강도 변환은 `noiseEffect.js`의 순수 함수 `computeNoiseWaveIntensity()`로 구현해 단위 테스트가 가능하다. Tauri/Web은 ESP32-S3 Serial을 직접 열지 않는다.
 
 ## 실제 제어와의 경계
 
-이 화면은 ThinQ-style 인터페이스이지만 공식 ThinQ API를 호출하지 않는다. 로봇청소기 경로 변경은 실제 기기 명령이 아니라 사용자에게 대응 정책을 보여주는 시뮬레이션이다. 향후 실제 제어 기능을 추가하려면 Spring Boot의 제어 명령 API, 사용자 확인 UI, 실패 복구 UI, 감사 로그가 먼저 확정되어야 한다.
+이 화면은 ThinQ-style 인터페이스이지만 공식 ThinQ API를 호출하지 않는다. 로봇청소기 경로 변경은 실제 기기 명령이 아니라 사용자에게 대응 정책을 보여주는 시뮬레이션이다. ESP32-S3 재생·정지·볼륨 제어는 별도 노트북의 Agent/firmware 실행 환경에서 담당하며 Tauri/Web 화면에는 넣지 않는다.
 
 ## 성능 메모
 

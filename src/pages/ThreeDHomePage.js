@@ -51,7 +51,7 @@ export async function mountThreeDHomePage() {
   sceneController = createSoundCareScene(container, { homeStatus: status });
   statusMessage.textContent = '3D 홈 화면이 준비되었습니다.';
 
-  // 로봇청소기 텔레메트리를 소음 파동 강도와 dB 라벨에 반영한다.
+  // 외부 ESP 측정 노트북/Agent가 업로드한 telemetry를 조회해 시각화에만 반영한다.
   const [agents, telemetry] = await Promise.all([
     getDeviceAgents().catch(() => []),
     getLatestApplianceMeasurement({ serviceLabel: 'robot_vacuum' }).catch(() => null)
@@ -60,7 +60,7 @@ export async function mountThreeDHomePage() {
   const stale = isTelemetryStale(telemetry);
   sceneController.applyTelemetry(telemetry, { agentOnline, stale });
   if (!agentOnline) {
-    statusMessage.textContent = 'Appliance Controller Agent 오프라인: 하드웨어 컨트롤러 사용 불가 상태입니다.';
+    statusMessage.textContent = '외부 ESP 측정 Agent 오프라인: 최신 측정값 없이 시뮬레이션을 표시합니다.';
   } else if (stale || !telemetry) {
     statusMessage.textContent = '최신 텔레메트리가 없거나 오래되어 stale 상태로 표시합니다.';
   }
