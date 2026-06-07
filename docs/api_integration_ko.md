@@ -123,6 +123,5 @@ GET /api/events/appliance-measurements/latest?agentId=appliance-controller-pc-01
 ## TODO
 
 - JWT 만료 처리와 refresh token 정책 반영
-- Guardian role 화면 권한 분기
 - 에러 코드와 JSON Schema 기반 입력 검증 연결
 - 실제 배포 URL과 CORS 정책 확인

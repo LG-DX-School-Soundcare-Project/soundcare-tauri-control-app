@@ -41,7 +41,6 @@ function applianceRow(item) {
           <select name="notificationMode">
             <option value="IMMEDIATE" ${notificationMode === 'IMMEDIATE' ? 'selected' : ''}>즉시</option>
             <option value="SUMMARY" ${notificationMode === 'SUMMARY' ? 'selected' : ''}>요약</option>
-            <option value="GUARDIAN_ESCALATION" ${notificationMode === 'GUARDIAN_ESCALATION' ? 'selected' : ''}>보호자 공유 후보</option>
           </select>
         </label>
         <label class="checkbox-row"><input type="checkbox" name="includeInReport" ${item.includeInReport ? 'checked' : ''} /> 리포트 포함</label>

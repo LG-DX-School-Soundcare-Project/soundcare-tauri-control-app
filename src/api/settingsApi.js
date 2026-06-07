@@ -24,7 +24,6 @@ function toBackendSetting(item) {
     automaticControlEnabled: item.automaticResponseMode !== 'DISABLED',
     automaticControlPolicy: item.automaticResponseMode || 'NOTIFY_ONLY',
     notifyUser: item.notificationMode !== 'SUMMARY',
-    notifyGuardian: item.notificationMode === 'GUARDIAN_ESCALATION',
     includeInReport: item.includeInReport
   };
 }
