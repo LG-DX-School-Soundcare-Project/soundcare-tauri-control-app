@@ -1,3 +1,5 @@
+import { requestDetailedReport } from '../api/reportApi.js';
+import { deleteReport, exportReport, regenerateReport } from '../api/reports.js';
 import { createReportFaceScene } from '../three/reportFaceScene.js';
 import { escapeHtml } from '../utils/html.js';
 
@@ -139,6 +141,11 @@ export async function renderReportPage() {
             요약 데이터만 전송되며 원음은 포함되지 않습니다.
           </div>
           <button type="button" id="generate-gpt-report">GPT 리포트 생성하기</button>
+          <div class="settings-button-row">
+            <button type="button" id="regenerate-gpt-report" class="settings-outline-button">Regenerate</button>
+            <button type="button" id="export-gpt-report" class="settings-outline-button">Export</button>
+            <button type="button" id="delete-gpt-report" class="settings-outline-button">Delete</button>
+          </div>
           <small id="gpt-report-status" aria-live="polite"></small>
         </article>
       </section>
@@ -170,8 +177,65 @@ export function mountReportPage({ navigate } = {}) {
     });
   });
 
-  document.querySelector('#generate-gpt-report')?.addEventListener('click', () => {
-    navigate('#/reports/gpt-detailed');
+  document.querySelector('#generate-gpt-report')?.addEventListener('click', async () => {
+    const status = document.querySelector('#gpt-report-status');
+    if (status) status.textContent = 'Generating detailed report...';
+    try {
+      const report = await requestDetailedReport();
+      if (report?.reportId) {
+        window.localStorage.setItem('soundcare.lastDetailedReportId', report.reportId);
+      }
+      if (status) status.textContent = 'Detailed report generated.';
+      navigate('#/reports/gpt-detailed');
+    } catch (error) {
+      if (status) status.textContent = `Detailed report failed: ${error.message}`;
+    }
+  });
+
+  document.querySelector('#regenerate-gpt-report')?.addEventListener('click', async () => {
+    const status = document.querySelector('#gpt-report-status');
+    const reportId = window.localStorage.getItem('soundcare.lastDetailedReportId');
+    if (status) status.textContent = 'Regenerating report...';
+    try {
+      const report = await regenerateReport(reportId);
+      if (report?.reportId) {
+        window.localStorage.setItem('soundcare.lastDetailedReportId', report.reportId);
+      }
+      if (status) status.textContent = 'Report regenerated.';
+    } catch (error) {
+      if (status) status.textContent = `Regenerate failed: ${error.message}`;
+    }
+  });
+
+  document.querySelector('#export-gpt-report')?.addEventListener('click', async () => {
+    const status = document.querySelector('#gpt-report-status');
+    const reportId = window.localStorage.getItem('soundcare.lastDetailedReportId');
+    if (!reportId) {
+      if (status) status.textContent = 'Generate a detailed report first.';
+      return;
+    }
+    try {
+      const exported = await exportReport(reportId);
+      if (status) status.textContent = `Report exported at ${exported.exportedAt ?? 'now'}.`;
+    } catch (error) {
+      if (status) status.textContent = `Export failed: ${error.message}`;
+    }
+  });
+
+  document.querySelector('#delete-gpt-report')?.addEventListener('click', async () => {
+    const status = document.querySelector('#gpt-report-status');
+    const reportId = window.localStorage.getItem('soundcare.lastDetailedReportId');
+    if (!reportId) {
+      if (status) status.textContent = 'No generated report to delete.';
+      return;
+    }
+    try {
+      const deleted = await deleteReport(reportId);
+      window.localStorage.removeItem('soundcare.lastDetailedReportId');
+      if (status) status.textContent = `Report ${deleted.status ?? 'DELETED'}.`;
+    } catch (error) {
+      if (status) status.textContent = `Delete failed: ${error.message}`;
+    }
   });
 }
 

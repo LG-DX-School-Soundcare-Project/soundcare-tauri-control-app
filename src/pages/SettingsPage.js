@@ -1,3 +1,5 @@
+import { withdrawGptConsent } from '../api/aiConsents.js';
+import { createDataDeletionRequest } from '../api/dataDeletion.js';
 import { bindSettingsTabs, renderSettingsTabs } from '../components/settingsTabs.js';
 
 const defaultSettings = {
@@ -59,12 +61,13 @@ export function renderSettingsPage() {
           <p>Manage consent and withdrawal. Withdrawal does not delete already generated reports unless separately deleted.</p>
           <div class="settings-consent-row">
             <label class="settings-switch-row settings-switch-row--compact">
-              <input type="checkbox" />
+              <input id="gpt-consent-toggle" type="checkbox" checked />
               <span class="settings-switch" aria-hidden="true"></span>
               <small>Consent granted for summarized data only</small>
             </label>
-            <button type="button" class="settings-outline-button">Manage</button>
+            <button id="withdraw-gpt-consent-button" type="button" class="settings-outline-button">Manage</button>
           </div>
+          <span id="gpt-consent-status" aria-live="polite"></span>
         </section>
 
         <section class="settings-card settings-data-card">
@@ -72,8 +75,9 @@ export function renderSettingsPage() {
           <p>Set event/report retention policy and request deletion. Destructive actions require confirmation.</p>
           <div class="settings-button-row">
             <button type="button" class="settings-outline-button">Retention: 90 days</button>
-            <button type="button" class="settings-outline-button">Delete data...</button>
+            <button id="delete-data-button" type="button" class="settings-outline-button">Delete data...</button>
           </div>
+          <span id="data-deletion-status" aria-live="polite"></span>
         </section>
 
         <section class="settings-card settings-save-card">
@@ -144,6 +148,39 @@ export function mountSettingsPage({ navigate } = {}) {
     if (avoidanceToggle) avoidanceToggle.checked = defaultSettings.avoidanceEnabled;
     renderValues();
     if (saveStatus) saveStatus.textContent = 'Defaults restored.';
+  });
+
+  document.querySelector('#withdraw-gpt-consent-button')?.addEventListener('click', async () => {
+    const status = document.querySelector('#gpt-consent-status');
+    const toggle = document.querySelector('#gpt-consent-toggle');
+    if (status) status.textContent = 'Withdrawing consent...';
+    try {
+      const response = await withdrawGptConsent({ reason: 'USER_WITHDRAWAL' });
+      if (toggle) toggle.checked = Boolean(response.granted);
+      if (status) status.textContent = 'GPT detailed report consent withdrawn.';
+    } catch (error) {
+      if (status) status.textContent = `Consent update failed: ${error.message}`;
+    }
+  });
+
+  document.querySelector('#delete-data-button')?.addEventListener('click', async () => {
+    const status = document.querySelector('#data-deletion-status');
+    const confirmText = window.prompt('Type DELETE to request data deletion.');
+    if (confirmText !== 'DELETE') {
+      if (status) status.textContent = 'Deletion request cancelled.';
+      return;
+    }
+    if (status) status.textContent = 'Submitting deletion request...';
+    try {
+      const response = await createDataDeletionRequest({
+        scope: 'ALL',
+        confirmText,
+        metadata: { requestedFrom: 'tauri-settings' }
+      });
+      if (status) status.textContent = `Deletion request ${response.status}.`;
+    } catch (error) {
+      if (status) status.textContent = `Deletion request failed: ${error.message}`;
+    }
   });
 
   renderValues();

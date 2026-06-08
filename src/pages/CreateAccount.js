@@ -1,13 +1,7 @@
-import { buildQuery, isMockApiEnabled, request } from '../api/client.js';
-
-const DUPLICATE_NICKNAMES_FOR_MOCK = ['admin', 'test', 'soundcare'];
+import { checkNickname, submitOnboarding } from '../api/users.js';
 
 async function checkNicknameDuplicate(nickname) {
-  if (isMockApiEnabled()) {
-    return DUPLICATE_NICKNAMES_FOR_MOCK.includes(nickname.toLowerCase());
-  }
-
-  const result = await request(`/api/users/nickname/check${buildQuery({ nickname })}`);
+  const result = await checkNickname(nickname);
   if (typeof result === 'boolean') return result;
   if (typeof result?.duplicate === 'boolean') return result.duplicate;
   if (typeof result?.duplicated === 'boolean') return result.duplicated;
@@ -105,10 +99,22 @@ export function mountCreateAccountPage({ navigate }) {
     }
   });
 
-  document.querySelector('#create-account-form')?.addEventListener('submit', (event) => {
+  document.querySelector('#create-account-form')?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const validation = document.querySelector('.account-validation');
-    if (validation) validation.textContent = 'Account created locally. Redirecting to Home...';
-    window.setTimeout(() => navigate('#/home'), 250);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    if (validation) validation.textContent = 'Creating account...';
+    try {
+      await submitOnboarding({
+        displayName: String(formData.get('householdName') || '').trim(),
+        nickname: String(formData.get('nick') || '').trim(),
+        householdLabel: String(formData.get('house') || '').trim()
+      });
+      if (validation) validation.textContent = 'Account created. Redirecting to Home...';
+      window.setTimeout(() => navigate('#/home'), 250);
+    } catch (error) {
+      if (validation) validation.textContent = `Account setup failed: ${error.message}`;
+    }
   });
 }

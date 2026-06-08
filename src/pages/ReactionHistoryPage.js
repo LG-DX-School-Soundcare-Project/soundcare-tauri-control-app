@@ -1,6 +1,7 @@
+import { fetchReactions } from '../api/reactions.js';
 import { escapeHtml } from '../utils/html.js';
 
-const reactionRows = [
+let reactionRows = [
   {
     time: '12:34',
     reactionType: 'positive',
@@ -73,6 +74,39 @@ const reactionRows = [
 
 const tableColumns = ['time', 'reaction type', 'linked event ID', 'noise class', 'dB', 'room', 'status'];
 
+function formatTime(value) {
+  const date = value ? new Date(value) : new Date();
+  if (Number.isNaN(date.getTime())) return '-';
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
+
+function toDisplayRow(item) {
+  const reactionType = String(item.reactionType ?? item.reaction ?? 'manual').toLowerCase();
+  const status = String(item.status ?? item.linkState ?? 'manual').toLowerCase();
+  const eventId = item.noiseEventId ?? item.eventId ?? 'manual-event';
+  return {
+    time: formatTime(item.createdAt),
+    reactionType,
+    eventId,
+    noiseClass: item.modelLabel ?? item.model_label ?? 'unknown',
+    db: item.decibelAvg ?? item.decibel_avg ?? '-',
+    room: item.roomName ?? item.room_name ?? item.roomId ?? '-',
+    status,
+    detail: {
+      reaction_id: item.reactionId ?? '-',
+      event_id: eventId,
+      model_label: item.modelLabel ?? item.model_label ?? 'unknown',
+      service_label: item.serviceLabel ?? item.service_label ?? '-',
+      relative_db: item.decibelAvg ?? item.decibel_avg ?? '-',
+      room_id: item.roomId ?? item.room_id ?? '-',
+      reaction: reactionType,
+      status,
+      source: item.source ?? '-',
+      memo: item.memo ?? '-'
+    }
+  };
+}
+
 function rowMarkup(row, index) {
   return `
     <button
@@ -104,6 +138,18 @@ function detailMarkup(row) {
 }
 
 export async function renderReactionHistoryPage() {
+  const response = await fetchReactions({ page: 0, size: 50 });
+  reactionRows = (response.items ?? []).map(toDisplayRow);
+  const firstRow = reactionRows[0] ?? {
+    time: '-',
+    reactionType: '-',
+    eventId: '-',
+    noiseClass: '-',
+    db: '-',
+    room: '-',
+    status: 'empty',
+    detail: { empty: 'No data' }
+  };
   return `
     <section class="page reaction-history-page" aria-label="Reaction History Screen">
       <header class="reaction-history-header">
@@ -137,7 +183,7 @@ export async function renderReactionHistoryPage() {
         </section>
 
         <aside id="reaction-detail-panel" class="reaction-detail-panel" aria-live="polite">
-          ${detailMarkup(reactionRows[0])}
+          ${detailMarkup(firstRow)}
         </aside>
 
         <section class="reaction-empty-state">
