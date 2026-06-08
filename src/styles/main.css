@@ -56,10 +56,63 @@ button.secondary, .secondary { background: #e2e8f0; color: #0f172a; box-shadow: 
 .page-header p { color: var(--muted); margin: 0; }
 .eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-weight: 800; color: var(--primary) !important; font-size: 0.78rem; }
 
-.login-card { max-width: 720px; padding: 3rem; border-radius: 28px; background: rgba(255,255,255,0.88); box-shadow: 0 30px 70px rgba(15, 23, 42, 0.13); }
-.login-card h1 { font-size: clamp(2rem, 4vw, 3.6rem); margin: 0.3rem 0 1rem; }
-.login-card p { color: var(--muted); line-height: 1.7; }
-.login-card button { margin: 1.5rem 0 1rem; }
+.login-page { min-height: 100vh; padding: 0.75rem; background: #f4f6fa; color: #111827; }
+.login-window { position: relative; min-height: calc(100vh - 1.5rem); display: grid; place-items: start center; border: 1px solid #cbd5e1; background: #f8fafc; box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.22); }
+.login-titlebar { display: flex; align-items: center; gap: 0.9rem; padding: 0 1.5rem; border-bottom: 2px solid #d5dce8; background: #e8edf4; color: #475569; font-size: 0.95rem; }
+.window-dot { width: 0.7rem; height: 0.7rem; border: 1.5px solid #64748b; border-radius: 50%; background: #f8fafc; }
+.login-titlebar__label { margin-left: 1.1rem; }
+.login-stage { display: grid; place-items: start center; padding-top: 4.4rem; }
+.login-card { width: min(100%, 25.8rem); padding: 1.45rem 1.7rem; border: 1.5px solid #8a94a6; border-radius: 0.55rem; background: #fff; box-shadow: none; }
+.login-card h1 { margin: 0.5rem 0 0.85rem; color: #111827; font-size: 1.55rem; line-height: 1.18; }
+.login-card p { margin: 0; color: #475569; line-height: 1.55; font-size: 0.92rem; }
+.login-card small { display: block; margin-top: 0.85rem; padding: 0.75rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 0.35rem; color: #475569; font-size: 0.78rem; line-height: 1.45; background: #fbfdff; white-space: pre-line; }
+.login-card .eyebrow { margin: 0 0 0.35rem; color: #111827 !important; font-size: 0.78rem; letter-spacing: 0.08em; }
+.login-card button { width: 100%; margin: 0.9rem 0 0; padding: 0.7rem 1rem; border: 1.5px solid #8a94a6; border-radius: 0.45rem; background: #e5e7eb; color: #111827; box-shadow: none; font-size: 0.84rem; }
+.login-card button::before { content: ""; display: inline-block; width: 6rem; height: 2rem; margin-right: 1rem; background: url("./google-logo.png") center / contain no-repeat; vertical-align: middle; }
+.login-card button:hover { background: #dfe3ea; }
+.login-create-account { margin-top: 0.7rem !important; text-align: center; font-size: 0.8rem !important; }
+.login-create-account a { color: #334155; font-weight: 800; text-decoration: underline; text-underline-offset: 0.16rem; }
+.login-footer { position: absolute; right: 1.75rem; bottom: 0.85rem; display: flex; justify-content: flex-end; align-items: center; gap: 1rem; color: #475569; font-size: 0.9rem; text-align: right; }
+.login-status { display: inline-flex; align-items: center; gap: 0.65rem; min-width: 15.7rem; padding: 0.45rem 1rem; border: 1.5px solid #64748b; border-radius: 999px; background: #fff; }
+.status-dot { width: 0.85rem; height: 0.85rem; border: 1.5px solid #94a3b8; border-radius: 50%; background: #f1f5f9; }
+
+.account-page { min-height: 100vh; padding: 0.65rem; background: #edf2f7; color: #111827; }
+.account-window { min-height: calc(100vh - 1.3rem); border: 1px solid #c7d3e1; background: #f8fafc; }
+.account-titlebar { height: 3.25rem; display: flex; align-items: center; gap: 0.7rem; padding: 0 2rem; border-bottom: 2px solid #cbd5e1; background: #e5e9ee; }
+.window-dot--active { background: #bfdbfe; border-color: #bfdbfe; }
+.account-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.35rem; min-height: 4.25rem; padding: 0 1.8rem; border-bottom: 1px solid #cbd5e1; background: #fff; }
+.account-header h1 { margin: 0; font-size: 1.55rem; line-height: 1.1; }
+.account-header a { color: #334155; }
+.account-header p { align-self: end; margin: 0 0 0.75rem; color: #475569; font-size: 0.9rem; }
+.account-back-button { display: grid; place-items: center; width: 2.9rem; height: 2.35rem; padding: 0.35rem; border: 1.5px solid #94a3b8; border-radius: 0.35rem; font-size: 1.2rem; font-weight: 900; overflow: hidden; }
+.account-back-button img { display: block; width: 0.8rem; height: 0.8rem; object-fit: contain; }
+.account-content { display: grid; grid-template-columns: minmax(22rem, 36rem) 10.8rem; grid-template-areas: "form guide" "validation guide"; justify-content: center; align-content: start; gap: 0.75rem 6rem; padding: 2.2rem 2rem; }
+.account-card { grid-area: form; padding: 1rem 1.85rem 0.45rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; background: #fff; }
+.account-card h2 { margin: 0 0 0.45rem; font-size: 1.55rem; }
+.account-info-box { display: grid; gap: 0.15rem; margin-bottom: 0.75rem; padding: 0.35rem 0.55rem; border: 1px solid #cbd5e1; border-radius: 0.35rem; color: #334155; background: #f8fafc; }
+.account-info-box span { font-size: 0.55rem; color: #334155; }
+.account-card label { display: grid; gap: 0.4rem; margin-top: 0.55rem; color: #334155; font-weight: 800; }
+.account-card input { height: 2.25rem; border-color: #9aa9bd; border-radius: 0.35rem; color: #334155; background: #fff; }
+.account-card input::placeholder { color: #7890aa; }
+.account-inline { display: grid; grid-template-columns: 1fr 10.2rem; gap: 1rem; }
+.account-inline button { height: 2.25rem; border-radius: 0.35rem; background: #6b7280; box-shadow: none; font-size: 0.78rem; }
+.account-availability { display: inline-flex; align-items: center; gap: 0.3rem; width: 14rem; margin: 0.45rem 0 0; padding: 0.2rem 0.45rem; border: 1px solid #cbd5e1; border-radius: 0.35rem; color: #64748b; font-size: 0.7rem; }
+.account-availability span { width: 0.7rem; height: 0.7rem; border-radius: 50%; background: #b6c4d6; }
+.account-availability.is-available { width: auto; color: #047857; border-color: #a7f3d0; }
+.account-availability.is-available span { background: #10b981; }
+.account-availability.is-duplicate { width: auto; color: #dc2626; border-color: #fecaca; }
+.account-availability.is-duplicate span { background: #ef4444; }
+.account-availability.is-checking { width: auto; color: #475569; }
+.account-consent { height: 2.25rem; display: flex !important; align-items: center; gap: 0.6rem !important; padding: 0 0.65rem; border: 1px solid #cbd5e1; border-radius: 0.35rem; color: #334155 !important; font-size: 0.75rem; font-weight: 500 !important; }
+.account-consent input { width: 1rem; height: 1rem; padding: 0; }
+.account-required { margin: 0.7rem 0 0.75rem; color: #ff0000; text-align: right; font-weight: 800; }
+.account-submit { width: 100%; height: 2.65rem; border: 2px solid #1f2937; border-radius: 0.35rem; background: #6b7280; box-shadow: none; font-size: 0.9rem; }
+.account-signin-note { margin: 0.35rem 0 0; text-align: center; color: #475569; }
+.account-guidance { grid-area: guide; min-height: 16.4rem; padding: 1.35rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; background: #fff; }
+.account-guidance h2 { margin: 0 0 1.4rem; font-size: 1.05rem; }
+.account-guidance p { margin: 0; color: #334155; line-height: 1.35; font-size: 0.85rem; }
+.account-guidance small { display: block; margin-top: 6.2rem; color: #64748b; line-height: 1.35; }
+.account-validation { grid-area: validation; margin: 0 1.2rem; padding: 0.45rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.35rem; color: #64748b; text-align: left; font-size: 0.75rem; background: #fff; }
 
 .dashboard-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
 .status-card, .section-block, .device-card, .routine-card, .report-card, .notification-row, .settings-row {

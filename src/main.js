@@ -1,6 +1,7 @@
 import './styles/main.css';
 import { getRecentNotifications } from './api/notificationApi.js';
 import { renderLoginPage, mountLoginPage } from './pages/LoginPage.js';
+import { renderCreateAccountPage, mountCreateAccountPage } from './pages/CreateAccount.js';
 import { renderHomeDashboardPage, mountHomeDashboardPage } from './pages/HomeDashboardPage.js';
 import { renderSensitiveApplianceSettingsPage, mountSensitiveApplianceSettingsPage } from './pages/SensitiveApplianceSettingsPage.js';
 import { cleanupThreeDHomePage, mountThreeDHomePage, renderThreeDHomePage } from './pages/ThreeDHomePage.js';
@@ -16,6 +17,7 @@ let notificationTimer = null;
 
 const routes = [
   { pattern: /^#\/login$/, title: '로그인', render: renderLoginPage, mount: mountLoginPage },
+  { pattern: /^#\/create-account$/, title: '계정 만들기', render: renderCreateAccountPage, mount: mountCreateAccountPage },
   { pattern: /^#\/home$/, title: '홈', render: renderHomeDashboardPage, mount: mountHomeDashboardPage },
   { pattern: /^#\/sensitive-appliances$/, title: '민감 가전', render: renderSensitiveApplianceSettingsPage, mount: mountSensitiveApplianceSettingsPage },
   { pattern: /^#\/three-home$/, title: '3D 홈', render: renderThreeDHomePage, mount: mountThreeDHomePage, cleanup: cleanupThreeDHomePage },
@@ -41,7 +43,7 @@ function shell(content, routeTitle) {
     const active = currentHash === href;
     return `<a class="${active ? 'is-active' : ''}" href="${href}">${label}</a>`;
   }).join('');
-  const hideNav = currentHash === '#/login';
+  const hideNav = currentHash === '#/login' || currentHash === '#/create-account';
   return `
     <div class="app-shell ${hideNav ? 'app-shell--login' : ''}">
       ${hideNav ? '' : `
