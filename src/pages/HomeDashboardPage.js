@@ -1,10 +1,12 @@
 import mockHomeStatus from '../data/mockHomeStatus.json';
 import { getCurrentHomeStatus } from '../api/eventApi.js';
+import { mountServerConnectionFailurePopup } from './ServerConnectionFailurePopup.js';
 import { createDashboardHomeScene } from '../three/dashboardHomeScene.js';
 import { escapeHtml } from '../utils/html.js';
 
 let dashboardSceneController = null;
 let dashboardSceneMediaCleanup = null;
+let serverFailurePopupCleanup = null;
 
 function formatMetric(value, fallback) {
   const number = Number(value);
@@ -26,7 +28,11 @@ function getSyncTime(status) {
 }
 
 export async function renderHomeDashboardPage() {
-  const status = await getCurrentHomeStatus().catch(() => mockHomeStatus);
+  let serverUnavailable = false;
+  const status = await getCurrentHomeStatus().catch(() => {
+    serverUnavailable = true;
+    return mockHomeStatus;
+  });
 
   const roomClimate = status.roomClimate ?? {};
   const temperature = formatMetric(status.dashboardTemperature ?? roomClimate.temperature, 23);
@@ -42,6 +48,12 @@ export async function renderHomeDashboardPage() {
           <p>Seocho Home · Live dashboard</p>
         </div>
         <p class="dashboard-mobile-sync">Last sync: ${escapeHtml(syncTime)}</p>
+        <div
+          id="dashboard-server-state"
+          class="hidden"
+          data-server-unavailable="${serverUnavailable ? 'true' : 'false'}"
+          data-last-sync="${escapeHtml(syncTime)}"
+        ></div>
       </header>
 
       <div class="dashboard-main-grid">
@@ -98,10 +110,20 @@ export async function renderHomeDashboardPage() {
 }
 
 export function mountHomeDashboardPage({ navigate } = {}) {
+  cleanupHomeDashboardPage();
+
+  const serverState = document.querySelector('#dashboard-server-state');
+  if (serverState?.dataset.serverUnavailable === 'true') {
+    const popupController = mountServerConnectionFailurePopup({ navigate });
+    serverFailurePopupCleanup = popupController.cleanup;
+    popupController.openPopup({
+      lastSuccessfulSync: serverState.dataset.lastSync,
+      retryQueueCount: 5
+    });
+  }
+
   const container = document.querySelector('#dashboard-home-scene');
   if (!container) return;
-
-  cleanupHomeDashboardPage();
 
   const syncDashboardScene = (isMobile) => {
     if (isMobile) {
@@ -139,6 +161,8 @@ export function mountHomeDashboardPage({ navigate } = {}) {
 }
 
 export function cleanupHomeDashboardPage() {
+  serverFailurePopupCleanup?.();
+  serverFailurePopupCleanup = null;
   dashboardSceneMediaCleanup?.();
   dashboardSceneMediaCleanup = null;
   dashboardSceneController?.dispose?.();

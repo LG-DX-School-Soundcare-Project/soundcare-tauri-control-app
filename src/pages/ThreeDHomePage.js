@@ -1,6 +1,15 @@
 import { createInteractiveHomeScene } from '../three/interactiveHomeScene.js';
+import { mountLowConfidenceNoticePopup } from './LowConfidenceNoticePopup.js';
 
 let sceneController = null;
+let lowConfidencePopupCleanup = null;
+
+const LOW_CONFIDENCE_POPUP_THRESHOLD = 0.6;
+const activePrediction = {
+  modelLabel: 'vacuum_cleaner',
+  confidence: 0.42,
+  thresholdValue: 0.7
+};
 
 const applianceCards = [
   { name: 'Robot vacuum', room: 'Kitchen', decibel: 50 },
@@ -53,14 +62,23 @@ export async function renderThreeDHomePage() {
 }
 
 export function mountThreeDHomePage() {
+  cleanupThreeDHomePage();
+
+  if (activePrediction.confidence < LOW_CONFIDENCE_POPUP_THRESHOLD) {
+    const popupController = mountLowConfidenceNoticePopup();
+    lowConfidencePopupCleanup = popupController.cleanup;
+    popupController.openPopup(activePrediction);
+  }
+
   const container = document.querySelector('#three-home-container');
   if (!container) return;
 
-  cleanupThreeDHomePage();
   sceneController = createInteractiveHomeScene(container);
 }
 
 export function cleanupThreeDHomePage() {
+  lowConfidencePopupCleanup?.();
+  lowConfidencePopupCleanup = null;
   sceneController?.dispose?.();
   sceneController = null;
 }

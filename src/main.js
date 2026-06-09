@@ -12,13 +12,13 @@ import {
 } from './pages/HomeDashboardPage.js';
 import { renderSensitiveApplianceSettingsPage, mountSensitiveApplianceSettingsPage } from './pages/SensitiveApplianceSettingsPage.js';
 import { cleanupThreeDHomePage, mountThreeDHomePage, renderThreeDHomePage } from './pages/ThreeDHomePage.js';
-import { renderDeviceListPage } from './pages/DeviceListPage.js';
+import { cleanupDeviceListPage, mountDeviceListPage, renderDeviceListPage } from './pages/DeviceListPage.js';
 import { cleanupDeviceDetailPage, mountDeviceDetailPage, renderDeviceDetailPage } from './pages/DeviceDetailPage.js';
 import { cleanupReportPage, mountReportPage, renderReportPage } from './pages/ReportPage.js';
 import { mountReactionHistoryPage, renderReactionHistoryPage } from './pages/ReactionHistoryPage.js';
 import { renderGPTDetailedReportPage } from './pages/GPTDetailedReportPage.js';
 import { mountSystemStatusPage, renderSystemStatusPage } from './pages/SystemStatusPage.js';
-import { mountSettingsPage, renderSettingsPage } from './pages/SettingsPage.js';
+import { cleanupSettingsPage, mountSettingsPage, renderSettingsPage } from './pages/SettingsPage.js';
 import { mountProfilePage, renderProfilePage } from './pages/ProfilePage.js';
 import { escapeHtml } from './utils/html.js';
 
@@ -42,7 +42,13 @@ const routes = [
     mount: mountThreeDHomePage,
     cleanup: cleanupThreeDHomePage
   },
-  { pattern: /^#\/devices$/, title: 'Devices', render: renderDeviceListPage },
+  {
+    pattern: /^#\/devices$/,
+    title: 'Devices',
+    render: renderDeviceListPage,
+    mount: mountDeviceListPage,
+    cleanup: cleanupDeviceListPage
+  },
   {
     pattern: /^#\/devices\/(?<deviceId>[^/]+)$/,
     title: 'Device Detail',
@@ -80,7 +86,13 @@ const routes = [
     render: renderSystemStatusPage,
     mount: mountSystemStatusPage
   },
-  { pattern: /^#\/settings$/, title: 'Settings', render: renderSettingsPage, mount: mountSettingsPage },
+  {
+    pattern: /^#\/settings$/,
+    title: 'Settings',
+    render: renderSettingsPage,
+    mount: mountSettingsPage,
+    cleanup: cleanupSettingsPage
+  },
   { pattern: /^#\/profile$/, title: 'Profile', render: renderProfilePage, mount: mountProfilePage }
 ];
 
