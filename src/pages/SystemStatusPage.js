@@ -113,9 +113,6 @@ function statusCard(card) {
         ${statusPill(card.state, card.tone)}
         <p>${escapeHtml(card.meta)}</p>
       </div>
-      <div class="system-progress" aria-hidden="true">
-        <span style="width: ${Number(card.progress) || 0}%"></span>
-      </div>
     </article>
   `;
 }

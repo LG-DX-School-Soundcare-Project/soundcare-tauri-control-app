@@ -4990,6 +4990,41 @@ input[type="checkbox"] { width: auto; }
   color: #aa1239;
 }
 
+.system-status-page {
+  background: #f3f4f6;
+  color: #383838;
+}
+
+.system-page-header h1,
+.system-page-header p,
+.system-overall-banner h2,
+.system-overall-banner p,
+.system-card h2,
+.system-card-body p,
+.system-guide-card h2,
+.system-guide-card li,
+.system-error-log h2,
+.system-error-log th,
+.system-error-log td,
+.system-retry-status {
+  color: #383838;
+}
+
+.system-card,
+.system-guide-card,
+.system-error-log,
+.system-overall-banner,
+.system-category-panel {
+  border: none !important;
+  background: #ffffff;
+}
+
+.system-retry-button {
+  border: none !important;
+  background: #BDC0C0 !important;
+  color: #383838 !important;
+}
+
 .profile-layout {
   grid-template-columns: clamp(180px, 15vw, 220px) minmax(360px, 1.35fr) minmax(280px, 0.9fr);
   gap: var(--ui-gap);
