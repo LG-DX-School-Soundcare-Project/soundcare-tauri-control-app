@@ -534,6 +534,45 @@ button:active,
   background: #f3f4f6 !important;
 }
 
+.gpt-consent-backdrop {
+  background: rgba(243, 244, 246, 0.3) !important;
+}
+
+.gpt-consent-modal {
+  background: #ffffff !important;
+  box-shadow: 0 18px 38px rgba(56, 56, 56, 0.18) !important;
+}
+
+.gpt-consent-card {
+  background: #f3f4f6 !important;
+}
+
+.gpt-consent-button {
+  border: none !important;
+  background: #BDC0C0 !important;
+  color: #383838 !important;
+}
+
+.low-confidence-backdrop {
+  background: rgba(243, 244, 246, 0.3) !important;
+}
+
+.low-confidence-modal {
+  background: #ffffff !important;
+  box-shadow: 0 18px 38px rgba(56, 56, 56, 0.18) !important;
+}
+
+.low-confidence-card {
+  background: #f3f4f6 !important;
+}
+
+.low-confidence-primary,
+.low-confidence-secondary {
+  border: none !important;
+  background: #BDC0C0 !important;
+  color: #383838 !important;
+}
+
 .device-failure-backdrop {
   background: rgba(243, 244, 246, 0.3) !important;
 }
