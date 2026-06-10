@@ -1,6 +1,8 @@
 import { withdrawGptConsent } from '../api/aiConsents.js';
 import { createDataDeletionRequest } from '../api/dataDeletion.js';
 import { bindSettingsTabs, renderSettingsTabs } from '../components/settingsTabs.js';
+import { mountDataDeleteConfirmationPopup } from './DataDeletConfirmationPoppup.js';
+import { mountGPTConsentWithdrawalPopup } from './GPTConsentWithdrawalPopup.js';
 
 const defaultSettings = {
   noiseThreshold: 62,
@@ -8,6 +10,9 @@ const defaultSettings = {
   confidence: 75,
   avoidanceEnabled: true
 };
+
+let dataDeletePopupCleanup = null;
+let gptConsentPopupCleanup = null;
 
 export function renderSettingsPage() {
   return `
@@ -92,6 +97,10 @@ export function renderSettingsPage() {
 }
 
 export function mountSettingsPage({ navigate } = {}) {
+  dataDeletePopupCleanup?.();
+  gptConsentPopupCleanup?.();
+  dataDeletePopupCleanup = null;
+  gptConsentPopupCleanup = null;
   const noiseRange = document.querySelector('#noise-threshold-range');
   const noiseValue = document.querySelector('#noise-threshold-value');
   const sensitivityRange = document.querySelector('#sensitivity-range');
@@ -100,6 +109,41 @@ export function mountSettingsPage({ navigate } = {}) {
   const confidenceValue = document.querySelector('#confidence-value');
   const avoidanceToggle = document.querySelector('#avoidance-toggle');
   const saveStatus = document.querySelector('#settings-save-status');
+  const deleteStatus = document.querySelector('#data-deletion-status');
+  const consentStatus = document.querySelector('#gpt-consent-status');
+  const consentToggle = document.querySelector('#gpt-consent-toggle');
+  const dataDeletePopup = mountDataDeleteConfirmationPopup({
+    onConfirm: async (confirmText) => {
+      if (deleteStatus) deleteStatus.textContent = 'Submitting deletion request...';
+      try {
+        const response = await createDataDeletionRequest({
+          scope: 'ALL',
+          confirmText,
+          metadata: { requestedFrom: 'tauri-settings' }
+        });
+        if (deleteStatus) deleteStatus.textContent = `Deletion request ${response.status}.`;
+      } catch (error) {
+        if (deleteStatus) deleteStatus.textContent = `Deletion request failed: ${error.message}`;
+        throw error;
+      }
+    }
+  });
+  dataDeletePopupCleanup = dataDeletePopup.cleanup;
+  const gptConsentPopup = mountGPTConsentWithdrawalPopup({
+    navigate,
+    onConfirm: async () => {
+      if (consentStatus) consentStatus.textContent = 'Withdrawing consent...';
+      try {
+        const response = await withdrawGptConsent({ reason: 'USER_WITHDRAWAL' });
+        if (consentToggle) consentToggle.checked = Boolean(response.granted);
+        if (consentStatus) consentStatus.textContent = 'GPT detailed report consent withdrawn.';
+      } catch (error) {
+        if (consentStatus) consentStatus.textContent = `Consent update failed: ${error.message}`;
+        throw error;
+      }
+    }
+  });
+  gptConsentPopupCleanup = gptConsentPopup.cleanup;
 
   function renderValues() {
     if (noiseValue) noiseValue.textContent = `${noiseRange?.value ?? defaultSettings.noiseThreshold} dB`;
@@ -150,38 +194,22 @@ export function mountSettingsPage({ navigate } = {}) {
     if (saveStatus) saveStatus.textContent = 'Defaults restored.';
   });
 
-  document.querySelector('#withdraw-gpt-consent-button')?.addEventListener('click', async () => {
-    const status = document.querySelector('#gpt-consent-status');
-    const toggle = document.querySelector('#gpt-consent-toggle');
-    if (status) status.textContent = 'Withdrawing consent...';
-    try {
-      const response = await withdrawGptConsent({ reason: 'USER_WITHDRAWAL' });
-      if (toggle) toggle.checked = Boolean(response.granted);
-      if (status) status.textContent = 'GPT detailed report consent withdrawn.';
-    } catch (error) {
-      if (status) status.textContent = `Consent update failed: ${error.message}`;
-    }
+  document.querySelector('#withdraw-gpt-consent-button')?.addEventListener('click', () => {
+    if (consentStatus) consentStatus.textContent = '';
+    gptConsentPopup.openPopup();
   });
 
   document.querySelector('#delete-data-button')?.addEventListener('click', async () => {
-    const status = document.querySelector('#data-deletion-status');
-    const confirmText = window.prompt('Type DELETE to request data deletion.');
-    if (confirmText !== 'DELETE') {
-      if (status) status.textContent = 'Deletion request cancelled.';
-      return;
-    }
-    if (status) status.textContent = 'Submitting deletion request...';
-    try {
-      const response = await createDataDeletionRequest({
-        scope: 'ALL',
-        confirmText,
-        metadata: { requestedFrom: 'tauri-settings' }
-      });
-      if (status) status.textContent = `Deletion request ${response.status}.`;
-    } catch (error) {
-      if (status) status.textContent = `Deletion request failed: ${error.message}`;
-    }
+    if (deleteStatus) deleteStatus.textContent = '';
+    dataDeletePopup.openPopup();
   });
 
   renderValues();
+}
+
+export function cleanupSettingsPage() {
+  dataDeletePopupCleanup?.();
+  gptConsentPopupCleanup?.();
+  dataDeletePopupCleanup = null;
+  gptConsentPopupCleanup = null;
 }

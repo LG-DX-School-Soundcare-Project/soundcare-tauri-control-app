@@ -1,5 +1,6 @@
 import { requestDetailedReport } from '../api/reportApi.js';
 import { deleteReport, exportReport, regenerateReport } from '../api/reports.js';
+import { mountGptDetailReportPopUp, renderGptDetailReportPopUp } from './gptDetailReportPopUp.js';
 import { createReportFaceScene } from '../three/reportFaceScene.js';
 import { escapeHtml } from '../utils/html.js';
 
@@ -149,6 +150,8 @@ export async function renderReportPage() {
           <small id="gpt-report-status" aria-live="polite"></small>
         </article>
       </section>
+
+      ${renderGptDetailReportPopUp()}
     </section>
   `;
 }
@@ -177,19 +180,23 @@ export function mountReportPage({ navigate } = {}) {
     });
   });
 
-  document.querySelector('#generate-gpt-report')?.addEventListener('click', async () => {
-    const status = document.querySelector('#gpt-report-status');
-    if (status) status.textContent = 'Generating detailed report...';
-    try {
+  const popupController = mountGptDetailReportPopUp({
+    onAgree: async () => {
+      const status = document.querySelector('#gpt-report-status');
+      if (status) status.textContent = 'Generating detailed report...';
       const report = await requestDetailedReport();
       if (report?.reportId) {
         window.localStorage.setItem('soundcare.lastDetailedReportId', report.reportId);
       }
       if (status) status.textContent = 'Detailed report generated.';
       navigate('#/reports/gpt-detailed');
-    } catch (error) {
-      if (status) status.textContent = `Detailed report failed: ${error.message}`;
     }
+  });
+
+  document.querySelector('#generate-gpt-report')?.addEventListener('click', async () => {
+    const status = document.querySelector('#gpt-report-status');
+    if (status) status.textContent = '';
+    popupController.openPopup();
   });
 
   document.querySelector('#regenerate-gpt-report')?.addEventListener('click', async () => {
