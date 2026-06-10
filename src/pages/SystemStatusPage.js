@@ -4,38 +4,34 @@ import { escapeHtml } from '../utils/html.js';
 
 let statusCards = [
   {
-    title: 'Spring Boot server',
+    title: 'Spring Boot 서버',
     state: 'Connected',
     tone: 'ok',
-    meta: 'API latency 124 ms',
-    progress: 85
+    meta: 'API 지연 시간 124 ms'
   },
   {
-    title: 'Flutter IoT Hub',
+    title: '가전 제어 에이전트',
     state: 'Intermittent',
     tone: 'warn',
-    meta: 'Last heartbeat 03:12 ago',
-    progress: 53
+    meta: '마지막 하트비트 03:12'
   },
   {
-    title: 'Local classification model',
-    state: 'Model loaded',
+    title: '로컬 분류 모델',
+    state: 'OK',
     tone: 'ok',
-    meta: 'YAMNet mapping active',
-    progress: 86
+    meta: '최근 분류 28건'
   },
   {
-    title: 'Compact hardware + sensor',
-    state: 'Sensor warning',
+    title: '컴팩트 하드웨어 센서',
+    state: 'Offline',
     tone: 'warn',
-    meta: 'Arduino temp/humidity stale',
-    progress: 53
+    meta: 'Arduino 수집 데이터 지연'
   }
 ];
 
 let errorRows = [
-  { time: '14:32', source: 'IoT Hub', error: 'Upload timeout', state: 'Retrying', action: 'View' },
-  { time: '14:28', source: 'Sensor', error: 'Humidity stale', state: 'Warning', action: 'Open' }
+  { time: '14:32', source: 'IoT Hub', error: '업로드 시간 초과', state: '재시도 중', action: '보기' },
+  { time: '14:28', source: 'Sensor', error: '온도 데이터 지연', state: '경고', action: '보기' }
 ];
 
 function statusPill(label, tone) {
@@ -50,8 +46,29 @@ function statusPill(label, tone) {
 function toneFor(status) {
   const normalized = String(status ?? '').toUpperCase();
   if (normalized === 'OK' || normalized === 'ONLINE' || normalized === 'CONNECTED') return 'ok';
-  if (normalized === 'WARN' || normalized === 'WARNING' || normalized === 'DEGRADED' || normalized === 'STALE') return 'warn';
+  if (
+    normalized === 'WARN' ||
+    normalized === 'WARNING' ||
+    normalized === 'DEGRADED' ||
+    normalized === 'STALE' ||
+    normalized === 'OFFLINE' ||
+    normalized === 'INTERMITTENT'
+  ) {
+    return 'warn';
+  }
   return 'warn';
+}
+
+function displayStatus(status) {
+  const normalized = String(status ?? '').toUpperCase();
+  if (normalized === 'CONNECTED' || normalized === 'ONLINE' || normalized === 'OK') return '온라인';
+  if (normalized === 'OFFLINE') return '오프라인';
+  if (normalized === 'WARNING' || normalized === 'WARN') return '경고';
+  if (normalized === 'DEGRADED') return '저하';
+  if (normalized === 'STALE') return '지연';
+  if (normalized === 'UNKNOWN') return '상태 없음';
+  if (normalized === 'INTERMITTENT') return '불안정';
+  return status ?? '-';
 }
 
 function buildStatusCards(status) {
@@ -59,34 +76,31 @@ function buildStatusCards(status) {
   const agent = status.agent ?? {};
   const model = status.model ?? {};
   const sensor = status.sensor ?? {};
+
   return [
     {
-      title: 'Spring Boot server',
+      title: 'Spring Boot 서버',
       state: backend.status ?? 'Unknown',
       tone: toneFor(backend.status),
-      meta: `API latency ${backend.latencyMs ?? '-'} ms`,
-      progress: backend.status === 'OK' ? 90 : 45
+      meta: `API 지연 시간 ${backend.latencyMs ?? '-'} ms`
     },
     {
-      title: 'Appliance Controller Agent',
+      title: '가전 제어 에이전트',
       state: agent.status ?? 'Unknown',
       tone: toneFor(agent.status),
-      meta: agent.lastSeenAt ? `Last seen ${agent.lastSeenAt}` : 'No heartbeat',
-      progress: agent.status === 'OK' ? 85 : 40
+      meta: agent.lastSeenAt ? `마지막 확인 ${agent.lastSeenAt}` : '하트비트 없음'
     },
     {
-      title: 'Local classification model',
+      title: '로컬 분류 모델',
       state: model.status ?? 'Unknown',
       tone: toneFor(model.status),
-      meta: `Recent classifications ${model.recentClassificationCount ?? 0}`,
-      progress: model.status === 'OK' ? 86 : 50
+      meta: `최근 분류 수 ${model.recentClassificationCount ?? 0}`
     },
     {
-      title: 'Compact hardware + sensor',
+      title: '컴팩트 하드웨어 센서',
       state: sensor.status ?? 'Unknown',
       tone: toneFor(sensor.status),
-      meta: sensor.lastEventAt ? `Last event ${sensor.lastEventAt}` : 'No sensor event',
-      progress: sensor.status === 'OK' ? 82 : 45
+      meta: sensor.lastEventAt ? `마지막 이벤트 ${sensor.lastEventAt}` : '센서 이벤트 없음'
     }
   ];
 }
@@ -94,14 +108,15 @@ function buildStatusCards(status) {
 function buildErrorRows(status) {
   const rows = status.recentErrors ?? [];
   if (!rows.length) {
-    return [{ time: '-', source: 'System', error: 'No recent warning', state: 'OK', action: '-' }];
+    return [{ time: '-', source: '시스템', error: '최근 경고 없음', state: 'OK', action: '-' }];
   }
+
   return rows.map((row) => ({
     time: row.created_at ?? row.createdAt ?? '-',
     source: row.source ?? '-',
     error: row.message ?? row.title ?? '-',
     state: row.state ?? row.severity ?? '-',
-    action: 'View'
+    action: '보기'
   }));
 }
 
@@ -110,11 +125,8 @@ function statusCard(card) {
     <article class="system-card system-card--${escapeHtml(card.tone)}">
       <h2>${escapeHtml(card.title)}</h2>
       <div class="system-card-body">
-        ${statusPill(card.state, card.tone)}
+        ${statusPill(displayStatus(card.state), card.tone)}
         <p>${escapeHtml(card.meta)}</p>
-      </div>
-      <div class="system-progress" aria-hidden="true">
-        <span style="width: ${Number(card.progress) || 0}%"></span>
       </div>
     </article>
   `;
@@ -136,56 +148,58 @@ export async function renderSystemStatusPage() {
   const systemStatus = await fetchSystemStatus();
   statusCards = buildStatusCards(systemStatus);
   errorRows = buildErrorRows(systemStatus);
+
   const overall = systemStatus.overallStatus ?? 'DEGRADED';
   const overallTone = toneFor(overall);
+
   return `
-    <section class="page system-status-page" aria-label="Error and Connection Status Screen">
+    <section class="page system-status-page" aria-label="오류 및 연결 상태 화면">
       <header class="system-page-header">
-        <h1>System Status</h1>
-        <p>Troubleshoot server, device, model, upload, and data loading failures.</p>
+        <h1>시스템 상태</h1>
+        <p>서버, 기기, 모델, 업로드 데이터 로딩 문제를 확인합니다.</p>
       </header>
 
       <div class="system-status-shell">
-        <aside class="settings-category-panel system-category-panel" aria-label="System settings categories">
+        <aside class="settings-category-panel system-category-panel" aria-label="시스템 설정 카테고리">
           ${renderSettingsTabs('system')}
         </aside>
 
         <div class="system-status-layout">
-          <section class="system-overall-banner" aria-label="Overall system status">
+          <section class="system-overall-banner" aria-label="전체 시스템 상태">
             <div>
-              <h2>Overall system status: ${escapeHtml(overall)}</h2>
-              <p>Backend, Agent, sensor, model, and upload visibility are checked together.</p>
+              <h2>전체 시스템 상태: ${escapeHtml(displayStatus(overall))}</h2>
+              <p>백엔드, 에이전트, 센서, 모델, 업로드 상태를 한 번에 확인합니다.</p>
             </div>
             <div class="system-banner-actions">
-              ${statusPill(`Backend ${systemStatus.backend?.status ?? '-'}`, toneFor(systemStatus.backend?.status))}
-              ${statusPill(`Upload ${systemStatus.uploadQueue?.status ?? '-'}`, overallTone)}
+              ${statusPill(`백엔드 ${displayStatus(systemStatus.backend?.status ?? '-')}`, toneFor(systemStatus.backend?.status))}
+              ${statusPill(`업로드 ${displayStatus(systemStatus.uploadQueue?.status ?? '-')}`, overallTone)}
             </div>
           </section>
 
           ${statusCards.map(statusCard).join('')}
 
           <aside class="system-guide-card">
-            <h2>Troubleshooting guide</h2>
+            <h2>문제 해결 가이드</h2>
             <ol>
-              <li>Check backend health endpoint.</li>
-              <li>Confirm IoT hub token validity.</li>
-              <li>Keep sensitive tokens hidden.</li>
-              <li>Retry queue can store local data.</li>
+              <li>백엔드 상태 대시보드를 확인합니다.</li>
+              <li>IoT Hub 토큰 유효성을 확인합니다.</li>
+              <li>민감한 토큰은 노출되지 않도록 주의합니다.</li>
+              <li>재시도 대기열과 로컬 적재 상태를 다시 확인합니다.</li>
             </ol>
-            <button id="system-retry-button" class="system-retry-button" type="button">Retry connection</button>
+            <button id="system-retry-button" class="system-retry-button" type="button">연결 재시도</button>
             <p id="system-retry-status" class="system-retry-status" aria-live="polite"></p>
           </aside>
 
           <section class="system-error-log">
-            <h2>Recent error log</h2>
+            <h2>최근 오류 로그</h2>
             <table>
               <thead>
                 <tr>
-                  <th>Time</th>
-                  <th>Source</th>
-                  <th>Error</th>
-                  <th>State</th>
-                  <th>Action</th>
+                  <th>시간</th>
+                  <th>출처</th>
+                  <th>오류</th>
+                  <th>상태</th>
+                  <th>동작</th>
                 </tr>
               </thead>
               <tbody>
@@ -204,6 +218,8 @@ export function mountSystemStatusPage({ navigate } = {}) {
 
   document.querySelector('#system-retry-button')?.addEventListener('click', () => {
     const status = document.querySelector('#system-retry-status');
-    if (status) status.textContent = 'Retry requested. Queue will be checked again shortly.';
+    if (status) {
+      status.textContent = '재시도를 요청했습니다. 잠시 후 대기열을 다시 확인합니다.';
+    }
   });
 }

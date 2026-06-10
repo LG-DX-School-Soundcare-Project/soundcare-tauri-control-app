@@ -1260,6 +1260,11 @@
     background: var(--apk-bg);
   }
 
+  .account-page {
+    background: #f3f4f6;
+    color: #383838;
+  }
+
   .login-window,
   .account-window {
     min-height: auto;
@@ -1280,6 +1285,12 @@
     border-radius: var(--apk-card-radius);
     background: var(--apk-surface);
     box-shadow: none;
+  }
+
+  .account-card {
+    border: none;
+    background: #ffffff;
+    box-shadow: 0 10px 24px rgba(56, 56, 56, 0.1);
   }
 
 }

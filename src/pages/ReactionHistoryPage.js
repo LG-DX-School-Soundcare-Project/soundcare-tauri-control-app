@@ -3,76 +3,52 @@ import { escapeHtml } from '../utils/html.js';
 
 let reactionRows = [
   {
-    time: '12:34',
+    time: '18:49',
+    createdAt: new Date().toISOString(),
     reactionType: 'positive',
-    eventId: 'EVT-238',
-    noiseClass: 'vacuum_cleaner',
+    eventId: 'event-demo-001',
+    noiseClass: '로봇청소기',
     db: '71',
-    room: 'Laundry',
+    room: '거실',
     status: 'linked',
     detail: {
-      event_id: 'EVT-238',
-      model_label: 'vacuum_cleaner',
+      reaction_id: 'reaction-demo-001',
+      event_id: 'event-demo-001',
+      model_label: '로봇청소기',
       service_label: 'robot_vacuum',
       relative_db: '71',
-      room_id: 'laundry',
-      reaction: 'positive'
+      room_id: '-',
+      reaction: 'positive',
+      status: 'linked',
+      source: 'USER_TAP',
+      memo: 'Linked demo reaction'
     }
   },
   {
-    time: '12:20',
+    time: '18:37',
+    createdAt: new Date().toISOString(),
     reactionType: 'negative',
-    eventId: 'EVT-236',
-    noiseClass: 'speech',
-    db: '58',
-    room: 'Living',
-    status: 'linked',
-    detail: {
-      event_id: 'EVT-236',
-      model_label: 'speech',
-      service_label: 'living_room',
-      relative_db: '58',
-      room_id: 'living',
-      reaction: 'negative'
-    }
-  },
-  {
-    time: '12:08',
-    reactionType: 'manual',
     eventId: 'manual-event',
-    noiseClass: 'unknown',
+    noiseClass: '상태없음',
     db: '-',
-    room: 'Bedroom',
+    room: '방1',
     status: 'manual',
     detail: {
+      reaction_id: 'reaction-demo-002',
       event_id: 'manual-event',
-      model_label: 'unknown',
+      model_label: '상태없음',
       service_label: 'manual',
       relative_db: '-',
-      room_id: 'bedroom',
-      reaction: 'manual'
-    }
-  },
-  {
-    time: '11:58',
-    reactionType: 'pending',
-    eventId: 'pending match',
-    noiseClass: 'appliance',
-    db: '63',
-    room: 'Kitchen',
-    status: 'pending',
-    detail: {
-      event_id: 'pending match',
-      model_label: 'appliance',
-      service_label: 'pending',
-      relative_db: '63',
-      room_id: 'kitchen',
-      reaction: 'pending'
+      room_id: 'bedroom1',
+      reaction: 'negative',
+      status: 'manual',
+      source: 'MANUAL',
+      memo: 'Manual reaction'
     }
   }
 ];
 
-const tableColumns = ['time', 'reaction type', 'linked event ID', 'noise class', 'dB', 'room', 'status'];
+const tableColumns = ['시간', '반응', '연결 이벤트 ID', '기기', 'dB', '공간'];
 
 function formatTime(value) {
   const date = value ? new Date(value) : new Date();
@@ -80,22 +56,52 @@ function formatTime(value) {
   return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
+function normalizeRoom(value) {
+  const map = {
+    living: '거실',
+    laundry: '세탁실',
+    kitchen: '부엌',
+    bathroom: '화장실',
+    bedroom: '방1',
+    bedroom1: '방1',
+    bedroom2: '방2',
+    bedroom3: '방3'
+  };
+  const normalized = String(value ?? '').toLowerCase();
+  return map[normalized] ?? value ?? '-';
+}
+
+function normalizeDevice(value) {
+  const normalized = String(value ?? '').toLowerCase();
+  if (normalized === 'vacuum_cleaner' || normalized === 'robot_vacuum') return '로봇청소기';
+  if (normalized === 'washer' || normalized === 'washing_machine') return '세탁기';
+  if (normalized === 'refrigerator' || normalized === 'fridge') return '냉장고';
+  if (normalized === 'dishwasher') return '식기세척기';
+  if (normalized === 'unknown') return '상태없음';
+  return value ?? 'unknown';
+}
+
 function toDisplayRow(item) {
   const reactionType = String(item.reactionType ?? item.reaction ?? 'manual').toLowerCase();
   const status = String(item.status ?? item.linkState ?? 'manual').toLowerCase();
   const eventId = item.noiseEventId ?? item.eventId ?? 'manual-event';
+  const createdAt = item.createdAt ?? item.created_at ?? new Date().toISOString();
+  const noiseClass = normalizeDevice(item.modelLabel ?? item.model_label ?? item.serviceLabel ?? item.service_label ?? 'unknown');
+  const room = normalizeRoom(item.roomName ?? item.room_name ?? item.roomId ?? item.room_id ?? '-');
+
   return {
-    time: formatTime(item.createdAt),
+    time: formatTime(createdAt),
+    createdAt,
     reactionType,
     eventId,
-    noiseClass: item.modelLabel ?? item.model_label ?? 'unknown',
+    noiseClass,
     db: item.decibelAvg ?? item.decibel_avg ?? '-',
-    room: item.roomName ?? item.room_name ?? item.roomId ?? '-',
+    room,
     status,
     detail: {
-      reaction_id: item.reactionId ?? '-',
-      event_id: eventId,
-      model_label: item.modelLabel ?? item.model_label ?? 'unknown',
+      reaction_id: item.reactionId ?? item.reaction_id ?? eventId,
+      event_id: item.eventId ?? item.noiseEventId ?? '-',
+      model_label: noiseClass,
       service_label: item.serviceLabel ?? item.service_label ?? '-',
       relative_db: item.decibelAvg ?? item.decibel_avg ?? '-',
       room_id: item.roomId ?? item.room_id ?? '-',
@@ -110,10 +116,10 @@ function toDisplayRow(item) {
 function rowMarkup(row, index) {
   return `
     <button
-      class="reaction-history-row ${index === 0 ? 'is-selected' : ''}"
+      class="reaction-history-row"
       type="button"
       data-reaction-row="${index}"
-      aria-label="Show ${escapeHtml(row.eventId)} detail"
+      aria-label="${escapeHtml(row.eventId)} 상세 보기"
     >
       <span>${escapeHtml(row.time)}</span>
       <strong>${escapeHtml(row.reactionType)}</strong>
@@ -121,97 +127,267 @@ function rowMarkup(row, index) {
       <span>${escapeHtml(row.noiseClass)}</span>
       <span>${escapeHtml(row.db)}</span>
       <span>${escapeHtml(row.room)}</span>
-      <span>${escapeHtml(row.status)}</span>
     </button>
   `;
 }
 
 function detailMarkup(row) {
+  if (!row) {
+    return `
+      <h2>연결 이벤트 상세</h2>
+      <dl class="reaction-detail-grid">
+        <div><dt>상태</dt><dd>표시할 데이터가 없습니다.</dd></div>
+      </dl>
+    `;
+  }
+
   return `
-    <h2>Linked event detail</h2>
-    <dl>
+    <h2>연결 이벤트 상세</h2>
+    <dl class="reaction-detail-grid">
       ${Object.entries(row.detail)
-        .map(([key, value]) => `<div><dt>${escapeHtml(key)}:</dt> <dd>${escapeHtml(value)}</dd></div>`)
+        .map(([key, value]) => `<div><dt>${escapeHtml(key)}</dt><dd>${escapeHtml(value)}</dd></div>`)
         .join('')}
     </dl>
   `;
 }
 
+function daysForRange(value) {
+  if (value === '7일') return 7;
+  if (value === '2주') return 14;
+  if (value === '한달') return 30;
+  return null;
+}
+
+function matchesDate(row, selectedRange) {
+  const days = daysForRange(selectedRange);
+  if (!days) return true;
+
+  const createdAt = new Date(row.createdAt);
+  if (Number.isNaN(createdAt.getTime())) return true;
+
+  const diffMs = Date.now() - createdAt.getTime();
+  return diffMs <= days * 24 * 60 * 60 * 1000;
+}
+
+function matchesNoise(row, selectedNoise) {
+  if (selectedNoise === '모두') return true;
+
+  const db = Number(row.db);
+  if (Number.isNaN(db)) return false;
+  if (selectedNoise === '60dB 이상') return db >= 60;
+  if (selectedNoise === '60dB 이하') return db <= 60;
+  return true;
+}
+
+function matchesDevice(row, selectedDevice) {
+  if (selectedDevice === '모두') return true;
+  return row.noiseClass === selectedDevice;
+}
+
+function matchesReaction(row, selectedReaction) {
+  if (selectedReaction === '모두') return true;
+  return row.reactionType === selectedReaction.toLowerCase();
+}
+
+function matchesSearch(row, keyword) {
+  const normalizedKeyword = keyword.trim().toLowerCase();
+  if (!normalizedKeyword) return true;
+
+  return [row.room, row.noiseClass, row.eventId, row.reactionType, row.status]
+    .join(' ')
+    .toLowerCase()
+    .includes(normalizedKeyword);
+}
+
+function filterRows(rows, filters) {
+  return rows.filter((row) => {
+    if (!matchesDate(row, filters.range)) return false;
+    if (!matchesNoise(row, filters.noise)) return false;
+    if (filters.room !== '모두' && row.room !== filters.room) return false;
+    if (!matchesDevice(row, filters.device)) return false;
+    if (!matchesReaction(row, filters.reaction)) return false;
+    if (!matchesSearch(row, filters.search)) return false;
+    return true;
+  });
+}
+
 export async function renderReactionHistoryPage() {
   const response = await fetchReactions({ page: 0, size: 50 });
-  reactionRows = (response.items ?? []).map(toDisplayRow);
-  const firstRow = reactionRows[0] ?? {
-    time: '-',
-    reactionType: '-',
-    eventId: '-',
-    noiseClass: '-',
-    db: '-',
-    room: '-',
-    status: 'empty',
-    detail: { empty: 'No data' }
-  };
+  const items = (response.items ?? []).map(toDisplayRow);
+  if (items.length) reactionRows = items;
+
   return `
-    <section class="page reaction-history-page" aria-label="Reaction History Screen">
+    <section class="page reaction-history-page" aria-label="반응 기록 화면">
       <header class="reaction-history-header">
-        <h1>Reaction History</h1>
-        <p>Linked and manual reactions from detected noise events</p>
+        <h1>반응 기록</h1>
+        <p>감지된 소음 이벤트에서 연결되거나 수동으로 생성된 반응을 확인합니다.</p>
       </header>
 
-      <section class="reaction-filter-panel" aria-label="Reaction filters">
+      <section class="reaction-filter-panel" aria-label="반응 필터">
         <label class="reaction-search">
-          <span class="hidden">Search room, device, label</span>
-          <input type="search" placeholder="Search room,device, label" />
+          <span class="hidden">공간, 기기, 라벨 검색</span>
+          <input id="reaction-search-input" type="search" placeholder="공간, 기기, 라벨 검색" />
         </label>
         <div class="reaction-filter-chips">
-          <button type="button">Date: last 7 days</button>
-          <button type="button">Noise: all</button>
-          <button type="button">Room: all</button>
-          <button type="button">Device: all</button>
-          <button type="button">Reaction: all</button>
-          <button type="button">Confidence: 0.70+</button>
+          <label class="reaction-filter-field">
+            <span>기간</span>
+            <select id="reaction-filter-range">
+              <option>7일</option>
+              <option>2주</option>
+              <option>한달</option>
+            </select>
+          </label>
+          <label class="reaction-filter-field">
+            <span>소음</span>
+            <select id="reaction-filter-noise">
+              <option>모두</option>
+              <option>60dB 이상</option>
+              <option>60dB 이하</option>
+            </select>
+          </label>
+          <label class="reaction-filter-field">
+            <span>공간</span>
+            <select id="reaction-filter-room">
+              <option>모두</option>
+              <option>거실</option>
+              <option>세탁실</option>
+              <option>부엌</option>
+              <option>화장실</option>
+              <option>방1</option>
+              <option>방2</option>
+              <option>방3</option>
+            </select>
+          </label>
+          <label class="reaction-filter-field">
+            <span>기기</span>
+            <select id="reaction-filter-device">
+              <option>모두</option>
+              <option>세탁기</option>
+              <option>로봇청소기</option>
+              <option>냉장고</option>
+              <option>식기세척기</option>
+              <option>상태없음</option>
+            </select>
+          </label>
+          <label class="reaction-filter-field">
+            <span>반응</span>
+            <select id="reaction-filter-reaction">
+              <option>모두</option>
+              <option>Positive</option>
+              <option>Negative</option>
+              <option>Pending</option>
+              <option>Manual</option>
+            </select>
+          </label>
         </div>
+        <p id="reaction-filter-status" class="reaction-filter-status" aria-live="polite"></p>
       </section>
 
       <div class="reaction-history-layout">
-        <section class="reaction-table-panel" aria-label="Reaction history table">
+        <section class="reaction-table-block">
           <div class="reaction-table-head" aria-hidden="true">
             ${tableColumns.map((label) => `<span>${escapeHtml(label)}</span>`).join('')}
           </div>
-          <div class="reaction-table-body">
+          <div id="reaction-table-body" class="reaction-table-body">
             ${reactionRows.map(rowMarkup).join('')}
           </div>
         </section>
+        <div class="reaction-pending-note-row">
+          <p class="reaction-table-note">
+            Pending 반응은 이벤트 매칭을 기다립니다. 매칭이 없으면 수동 반응 이벤트를 생성하세요.
+          </p>
+        </div>
+      </div>
 
-        <aside id="reaction-detail-panel" class="reaction-detail-panel" aria-live="polite">
-          ${detailMarkup(firstRow)}
-        </aside>
-
-        <section class="reaction-empty-state">
-          Empty state: no positive, negative, pending, or manual reaction exists for the selected filters.
+      <div id="reaction-detail-modal" class="reaction-detail-modal hidden" aria-hidden="true">
+        <div class="reaction-detail-backdrop" data-reaction-close="backdrop"></div>
+        <section class="reaction-detail-card" role="dialog" aria-modal="true" aria-label="연결 이벤트 상세">
+          <button type="button" class="reaction-detail-close" data-reaction-close="button" aria-label="닫기">X</button>
+          <div id="reaction-detail-content">
+            ${detailMarkup(reactionRows[0] ?? null)}
+          </div>
         </section>
-
-        <aside class="reaction-pending-note">
-          <span aria-hidden="true"></span>
-          <p>Pending reactions wait for event matching. If no match appears, create manual reaction event.</p>
-        </aside>
       </div>
     </section>
   `;
 }
 
 export function mountReactionHistoryPage() {
-  const detailPanel = document.querySelector('#reaction-detail-panel');
+  const tableBody = document.querySelector('#reaction-table-body');
+  const statusMessage = document.querySelector('#reaction-filter-status');
+  const searchInput = document.querySelector('#reaction-search-input');
+  const rangeSelect = document.querySelector('#reaction-filter-range');
+  const noiseSelect = document.querySelector('#reaction-filter-noise');
+  const roomSelect = document.querySelector('#reaction-filter-room');
+  const deviceSelect = document.querySelector('#reaction-filter-device');
+  const reactionSelect = document.querySelector('#reaction-filter-reaction');
+  const detailModal = document.querySelector('#reaction-detail-modal');
+  const detailContent = document.querySelector('#reaction-detail-content');
 
-  document.querySelectorAll('[data-reaction-row]').forEach((rowButton) => {
-    rowButton.addEventListener('click', () => {
-      const index = Number(rowButton.dataset.reactionRow);
-      const row = reactionRows[index] ?? reactionRows[0];
+  function openModal(row) {
+    if (!detailModal || !detailContent) return;
+    detailContent.innerHTML = detailMarkup(row);
+    detailModal.classList.remove('hidden');
+    detailModal.setAttribute('aria-hidden', 'false');
+  }
 
-      document.querySelectorAll('[data-reaction-row]').forEach((button) => {
-        button.classList.toggle('is-selected', button === rowButton);
+  function closeModal() {
+    if (!detailModal) return;
+    detailModal.classList.add('hidden');
+    detailModal.setAttribute('aria-hidden', 'true');
+  }
+
+  function bindRowSelection(rows) {
+    document.querySelectorAll('[data-reaction-row]').forEach((rowButton) => {
+      rowButton.addEventListener('click', () => {
+        const index = Number(rowButton.dataset.reactionRow);
+        const row = rows[index] ?? rows[0] ?? null;
+
+        document.querySelectorAll('[data-reaction-row]').forEach((button) => {
+          button.classList.toggle('is-selected', button === rowButton);
+        });
+
+        openModal(row);
       });
-
-      if (detailPanel) detailPanel.innerHTML = detailMarkup(row);
     });
+  }
+
+  function renderFilteredRows() {
+    const filters = {
+      search: searchInput?.value ?? '',
+      range: rangeSelect?.value ?? '7일',
+      noise: noiseSelect?.value ?? '모두',
+      room: roomSelect?.value ?? '모두',
+      device: deviceSelect?.value ?? '모두',
+      reaction: reactionSelect?.value ?? '모두'
+    };
+
+    const filteredRows = filterRows(reactionRows, filters);
+
+    if (tableBody) {
+      tableBody.innerHTML = filteredRows.map(rowMarkup).join('');
+    }
+
+    if (statusMessage) {
+      statusMessage.textContent = filteredRows.length ? '' : '선택한 필터에 해당하는 기록된 반응이 없습니다.';
+    }
+
+    closeModal();
+    bindRowSelection(filteredRows);
+  }
+
+  [searchInput, rangeSelect, noiseSelect, roomSelect, deviceSelect, reactionSelect].forEach((element) => {
+    element?.addEventListener('input', renderFilteredRows);
+    element?.addEventListener('change', renderFilteredRows);
   });
+
+  document.querySelectorAll('[data-reaction-close]').forEach((element) => {
+    element.addEventListener('click', closeModal);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeModal();
+  });
+
+  renderFilteredRows();
 }

@@ -1,3 +1,16 @@
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function renderServerFailureLine(label, value) {
+  return `<span class="server-failure-label">${escapeHtml(label)}</span><span class="server-failure-value">${escapeHtml(value)}</span>`;
+}
+
 export function renderServerConnectionFailurePopup() {
   return `
     <div id="server-connection-failure-popup" class="server-failure-backdrop hidden" aria-hidden="true">
@@ -6,15 +19,15 @@ export function renderServerConnectionFailurePopup() {
         <p class="server-failure-subtitle">Spring Boot 백엔드에 연결할 수 없습니다.</p>
 
         <div class="server-failure-card">
-          <p id="server-failure-last-sync">마지막 정상 동기화: -</p>
+          <p id="server-failure-last-sync">${renderServerFailureLine('마지막 정상 동기화: ', '-')}</p>
         </div>
 
-        <div class="server-failure-card server-failure-card--accent">
-          <p id="server-failure-queue">로컬 재시도 대기열: 서명된 payload 5건 대기 중</p>
+        <div class="server-failure-card">
+          <p id="server-failure-queue">${renderServerFailureLine('로컬 재시도 대기열: ', '서명된 payload 5건 대기 중')}</p>
         </div>
 
         <div class="server-failure-actions">
-          <button type="button" id="server-failure-retry" class="server-failure-primary">지금 다시 시도</button>
+          <button type="button" id="server-failure-retry" class="server-failure-primary">다시 시도</button>
           <button type="button" id="server-failure-offline" class="server-failure-secondary">오프라인으로 계속</button>
           <button type="button" id="server-failure-status" class="server-failure-secondary">상태 보기</button>
         </div>
@@ -48,8 +61,14 @@ export function mountServerConnectionFailurePopup({ navigate } = {}) {
   };
 
   const openPopup = ({ lastSuccessfulSync, retryQueueCount = 5 } = {}) => {
-    if (lastSync) lastSync.textContent = `마지막 정상 동기화: ${lastSuccessfulSync ?? '-'}`;
-    if (queue) queue.textContent = `로컬 재시도 대기열: 서명된 payload ${retryQueueCount}건 대기 중`;
+    if (lastSync) {
+      lastSync.innerHTML = renderServerFailureLine('마지막 정상 동기화: ', lastSuccessfulSync ?? '-');
+    }
+
+    if (queue) {
+      queue.innerHTML = renderServerFailureLine('로컬 재시도 대기열: ', `서명된 payload ${retryQueueCount}건 대기 중`);
+    }
+
     popup?.classList.remove('hidden');
     popup?.setAttribute('aria-hidden', 'false');
   };
