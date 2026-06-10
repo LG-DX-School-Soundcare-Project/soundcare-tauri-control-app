@@ -2721,30 +2721,10 @@ input[type="checkbox"] { width: auto; }
 }
 
 .reaction-pending-note {
-  grid-area: note;
-  display: grid;
-  grid-template-columns: 62px minmax(0, 1fr);
-  align-items: center;
-  gap: 25px;
-  min-height: 169px;
-  padding: 22px 34px;
-  border: 3px solid #737c8c;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.72);
-}
-
-.reaction-pending-note span {
-  width: 62px;
-  height: 62px;
-  border: 3px solid #737c8c;
-  border-radius: 50%;
-  background: #eef1f5;
-}
-
-.reaction-pending-note p {
   margin: 0;
+  padding: 0.75rem 1.5rem 1rem;
   color: #4b5563;
-  font-size: 24px;
+  font-size: 0.8rem;
   line-height: 1.35;
 }
 
@@ -4705,6 +4685,399 @@ input[type="checkbox"] { width: auto; }
       "model sensor guide"
       "log log log";
   }
+}
+
+.reaction-history-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.35rem;
+  width: min(100%, var(--ui-content-max));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.reaction-table-block {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.reaction-pending-note-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 0 0.25rem 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.reaction-table-note {
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  outline: none;
+  color: #4b5563;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  text-align: right;
+}
+
+.reaction-history-layout > .reaction-pending-note-row {
+  width: 100%;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: flex-start !important;
+  grid-column: 1 / -1;
+}
+
+.reaction-table-block {
+  background: #ffffff;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.reaction-pending-note-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 0.45rem 1rem 0.7rem;
+  background: transparent;
+}
+
+.reaction-pending-note {
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: #4b5563;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  text-align: right;
+}
+
+.reaction-table-block {
+  background: #ffffff;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.reaction-pending-note {
+  display: block;
+  width: fit-content;
+  max-width: calc(100% - 2rem);
+  margin: 0 0 0 auto;
+  padding: 0.45rem 1rem 0.7rem;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #4b5563;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  text-align: right;
+}
+
+.reaction-filter-panel {
+  background: #ffffff;
+  border: none;
+}
+
+.reaction-filter-chips {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.reaction-filter-field {
+  position: relative;
+  display: grid;
+  gap: 0.4rem;
+  color: #383838;
+  font-weight: 700;
+}
+
+.reaction-filter-field span {
+  color: #383838;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.reaction-filter-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  min-height: 46px;
+  padding: 0 2.4rem 0 1rem;
+  border: none;
+  border-radius: 16px;
+  background: #f3f4f6;
+  color: #383838;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+  background-image: none;
+}
+
+.reaction-filter-field::after {
+  content: 'ⅴ';
+  position: absolute;
+  right: 1rem;
+  bottom: 0.9rem;
+  color: #383838;
+  font-size: 0.95rem;
+  pointer-events: none;
+}
+
+.reaction-filter-field select:focus {
+  outline: 2px solid #f3f4f6;
+  outline-offset: 2px;
+}
+
+.reaction-history-header {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.reaction-history-header p {
+  margin: 0 0 0.15rem;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.reaction-filter-field select:hover {
+  transform: translateY(-1px);
+}
+
+.reaction-filter-status {
+  min-height: 1.4rem;
+  margin: 0;
+  color: #aa1239;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.reaction-history-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.1rem;
+}
+
+.reaction-table-block {
+  display: grid;
+  gap: 0;
+  background: #ffffff;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.reaction-table-head,
+.reaction-history-row {
+  display: grid;
+  grid-template-columns: 118px 179px 200px 170px 91px 133px minmax(120px, 1fr);
+  align-items: center;
+}
+
+.reaction-table-head {
+  min-height: 83px;
+  padding: 0 24px;
+  border-bottom: 2px solid #f3f4f6;
+  background: transparent;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 850;
+}
+
+.reaction-table-body {
+  display: grid;
+}
+
+.reaction-pending-note {
+  display: block;
+  width: fit-content;
+  max-width: calc(100% - 3rem);
+  margin-left: auto;
+  margin-right: 0;
+  margin: 0;
+  padding: 0.55rem 1rem 0.7rem;
+  background: transparent;
+  color: #4b5563;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  text-align: right;
+  white-space: normal;
+}
+
+.reaction-history-row {
+  width: 100%;
+  min-height: 98px;
+  padding: 0 24px;
+  border: 0;
+  border-bottom: 2px solid #f3f4f6;
+  border-radius: 0;
+  background: transparent;
+  color: #4b5563;
+  box-shadow: none;
+  text-align: left;
+  font-size: 21px;
+  font-weight: 500;
+}
+
+.reaction-detail-panel {
+  padding: 1.2rem 0 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  min-height: auto;
+}
+
+.reaction-detail-panel h2 {
+  margin: 0 0 1rem;
+  color: #111827;
+  font-size: 1.2rem;
+}
+
+.reaction-detail-grid {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 1.5rem;
+}
+
+.reaction-detail-grid div {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.reaction-detail-grid dt {
+  color: #6b7280;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.reaction-detail-grid dd {
+  margin: 0;
+  color: #111827;
+  font-size: 0.95rem;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.reaction-detail-modal.hidden {
+  display: none;
+}
+
+.reaction-detail-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.reaction-detail-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(243, 244, 246, 0.3);
+}
+
+.reaction-detail-card {
+  position: relative;
+  width: min(760px, calc(100vw - 2rem));
+  margin: 0;
+  padding: 1.4rem 1.4rem 1.3rem;
+  border: none;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 18px 48px rgba(17, 24, 39, 0.12);
+}
+
+.reaction-detail-close {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.95rem;
+  border: none;
+  background: transparent;
+  color: #383838;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+  outline: none;
+  transition: transform 180ms ease, box-shadow 180ms ease, color 180ms ease;
+}
+
+.reaction-detail-close:hover {
+  background: transparent;
+  color: #383838;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 18px rgba(56, 56, 56, 0.12);
+}
+
+.reaction-detail-close:focus,
+.reaction-detail-close:focus-visible,
+.reaction-detail-close:active {
+  background: transparent;
+  color: #383838;
+  outline: none;
+  box-shadow: none;
+}
+
+.reaction-search input {
+  border: none;
+  background: #f3f4f6;
+  color: #383838;
+}
+
+.reaction-search input::placeholder {
+  color: #383838;
+  opacity: 0.7;
+}
+
+.system-status-page,
+.system-status-page .system-page-header p,
+.system-status-page .system-card p,
+.system-status-page .system-guide-card li,
+.system-status-page .system-error-log td,
+.system-status-page .system-error-log th,
+.system-status-page .system-overall-banner p {
+  color: #383838;
+}
+
+.system-status-page {
+  background: #f3f4f6;
+}
+
+.system-card,
+.system-guide-card,
+.system-error-log,
+.system-overall-banner {
+  background: #ffffff;
+  border: none;
+}
+
+.system-retry-button {
+  background: #BDC0C0;
+  border: none;
+  color: #383838;
 }
 
 /* Responsive normalization layer */
