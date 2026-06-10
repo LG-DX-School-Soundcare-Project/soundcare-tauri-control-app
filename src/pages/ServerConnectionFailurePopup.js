@@ -27,7 +27,7 @@ export function renderServerConnectionFailurePopup() {
         </div>
 
         <div class="server-failure-actions">
-          <button type="button" id="server-failure-retry" class="server-failure-primary">지금 다시 시도</button>
+          <button type="button" id="server-failure-retry" class="server-failure-primary">다시 시도</button>
           <button type="button" id="server-failure-offline" class="server-failure-secondary">오프라인으로 계속</button>
           <button type="button" id="server-failure-status" class="server-failure-secondary">상태 보기</button>
         </div>

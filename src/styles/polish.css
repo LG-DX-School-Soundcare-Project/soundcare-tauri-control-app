@@ -573,6 +573,26 @@ button:active,
   color: #383838 !important;
 }
 
+.server-failure-backdrop {
+  background: rgba(243, 244, 246, 0.3) !important;
+}
+
+.server-failure-modal {
+  background: #ffffff !important;
+  box-shadow: 0 18px 38px rgba(56, 56, 56, 0.18) !important;
+}
+
+.server-failure-card {
+  background: #f3f4f6 !important;
+}
+
+.server-failure-primary,
+.server-failure-secondary {
+  border: none !important;
+  background: #BDC0C0 !important;
+  color: #383838 !important;
+}
+
 .device-failure-backdrop {
   background: rgba(243, 244, 246, 0.3) !important;
 }
