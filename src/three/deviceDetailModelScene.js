@@ -10,11 +10,11 @@ const MODEL_PATHS = {
 
 export function createDeviceDetailModelScene(container, { modelType = 'washer' } = {}) {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xe9ecef);
+  scene.background = null;
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.setClearColor(0xe9ecef, 1);
+  renderer.setClearColor(0x4b164c, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 50);

@@ -42,12 +42,12 @@ export async function renderHomeDashboardPage() {
   return `
     <section class="page thinq-dashboard-page" aria-label="Main dashboard">
       <header class="dashboard-household-header">
-        <h1 class="dashboard-desktop-title">호성 님의 Home</h1>
+        <h1 class="dashboard-desktop-title">Cho Home</h1>
         <div class="dashboard-mobile-title">
-          <h1>ThinQ Clone</h1>
-          <p>Seocho Home · Live dashboard</p>
+          <h1>SoundCare</h1>
+          <p>Seocho Home</p>
         </div>
-        <p class="dashboard-mobile-sync">마지막 동기화: ${escapeHtml(syncTime)}</p>
+        <p class="dashboard-mobile-sync">Last sync: ${escapeHtml(syncTime)}</p>
         <div
           id="dashboard-server-state"
           class="hidden"
@@ -57,49 +57,49 @@ export async function renderHomeDashboardPage() {
       </header>
 
       <div class="dashboard-main-grid">
-        <button class="dashboard-home-card" data-dashboard-home-link type="button" aria-label="Open 3D Home View">
-          <h2>3D Home</h2>
+        <button class="dashboard-home-card" data-dashboard-home-link type="button" aria-label="Open 3D view">
+          <h2>Home monitor</h2>
           <div id="dashboard-home-scene" class="dashboard-home-scene" aria-label="Fixed top view of the home"></div>
           <p class="dashboard-sync">Last sync: ${escapeHtml(syncTime)}</p>
         </button>
 
         <aside class="dashboard-summary-column" aria-label="Home summary">
           <section class="dashboard-info-card dashboard-climate-card">
-            <h2>실내 환경</h2>
+            <h2>Climate</h2>
             <strong>${temperature} &deg;C</strong>
-            <strong>습도 ${humidity}%</strong>
+            <strong>${humidity}%</strong>
           </section>
 
           <section class="dashboard-info-card dashboard-noise-card">
-            <h2>소음 상태</h2>
-            <strong>안정</strong>
-            <p>특이사항이 감지되지 않았습니다</p>
+            <h2>Noise</h2>
+            <strong>Stable</strong>
+            <p>No critical events</p>
             <div class="dashboard-progress" aria-hidden="true">
               <span style="width: 76%"></span>
             </div>
           </section>
 
           <section class="dashboard-info-card dashboard-report-shortcut">
-            <h2>오늘의 리포트</h2>
-            <p>Open daily noise summary and reaction overview.</p>
-            <a class="dashboard-report-button" href="#/reports">View report</a>
+            <h2>Daily report</h2>
+            <p>Noise summary and reactions.</p>
+            <a class="dashboard-report-button" href="#/reports">Open</a>
           </section>
 
           <button class="dashboard-info-card dashboard-reaction-card dashboard-reaction-card--positive" type="button">
             <strong aria-hidden="true">+</strong>
-            <h2>Positive</h2>
-            <p>Record good</p>
+            <h2>Good</h2>
+            <p>Save feedback</p>
           </button>
 
           <button class="dashboard-info-card dashboard-reaction-card dashboard-reaction-card--negative" type="button">
             <strong aria-hidden="true">-</strong>
-            <h2>Negative</h2>
-            <p>Record bad</p>
+            <h2>Bad</h2>
+            <p>Save feedback</p>
           </button>
 
           <section class="dashboard-info-card dashboard-detection-card">
-            <h2>Current detection</h2>
-            <p>model_label</p>
+            <h2>Detected sound</h2>
+            <p>Source</p>
             <strong>robot_vacuum</strong>
             <p>relative dB <b>62 dB</b></p>
           </section>

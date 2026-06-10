@@ -27,7 +27,7 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
   const isDashboard = mode === 'dashboard';
   const sceneColor = isDashboard ? 0xffffff : 0xf4f7fb;
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(sceneColor);
+  scene.background = isDashboard ? null : new THREE.Color(sceneColor);
 
   const renderer = new THREE.WebGLRenderer({
     antialias: true,

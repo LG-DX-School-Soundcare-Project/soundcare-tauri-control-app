@@ -6,19 +6,16 @@ export function renderLoginPage() {
       <div class="login-window">
         <div class="login-stage">
           <div class="login-card">
-            <p class="eyebrow">사운드케어 MVP</p>
-            <h1>SoundCare ThinQ Clone</h1>
-            <p>메인 대시보드, 3D 홈, 기기, 리포트를 확인하려면 로그인하세요.</p>
-            <button id="local-login-button" class="primary-button">
-              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" alt="" aria-hidden="true" />
-              <span>로그인</span>
-            </button>
+            <p class="eyebrow">SoundCare</p>
+            <h1>Smart noise dashboard</h1>
+            <p>Sign in to monitor home noise, devices, and daily reports.</p>
+            <button id="local-login-button" class="primary-button"><span>Login</span></button>
             <p id="login-status" aria-live="polite"></p>
-            <p class="login-create-account">계정이 없으신가요? <a href="#/create-account">계정 만들기</a></p>
+            <p class="login-create-account">Need an account? <a href="#/create-account">Create account</a></p>
           </div>
         </div>
         <div class="login-footer">
-          <span>앱 버전 0.1</span>
+          <span>App version 0.1</span>
         </div>
       </div>
     </section>
@@ -31,17 +28,17 @@ export function mountLoginPage({ navigate }) {
     const buttonLabel = button?.querySelector('span');
     const status = document.querySelector('#login-status');
     button.disabled = true;
-    if (buttonLabel) buttonLabel.textContent = '로그인 중...';
-    if (status) status.textContent = '백엔드 토큰을 요청하는 중입니다...';
+    if (buttonLabel) buttonLabel.textContent = 'Logging in...';
+    if (status) status.textContent = 'Requesting backend token...';
 
     try {
       await loginWithLocalDev();
-      if (status) status.textContent = '로그인이 완료되었습니다.';
+      if (status) status.textContent = 'Login complete.';
       navigate('#/home');
     } catch (error) {
-      if (status) status.textContent = `로그인 실패: ${error.message}`;
+      if (status) status.textContent = `Login failed: ${error.message}`;
       button.disabled = false;
-      if (buttonLabel) buttonLabel.textContent = '로그인';
+      if (buttonLabel) buttonLabel.textContent = 'Login';
     }
   });
 }

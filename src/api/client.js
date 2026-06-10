@@ -1,7 +1,7 @@
 const env = import.meta.env ?? {};
 
 export const API_BASE_URL = env.VITE_SOUNDCARE_API_BASE_URL || 'http://localhost:8080';
-export const USE_MOCK_API = String(env.VITE_USE_MOCK_API ?? 'true').toLowerCase() === 'true';
+export const USE_MOCK_API = String(env.VITE_USE_MOCK_API ?? 'false').toLowerCase() === 'true';
 export const USE_API_FALLBACK = String(env.VITE_USE_API_FALLBACK ?? 'false').toLowerCase() === 'true';
 export const TOKEN_STORAGE_KEY = 'soundcare.accessToken';
 export const DEV_AUTH_PROFILE = {
