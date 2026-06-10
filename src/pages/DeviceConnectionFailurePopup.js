@@ -2,9 +2,9 @@ import { escapeHtml } from '../utils/html.js';
 
 function getFailureReason(device) {
   if (device?.decibel === '--') {
-    return 'No response after dB scan timeout.';
+    return 'dB 스캔 제한 시간 이후에도 응답이 없습니다.';
   }
-  return 'Device connection status could not be confirmed.';
+  return '기기 연결 상태를 확인할 수 없습니다.';
 }
 
 function getAffectedDeviceName(device) {
@@ -15,33 +15,32 @@ export function renderDeviceConnectionFailurePopup() {
   return `
     <div id="device-connection-failure-popup" class="device-failure-backdrop hidden" aria-hidden="true">
       <section class="device-failure-modal" role="dialog" aria-modal="true" aria-labelledby="device-failure-title">
-        <h2 id="device-failure-title">Connection failed</h2>
-        <p class="device-failure-subtitle">Hardware or sensor is not reachable</p>
+        <h2 id="device-failure-title">연결에 실패했습니다</h2>
+        <p class="device-failure-subtitle">하드웨어 또는 센서에 연결할 수 없습니다.</p>
 
         <div class="device-failure-card">
-          <strong>Affected device name</strong>
+          <strong>영향받은 기기 이름</strong>
           <p id="device-failure-name">-</p>
         </div>
 
         <div class="device-failure-card device-failure-card--danger">
-          <strong>Failure reason message</strong>
+          <strong>실패 원인 메시지</strong>
           <p id="device-failure-reason">-</p>
         </div>
 
         <div class="device-failure-card">
-          <strong>Suggested recovery checklist</strong>
+          <strong>권장 확인 항목</strong>
           <ul class="device-failure-list">
-            <li>Power on device</li>
-            <li>Check app permissions</li>
-            <li>Move closer and retry</li>
+            <li>기기의 전원이 켜져 있는지 확인</li>
+            <li>앱 권한이 허용되어 있는지 확인</li>
+            <li>기기 가까이에서 다시 시도</li>
           </ul>
         </div>
 
-        <button type="button" id="device-failure-retry" class="device-failure-primary">Retry</button>
-
         <div class="device-failure-actions">
-          <button type="button" id="device-failure-settings" class="device-failure-secondary">Open settings</button>
-          <button type="button" id="device-failure-cancel" class="device-failure-secondary">Cancel</button>
+          <button type="button" id="device-failure-settings" class="device-failure-secondary">설정</button>
+          <button type="button" id="device-failure-retry" class="device-failure-primary">재시도</button>
+          <button type="button" id="device-failure-cancel" class="device-failure-secondary">취소</button>
         </div>
       </section>
     </div>
@@ -69,7 +68,7 @@ export function mountDeviceConnectionFailurePopup({ navigate } = {}) {
     popup?.classList.add('hidden');
     popup?.setAttribute('aria-hidden', 'true');
     if (retryButton) retryButton.disabled = false;
-    if (retryButton) retryButton.textContent = 'Retry';
+    if (retryButton) retryButton.textContent = '재시도';
   };
 
   const openPopup = (device) => {
@@ -94,10 +93,10 @@ export function mountDeviceConnectionFailurePopup({ navigate } = {}) {
 
   retryButton?.addEventListener('click', async () => {
     retryButton.disabled = true;
-    retryButton.textContent = 'Retrying...';
+    retryButton.textContent = '재시도 중...';
     await new Promise((resolve) => window.setTimeout(resolve, 900));
     retryButton.disabled = false;
-    retryButton.textContent = 'Retry';
+    retryButton.textContent = '재시도';
   });
 
   const cleanup = () => {
