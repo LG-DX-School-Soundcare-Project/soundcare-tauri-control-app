@@ -16,7 +16,11 @@ import { cleanupThreeDHomePage, mountThreeDHomePage, renderThreeDHomePage } from
 import { cleanupDeviceListPage, mountDeviceListPage, renderDeviceListPage } from './pages/DeviceListPage.js';
 import { cleanupDeviceDetailPage, mountDeviceDetailPage, renderDeviceDetailPage } from './pages/DeviceDetailPage.js';
 import { cleanupReportPage, mountReportPage, renderReportPage } from './pages/ReportPage.js';
-import { mountReactionHistoryPage, renderReactionHistoryPage } from './pages/ReactionHistoryPage.js';
+import {
+  cleanupReactionHistoryPage,
+  mountReactionHistoryPage,
+  renderReactionHistoryPage
+} from './pages/ReactionHistoryPage.js';
 import { renderGPTDetailedReportPage } from './pages/GPTDetailedReportPage.js';
 import { mountSystemStatusPage, renderSystemStatusPage } from './pages/SystemStatusPage.js';
 import { cleanupSettingsPage, mountSettingsPage, renderSettingsPage } from './pages/SettingsPage.js';
@@ -74,7 +78,8 @@ const routes = [
     pattern: /^#\/reports\/reaction-history$/,
     title: 'Reaction History',
     render: renderReactionHistoryPage,
-    mount: mountReactionHistoryPage
+    mount: mountReactionHistoryPage,
+    cleanup: cleanupReactionHistoryPage
   },
   {
     pattern: /^#\/reports\/gpt-detailed$/,

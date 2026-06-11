@@ -3,7 +3,6 @@
 .dashboard-mobile-sync,
 .dashboard-reaction-card,
 .dashboard-detection-card,
-.three-view-mobile-title,
 .three-view-active-pill,
 .three-title-mobile,
 .three-view-mobile-source {
@@ -160,7 +159,6 @@
   }
 
   .dashboard-mobile-title h1,
-  .three-view-mobile-title h1,
   .device-list-header h1,
   .basic-report-header h1,
   .settings-page-header h1,
@@ -177,7 +175,6 @@
   }
 
   .dashboard-mobile-title p,
-  .three-view-mobile-title p,
   .device-list-header p,
   .basic-report-header p,
   .settings-page-header p,
@@ -357,12 +354,10 @@
     align-content: center;
   }
 
-  .three-view-desktop-title,
   .three-title-desktop {
     display: none;
   }
 
-  .three-view-mobile-title,
   .three-title-mobile,
   .three-view-mobile-source {
     display: block;

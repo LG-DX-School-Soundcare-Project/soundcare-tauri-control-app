@@ -2,6 +2,7 @@ import mockHomeStatus from '../data/mockHomeStatus.json';
 import { getCurrentHomeStatus } from '../api/eventApi.js';
 import { mountServerConnectionFailurePopup } from './ServerConnectionFailurePopup.js';
 import { createDashboardHomeScene } from '../three/dashboardHomeScene.js';
+import { householdHeader } from '../components/householdHeader.js';
 import { escapeHtml } from '../utils/html.js';
 
 let dashboardSceneController = null;
@@ -41,18 +42,17 @@ export async function renderHomeDashboardPage() {
 
   return `
     <section class="page thinq-dashboard-page" aria-label="Main dashboard">
-      <header class="dashboard-household-header">
-        <h1 class="dashboard-desktop-title">조호성 님의 Home</h1>
-        <div class="dashboard-mobile-title">
-        </div>
-        <p class="dashboard-mobile-sync">Last sync: ${escapeHtml(syncTime)}</p>
-        <div
-          id="dashboard-server-state"
-          class="hidden"
-          data-server-unavailable="${serverUnavailable ? 'true' : 'false'}"
-          data-last-sync="${escapeHtml(syncTime)}"
-        ></div>
-      </header>
+      ${householdHeader({
+        status: `Last sync: ${syncTime}`,
+        extraHtml: `
+          <div
+            id="dashboard-server-state"
+            class="hidden"
+            data-server-unavailable="${serverUnavailable ? 'true' : 'false'}"
+            data-last-sync="${escapeHtml(syncTime)}"
+          ></div>
+        `
+      })}
 
       <div class="dashboard-main-grid">
         <button class="dashboard-home-card" data-dashboard-home-link type="button" aria-label="Open 3D view">

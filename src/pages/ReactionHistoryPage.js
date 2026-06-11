@@ -133,7 +133,18 @@ function toDisplayRow(item) {
   };
 }
 
+function rowCells(row) {
+  return [row.time, row.reactionType, row.eventId, row.noiseClass, row.db, row.room];
+}
+
 function rowMarkup(row, index) {
+  const cells = rowCells(row)
+    .map((value, columnIndex) => {
+      const tag = columnIndex === 1 ? 'strong' : 'span';
+      return `<${tag} class="reaction-cell" data-label="${escapeHtml(tableColumns[columnIndex])}">${escapeHtml(value)}</${tag}>`;
+    })
+    .join('');
+
   return `
     <button
       class="reaction-history-row"
@@ -141,12 +152,7 @@ function rowMarkup(row, index) {
       data-reaction-row="${index}"
       aria-label="${escapeHtml(row.eventId)} 상세 보기"
     >
-      <span class="reaction-cell" data-label="?쒓컙">${escapeHtml(row.time)}</span>
-      <strong class="reaction-cell" data-label="諛섏쓳">${escapeHtml(row.reactionType)}</strong>
-      <span class="reaction-cell" data-label="?곌껐 ?대깽??ID">${escapeHtml(row.eventId)}</span>
-      <span class="reaction-cell" data-label="湲곌린">${escapeHtml(row.noiseClass)}</span>
-      <span class="reaction-cell" data-label="dB">${escapeHtml(row.db)}</span>
-      <span class="reaction-cell" data-label="怨듦컙">${escapeHtml(row.room)}</span>
+      ${cells}
     </button>
   `;
 }
@@ -232,7 +238,7 @@ function filterRows(rows, filters) {
 }
 
 export async function renderReactionHistoryPage() {
-  const response = await fetchReactions({ page: 0, size: 50 });
+  const response = await fetchReactions({ page: 0, size: 50 }).catch(() => ({ items: [] }));
   const items = (response.items ?? []).map(toDisplayRow);
   if (items.length) reactionRows = items;
 
@@ -283,7 +289,15 @@ export async function renderReactionHistoryPage() {
   `;
 }
 
+let detachKeydown = null;
+
+export function cleanupReactionHistoryPage() {
+  detachKeydown?.();
+  detachKeydown = null;
+}
+
 export function mountReactionHistoryPage() {
+  cleanupReactionHistoryPage();
   const tableBody = document.querySelector('#reaction-table-body');
   const statusMessage = document.querySelector('#reaction-filter-status');
   const searchInput = document.querySelector('#reaction-search-input');
@@ -353,9 +367,11 @@ export function mountReactionHistoryPage() {
     element.addEventListener('click', closeModal);
   });
 
-  document.addEventListener('keydown', (event) => {
+  const onKeydown = (event) => {
     if (event.key === 'Escape') closeModal();
-  });
+  };
+  document.addEventListener('keydown', onKeydown);
+  detachKeydown = () => document.removeEventListener('keydown', onKeydown);
 
   renderFilteredRows();
 }

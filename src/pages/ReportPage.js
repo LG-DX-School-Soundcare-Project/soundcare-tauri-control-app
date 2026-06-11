@@ -1,5 +1,4 @@
 import { requestDetailedReport } from '../api/reportApi.js';
-import { deleteReport, exportReport, regenerateReport } from '../api/reports.js';
 import { mountGptDetailReportPopUp, renderGptDetailReportPopUp } from './gptDetailReportPopUp.js';
 import { createReportFaceScene } from '../three/reportFaceScene.js';
 import { escapeHtml } from '../utils/html.js';
@@ -196,51 +195,6 @@ export function mountReportPage({ navigate } = {}) {
     popupController.openPopup();
   });
 
-  document.querySelector('#regenerate-gpt-report')?.addEventListener('click', async () => {
-    const status = document.querySelector('#gpt-report-status');
-    const reportId = window.localStorage.getItem('soundcare.lastDetailedReportId');
-    if (status) status.textContent = '리포트를 다시 생성하는 중입니다...';
-    try {
-      const report = await regenerateReport(reportId);
-      if (report?.reportId) {
-        window.localStorage.setItem('soundcare.lastDetailedReportId', report.reportId);
-      }
-      if (status) status.textContent = '리포트가 다시 생성되었습니다.';
-    } catch (error) {
-      if (status) status.textContent = `다시 생성 실패: ${error.message}`;
-    }
-  });
-
-  document.querySelector('#export-gpt-report')?.addEventListener('click', async () => {
-    const status = document.querySelector('#gpt-report-status');
-    const reportId = window.localStorage.getItem('soundcare.lastDetailedReportId');
-    if (!reportId) {
-      if (status) status.textContent = '먼저 상세 리포트를 생성해 주세요.';
-      return;
-    }
-    try {
-      const exported = await exportReport(reportId);
-      if (status) status.textContent = `리포트를 내보냈습니다: ${exported.exportedAt ?? '지금'}.`;
-    } catch (error) {
-      if (status) status.textContent = `내보내기 실패: ${error.message}`;
-    }
-  });
-
-  document.querySelector('#delete-gpt-report')?.addEventListener('click', async () => {
-    const status = document.querySelector('#gpt-report-status');
-    const reportId = window.localStorage.getItem('soundcare.lastDetailedReportId');
-    if (!reportId) {
-      if (status) status.textContent = '삭제할 생성 리포트가 없습니다.';
-      return;
-    }
-    try {
-      const deleted = await deleteReport(reportId);
-      window.localStorage.removeItem('soundcare.lastDetailedReportId');
-      if (status) status.textContent = `리포트 상태: ${deleted.status ?? '삭제됨'}.`;
-    } catch (error) {
-      if (status) status.textContent = `삭제 실패: ${error.message}`;
-    }
-  });
 }
 
 export function cleanupReportPage() {

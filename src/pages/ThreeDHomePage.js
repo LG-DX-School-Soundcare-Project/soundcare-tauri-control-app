@@ -1,4 +1,5 @@
 import { createInteractiveHomeScene } from '../three/interactiveHomeScene.js';
+import { householdHeader } from '../components/householdHeader.js';
 import { mountLowConfidenceNoticePopup } from './LowConfidenceNoticePopup.js';
 
 let sceneController = null;
@@ -23,11 +24,10 @@ const applianceCards = [
 export async function renderThreeDHomePage() {
   return `
     <section class="page three-view-page" aria-label="3D home view">
-      <header class="dashboard-household-header three-view-household-header">
-        <h1 class="dashboard-desktop-title">조호성 님의 Home</h1>
-        <div class="dashboard-mobile-title"></div>
-        <p class="dashboard-mobile-sync">Active · 42 dB</p>
-      </header>
+      ${householdHeader({
+        headerClass: 'three-view-household-header',
+        status: 'Active · 42 dB'
+      })}
       <p class="three-view-active-pill"><span></span>Active 42 dB</p>
 
       <div class="three-view-content">

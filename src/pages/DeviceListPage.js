@@ -17,7 +17,7 @@ const deviceRows = [
 function deviceCard(device) {
   const failed = isDeviceConnectionFailed(device);
   return `
-    <a class="device-list-card ${failed ? 'device-list-card--failed' : ''}" href="#/devices/${encodeURIComponent(device.id)}" aria-label="${escapeHtml(device.room)} device detail" ${failed ? `data-device-failure="${escapeHtml(device.id)}"` : ''}>
+    <a class="device-list-card ${failed ? 'device-list-card--failed' : ''}" href="#/devices/${encodeURIComponent(device.id)}" aria-label="${escapeHtml(device.deviceName)} (${escapeHtml(device.room)}) device detail" ${failed ? `data-device-failure="${escapeHtml(device.id)}"` : ''}>
       <div class="device-list-picture" aria-hidden="true"></div>
       <div class="device-list-meta">
         <p>${escapeHtml(device.deviceName)}</p>
