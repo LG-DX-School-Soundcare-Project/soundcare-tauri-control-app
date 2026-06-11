@@ -93,7 +93,7 @@ cp .env.example .env
 주요 변수:
 
 ```env
-VITE_SOUNDCARE_API_BASE_URL=http://localhost:8080
+VITE_SOUNDCARE_API_BASE_URL=http://localhost:18080
 VITE_USE_MOCK_API=true
 VITE_NOTIFICATION_POLL_INTERVAL_MS=15000
 ```
@@ -149,21 +149,21 @@ public/assets/glb/smartphone_device.glb
 
 주요 API 그룹:
 
-- `/api/auth/google`
-- `/api/me`
+- `/api/auth/google`, `/api/auth/me`
+- `/api/users/me` (프로필 + AI 동의 컬럼)
 - `/api/home/current-status`
-- `/api/devices`
-- `/api/devices/runtime-settings`
-- `/api/sensitive-appliances`
-- `/api/device-agents`
-- `/api/events/appliance-measurements/latest`
-- `/api/events/appliance-measurements`
-- `/api/notifications/recent`
-- `/api/notifications`
-- `/api/routines/recommendations`
-- `/api/reports/basic`
-- `/api/reports/detailed`
-- `/api/ai-consents/gpt-report`
+- `/api/devices`, `/api/user-devices`
+- `/api/settings/runtime`
+- `/api/settings/sensitive-appliances`
+- `/api/settings/appliance-control-policies`
+- `/api/events/noise`
+- `/api/events/appliance-measurements`, `/latest`
+- `/api/events/reactions`
+- `/api/notifications/recent`, `/api/notifications`
+- `/api/routines` (apply/dismiss는 `PATCH /api/routines/{id}/status`)
+- `/api/reports/basic`, `/api/reports/detailed`
+
+MVP에서 제거된 API (호출하지 않음): `/api/device-agents`, `/api/control-commands`, `/api/ai-consents`, `/api/data-deletion-requests`, `/api/reports/{id}/export`, `DELETE /api/reports/{id}`, `/api/robot-avoid-events`. Agent 상태/로봇 회피는 로컬 표시·GLB 시뮬레이션 전용이고, GPT 동의는 `PATCH /api/users/me`의 `aiDataUseConsent`로 처리합니다.
 
 ## 보안 메모
 

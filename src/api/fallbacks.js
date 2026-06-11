@@ -26,8 +26,9 @@ export function defaultAuthUser(profile = DEV_AUTH_PROFILE) {
   return {
     id: 'user-demo-001',
     email: profile.email,
-    displayName: profile.displayName,
-    roles: ['USER']
+    nickname: profile.nickname ?? profile.displayName,
+    aiRoutineConsent: true,
+    aiDataUseConsent: true
   };
 }
 

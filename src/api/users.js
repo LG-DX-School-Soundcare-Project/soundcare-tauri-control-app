@@ -1,38 +1,47 @@
-import { buildQuery, isMockApiEnabled, request } from './client.js';
+import { isMockApiEnabled, request } from './client.js';
 import { defaultAuthUser, withApiFallback } from './fallbacks.js';
 
-const duplicateNicknamesForMock = ['admin', 'test', 'soundcare'];
+// MVP 기준: /api/users/onboarding, /api/users/nickname/check는 삭제되었다.
+// 프로필 수정은 PATCH /api/users/me 하나로 처리한다.
 
-export async function submitOnboarding(body) {
+export async function getMyProfile() {
   if (isMockApiEnabled()) {
-    const profile = {
-      ...defaultAuthUser(),
-      displayName: body.displayName,
-      nickname: body.nickname,
-      householdLabel: body.householdLabel,
-      defaultRoomId: body.defaultRoomId ?? null,
-      onboardingCompleted: true
-    };
-    window.localStorage.setItem('soundcare.onboardingProfile', JSON.stringify(profile));
-    return profile;
+    return defaultAuthUser();
   }
-  return request('/api/users/onboarding', {
-    method: 'POST',
-    body
-  }).catch((error) => withApiFallback(error, () => ({
-    ...defaultAuthUser(),
-    ...body,
-    onboardingCompleted: true
-  }), 'submit onboarding'));
+  return request('/api/users/me')
+    .catch((error) => withApiFallback(error, defaultAuthUser, 'my profile'));
 }
 
-export async function checkNickname(nickname) {
+export async function updateMyProfile(body) {
   if (isMockApiEnabled()) {
-    return {
-      nickname,
-      available: !duplicateNicknamesForMock.includes(String(nickname).toLowerCase())
-    };
+    const profile = { ...defaultAuthUser(), ...body };
+    window.localStorage.setItem('soundcare.profile', JSON.stringify(profile));
+    return profile;
   }
-  return request(`/api/users/nickname/check${buildQuery({ nickname })}`)
-    .catch((error) => withApiFallback(error, () => ({ nickname, available: true }), 'nickname check'));
+  return request('/api/users/me', {
+    method: 'PATCH',
+    body
+  }).catch((error) => withApiFallback(error, () => ({ ...defaultAuthUser(), ...body }), 'update profile'));
+}
+
+/**
+ * 기존 온보딩 화면 호환용. nickname/householdLabel/defaultRoomId만 서버에 반영한다.
+ */
+export async function submitOnboarding(body) {
+  return updateMyProfile({
+    nickname: body.nickname ?? body.displayName,
+    householdLabel: body.householdLabel,
+    defaultRoomId: body.defaultRoomId ?? null
+  });
+}
+
+/**
+ * MVP 기준: 서버 닉네임 중복 검사 API는 삭제되었다. 로컬 형식 검증만 수행한다.
+ */
+export async function checkNickname(nickname) {
+  const normalized = String(nickname ?? '').trim();
+  return {
+    nickname: normalized,
+    available: normalized.length >= 2 && normalized.length <= 100
+  };
 }

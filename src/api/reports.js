@@ -25,29 +25,20 @@ export async function regenerateReport(reportId) {
   }).catch((error) => withApiFallback(error, () => requestDetailedReport(), 'regenerate report'));
 }
 
+// MVP 기준: report export API는 삭제되었다.
+// 클라이언트에서 리포트 본문을 조회해 로컬 저장용으로만 반환한다.
 export async function exportReport(reportId) {
-  if (isMockApiEnabled()) {
-    return {
-      reportId,
-      reportText: 'Local mock export.',
-      summaryJson: {},
-      exportedAt: new Date().toISOString()
-    };
-  }
-  return request(`/api/reports/${encodeURIComponent(reportId)}/export`)
-    .catch((error) => withApiFallback(error, () => ({
-      reportId,
-      reportText: '',
-      summaryJson: {},
-      exportedAt: new Date().toISOString()
-    }), 'export report'));
+  const report = await fetchReport(reportId);
+  return {
+    reportId,
+    reportText: report?.reportText ?? '',
+    summaryJson: report?.summary ?? {},
+    exportedAt: new Date().toISOString(),
+    localOnly: true
+  };
 }
 
+// MVP 기준: report delete API는 삭제되었다. 로컬 안내만 반환한다.
 export async function deleteReport(reportId) {
-  if (isMockApiEnabled()) {
-    return { reportId, status: 'DELETED' };
-  }
-  return request(`/api/reports/${encodeURIComponent(reportId)}`, {
-    method: 'DELETE'
-  }).catch((error) => withApiFallback(error, () => ({ reportId, status: 'DELETE_FAILED' }), 'delete report'));
+  return { reportId, status: 'NOT_SUPPORTED_IN_MVP' };
 }

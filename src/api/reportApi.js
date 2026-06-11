@@ -30,20 +30,23 @@ export async function getBasicReport() {
   if (isMockApiEnabled()) {
     return mockHomeStatus.basicReport;
   }
+  // MVP 계약: POST /api/reports/basic 이 새 리포트를 생성해 반환한다.
   const query = new URLSearchParams(reportWindow()).toString();
-  const report = await request(`/api/reports/basic?${query}`)
+  const report = await request(`/api/reports/basic?${query}`, { method: 'POST' })
     .catch((error) => withApiFallback(error, defaultBasicReport, 'basic report'));
   return normalizeBasicReport(report);
 }
 
-export async function grantGptReportConsent(consentPayload) {
+// MVP 기준: GPT 동의는 users.ai_data_use_consent로 관리한다 (ai_consents API 삭제).
+export async function grantGptReportConsent(consentPayload = {}) {
   if (isMockApiEnabled()) {
-    return { consentId: 'consent-demo-001', granted: true, ...consentPayload };
+    return { granted: true, ...consentPayload };
   }
-  return request('/api/reports/detailed/consent', {
-    method: 'POST',
-    body: { granted: consentPayload.granted ?? true }
-  }).catch((error) => withApiFallback(error, () => ({ consentId: 'consent-local-001', granted: true, ...consentPayload }), 'GPT report consent'));
+  return request('/api/users/me', {
+    method: 'PATCH',
+    body: { aiDataUseConsent: consentPayload.granted ?? true }
+  }).then((profile) => ({ granted: profile?.aiDataUseConsent ?? true }))
+    .catch((error) => withApiFallback(error, () => ({ granted: true, ...consentPayload }), 'GPT report consent'));
 }
 
 export async function requestDetailedReport(reportPayload) {
@@ -72,6 +75,6 @@ export async function requestDetailedReport(reportPayload) {
   return {
     ...detailed,
     text: detailed.text ?? detailed.reportText,
-    metadata: detailed.metadata
+    metadata: detailed.metadata ?? detailed.raw?.metadata
   };
 }

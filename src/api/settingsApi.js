@@ -2,29 +2,33 @@ import mockHomeStatus from '../data/mockHomeStatus.json';
 import { request, isMockApiEnabled } from './client.js';
 import { defaultSensitiveAppliances, withApiFallback } from './fallbacks.js';
 
+// MVP 계약:
+// - sensitive_appliances: userRegisteredDeviceId 기준, 단일 dbThreshold + sensitivityLevel + reportInclusion
+// - 정책은 /api/settings/appliance-control-policies (sensitiveApplianceId 기준)
+// - confidenceThreshold / responsePolicy / notifyGuardian 제거
+
 function normalizeSetting(item) {
   return {
     ...item,
-    baseDbThreshold: item.baseDbThreshold ?? item.dbThresholdAvg ?? 55,
-    responseDbThreshold: item.responseDbThreshold ?? item.dbThresholdMax ?? 70,
-    automaticResponseMode: item.automaticResponseMode ?? item.automaticControlPolicy ?? item.responsePolicy ?? 'NOTIFY_ONLY',
-    notificationMode: item.notificationMode ?? item.responsePolicy ?? 'IMMEDIATE'
+    baseDbThreshold: item.baseDbThreshold ?? item.dbThreshold ?? 55,
+    sensitivityLevel: item.sensitivityLevel ?? 3,
+    includeInReport: item.includeInReport ?? item.reportInclusion ?? true,
+    policies: item.policies ?? []
   };
 }
 
 function toBackendSetting(item) {
   return {
+    userRegisteredDeviceId: item.userRegisteredDeviceId,
     serviceLabel: item.serviceLabel,
-    displayName: item.displayName,
     enabled: item.enabled,
-    dbThresholdAvg: item.baseDbThreshold,
-    dbThresholdMax: item.responseDbThreshold,
-    confidenceThreshold: item.confidenceThreshold,
-    responsePolicy: item.notificationMode || 'IMMEDIATE',
-    automaticControlEnabled: item.automaticResponseMode !== 'DISABLED',
-    automaticControlPolicy: item.automaticResponseMode || 'NOTIFY_ONLY',
-    notifyUser: item.notificationMode !== 'SUMMARY',
-    includeInReport: item.includeInReport
+    dbThreshold: item.baseDbThreshold ?? item.dbThreshold,
+    sensitivityLevel: item.sensitivityLevel ?? 3,
+    reportInclusion: item.includeInReport ?? item.reportInclusion ?? true,
+    policies: item.policies ?? [
+      { policyType: 'NOTIFICATION', enabled: item.notificationMode !== 'DISABLED', policyJson: {} },
+      { policyType: 'ROUTINE_RECOMMENDATION', enabled: true, policyJson: {} }
+    ]
   };
 }
 
@@ -42,10 +46,22 @@ export async function saveSensitiveAppliances(settings) {
     window.localStorage.setItem('soundcare.sensitiveAppliances', JSON.stringify(settings));
     return { saved: true, settingsVersion: `local-${Date.now()}`, items: settings };
   }
-  const saved = await request('/api/settings/sensitive-appliances', {
-    method: 'PUT',
-    body: settings.map(toBackendSetting)
-  }).catch((error) => withApiFallback(error, () => settings, 'save sensitive appliance settings'));
+  const saved = [];
+  for (const item of settings) {
+    if (item.sensitiveApplianceId) {
+      const updated = await request(`/api/settings/sensitive-appliances/${encodeURIComponent(item.sensitiveApplianceId)}`, {
+        method: 'PATCH',
+        body: toBackendSetting(item)
+      }).catch((error) => withApiFallback(error, () => item, 'update sensitive appliance setting'));
+      saved.push(updated);
+    } else {
+      const created = await request('/api/settings/sensitive-appliances', {
+        method: 'POST',
+        body: toBackendSetting(item)
+      }).catch((error) => withApiFallback(error, () => item, 'create sensitive appliance setting'));
+      saved.push(created);
+    }
+  }
   return { saved: true, settingsVersion: new Date().toISOString(), items: saved.map(normalizeSetting) };
 }
 
@@ -53,24 +69,24 @@ export async function getControlPolicies() {
   if (isMockApiEnabled()) {
     return mockHomeStatus.sensitiveAppliances.map((item) => ({
       serviceLabel: item.serviceLabel,
-      automaticResponseMode: item.automaticResponseMode,
-      responseDbThreshold: item.responseDbThreshold
+      policyType: 'NOTIFICATION',
+      enabled: true
     }));
   }
-  return request('/api/control-policies')
+  return request('/api/settings/appliance-control-policies')
     .catch((error) => withApiFallback(error, () => defaultSensitiveAppliances().map((item) => ({
       serviceLabel: item.serviceLabel,
-      automaticResponseMode: item.automaticResponseMode,
-      responseDbThreshold: item.responseDbThreshold
-    })), 'control policies'));
+      policyType: 'NOTIFICATION',
+      enabled: true
+    })), 'appliance control policies'));
 }
 
-export async function updateControlPolicy(serviceLabel, policy) {
+export async function updateControlPolicy(policyId, policy) {
   if (isMockApiEnabled()) {
-    return { serviceLabel, ...policy, saved: true };
+    return { policyId, ...policy, saved: true };
   }
-  return request(`/api/control-policies/${encodeURIComponent(serviceLabel)}`, {
+  return request(`/api/settings/appliance-control-policies/${encodeURIComponent(policyId)}`, {
     method: 'PATCH',
     body: policy
-  }).catch((error) => withApiFallback(error, () => ({ serviceLabel, ...policy, saved: true }), 'update control policy'));
+  }).catch((error) => withApiFallback(error, () => ({ policyId, ...policy, saved: true }), 'update appliance control policy'));
 }

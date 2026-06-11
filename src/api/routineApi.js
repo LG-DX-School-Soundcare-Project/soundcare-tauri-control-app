@@ -2,37 +2,31 @@ import mockHomeStatus from '../data/mockHomeStatus.json';
 import { request, isMockApiEnabled } from './client.js';
 import { defaultRoutineRecommendations, withApiFallback } from './fallbacks.js';
 
+// MVP 기준: 루틴 적용/숨김은 routine_recommendations.status 업데이트로 단순 처리한다.
+// (/api/routines/{id}/apply, /dismiss, /generate, routine_applications 삭제)
+
 export async function getRoutineRecommendations() {
   if (isMockApiEnabled()) {
     return mockHomeStatus.routineRecommendations;
   }
-  return request('/api/routines/recommendations')
+  return request('/api/routines')
     .catch((error) => withApiFallback(error, defaultRoutineRecommendations, 'routine recommendations'));
 }
 
-export async function generateRoutineRecommendations() {
+async function updateRoutineStatus(routineId, status) {
   if (isMockApiEnabled()) {
-    return { created: 1, items: mockHomeStatus.routineRecommendations };
+    return { id: routineId, status };
   }
-  return request('/api/routines/generate', { method: 'POST' })
-    .catch((error) => withApiFallback(error, () => ({
-      created: defaultRoutineRecommendations().length,
-      items: defaultRoutineRecommendations()
-    }), 'generate routine recommendations'));
+  return request(`/api/routines/${encodeURIComponent(routineId)}/status?status=${encodeURIComponent(status)}`, {
+    method: 'PATCH'
+  }).then(() => ({ id: routineId, status }))
+    .catch((error) => withApiFallback(error, () => ({ id: routineId, status }), `routine status ${status}`));
 }
 
 export async function applyRoutine(routineId) {
-  if (isMockApiEnabled()) {
-    return { id: routineId, status: 'APPLIED' };
-  }
-  return request(`/api/routines/${encodeURIComponent(routineId)}/apply`, { method: 'POST' })
-    .catch((error) => withApiFallback(error, () => ({ id: routineId, status: 'APPLIED' }), 'apply routine'));
+  return updateRoutineStatus(routineId, 'ACCEPTED');
 }
 
 export async function dismissRoutine(routineId) {
-  if (isMockApiEnabled()) {
-    return { id: routineId, status: 'DISMISSED' };
-  }
-  return request(`/api/routines/${encodeURIComponent(routineId)}/dismiss`, { method: 'POST' })
-    .catch((error) => withApiFallback(error, () => ({ id: routineId, status: 'DISMISSED' }), 'dismiss routine'));
+  return updateRoutineStatus(routineId, 'DISMISSED');
 }
