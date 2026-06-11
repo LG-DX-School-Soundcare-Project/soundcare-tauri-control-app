@@ -6,12 +6,12 @@ import {
 } from './DeviceConnectionFailurePopup.js';
 
 const deviceRows = [
-  { id: 'washer-main', room: 'Laundry Area', decibel: 71, time: '12:30' },
-  { id: 'robot-living', room: 'Living Room', decibel: 71, time: '12:30' },
-  { id: 'washer-laundry-2', room: 'Laundry Area', decibel: '--', time: '11:30' },
-  { id: 'washer-laundry-3', room: 'Laundry Area', decibel: 71, time: '12:30' },
-  { id: 'robot-kitchen-2', room: 'Kitchen', decibel: 64, time: '12:10' },
-  { id: 'hub-study-1', room: 'Study', decibel: 19, time: '11:52' }
+  { id: 'washer-main', deviceName: '세탁기', room: 'Laundry Area', decibel: 71, time: '12:30' },
+  { id: 'robot-living', deviceName: '로봇청소기', room: 'Living Room', decibel: 71, time: '12:30' },
+  { id: 'washer-laundry-2', deviceName: '냉장고', room: 'Laundry Area', decibel: '--', time: '11:30' },
+  { id: 'washer-laundry-3', deviceName: '에어컨', room: 'Laundry Area', decibel: 71, time: '12:30' },
+  { id: 'robot-kitchen-2', deviceName: '식기세척기', room: 'Kitchen', decibel: 64, time: '12:10' },
+  { id: 'hub-study-1', deviceName: 'LG 허브', room: 'Study', decibel: 19, time: '11:52' }
 ];
 
 function deviceCard(device) {
@@ -20,7 +20,7 @@ function deviceCard(device) {
     <a class="device-list-card ${failed ? 'device-list-card--failed' : ''}" href="#/devices/${encodeURIComponent(device.id)}" aria-label="${escapeHtml(device.room)} device detail" ${failed ? `data-device-failure="${escapeHtml(device.id)}"` : ''}>
       <div class="device-list-picture" aria-hidden="true"></div>
       <div class="device-list-meta">
-        <p>${escapeHtml(device.room)}</p>
+        <p>${escapeHtml(device.deviceName)}</p>
         <p>${escapeHtml(device.decibel)} dB</p>
         <p>${escapeHtml(device.time)}</p>
       </div>
