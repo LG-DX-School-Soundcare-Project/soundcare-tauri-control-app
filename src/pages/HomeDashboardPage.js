@@ -42,10 +42,8 @@ export async function renderHomeDashboardPage() {
   return `
     <section class="page thinq-dashboard-page" aria-label="Main dashboard">
       <header class="dashboard-household-header">
-        <h1 class="dashboard-desktop-title">Cho Home</h1>
+        <h1 class="dashboard-desktop-title">조호성 님의 Home</h1>
         <div class="dashboard-mobile-title">
-          <h1>SoundCare</h1>
-          <p>Seocho Home</p>
         </div>
         <p class="dashboard-mobile-sync">Last sync: ${escapeHtml(syncTime)}</p>
         <div

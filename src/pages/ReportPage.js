@@ -39,11 +39,11 @@ function applianceCard(device, index) {
       >
         <span class="report-metric-box report-metric-box--soft">
           <strong>${escapeHtml(device.positive)}</strong>
-          <span>positive</span>
+          <span>긍정</span>
         </span>
         <span class="report-metric-box">
           <strong>${escapeHtml(device.negative)}</strong>
-          <span>negative</span>
+          <span>부정</span>
         </span>
       </button>
       <div
@@ -64,14 +64,16 @@ function applianceCard(device, index) {
 
 export async function renderReportPage() {
   return `
-    <section class="page basic-report-page" aria-label="Basic Report Screen">
+    <section class="page basic-report-page" aria-label="기본 리포트 화면">
       <header class="basic-report-header">
-        <h1>Basic Report</h1>
-        <p>Rule-based summary from stored events · no server-side AI inference</p>
-        <button type="button" class="report-period-button">Period: Last 7 days</button>
+        <div class="basic-report-heading">
+          <h1>기본 리포트</h1>
+          <p>저장된 이벤트를 기반으로 한 규칙 기반 요약 · 서버 AI 추론 없음</p>
+        </div>
+        <button type="button" class="report-period-button">기간: 최근 7일</button>
       </header>
 
-      <section class="report-appliance-grid" aria-label="Appliance reaction cards">
+      <section class="report-appliance-grid" aria-label="기기별 반응 카드">
         ${applianceReports.map(applianceCard).join('')}
       </section>
 
@@ -111,18 +113,18 @@ export async function renderReportPage() {
           </span>
         </span>
 
-        <span class="report-caution-box" aria-label="Attention">
+        <span class="report-caution-box" aria-label="주의">
           <span class="report-panel-heading">주의</span>
           <span>건조기 부정 반응 최다</span>
           <strong>저소음 모드 권장</strong>
         </span>
       </button>
 
-      <section class="report-lower-grid" aria-label="Report details">
+      <section class="report-lower-grid" aria-label="리포트 상세">
         <article class="report-detail-card low-noise-detail-card">
           <h2><span class="detail-card-icon" aria-hidden="true"></span>저소음 모드 전환 비율 상세</h2>
           <div class="low-noise-content">
-            <div class="donut-chart" aria-label="58 percent switch ratio">
+            <div class="donut-chart" aria-label="저소음 모드 전환 비율 58퍼센트">
               <strong>58%</strong>
               <span>전환 비율</span>
             </div>
@@ -142,11 +144,6 @@ export async function renderReportPage() {
             요약 데이터만 전송되며 원음은 포함되지 않습니다.
           </div>
           <button type="button" id="generate-gpt-report">GPT 리포트 생성하기</button>
-          <div class="settings-button-row">
-            <button type="button" id="regenerate-gpt-report" class="settings-outline-button">Regenerate</button>
-            <button type="button" id="export-gpt-report" class="settings-outline-button">Export</button>
-            <button type="button" id="delete-gpt-report" class="settings-outline-button">Delete</button>
-          </div>
           <small id="gpt-report-status" aria-live="polite"></small>
         </article>
       </section>
@@ -183,12 +180,12 @@ export function mountReportPage({ navigate } = {}) {
   const popupController = mountGptDetailReportPopUp({
     onAgree: async () => {
       const status = document.querySelector('#gpt-report-status');
-      if (status) status.textContent = 'Generating detailed report...';
+      if (status) status.textContent = '상세 리포트를 생성하는 중입니다...';
       const report = await requestDetailedReport();
       if (report?.reportId) {
         window.localStorage.setItem('soundcare.lastDetailedReportId', report.reportId);
       }
-      if (status) status.textContent = 'Detailed report generated.';
+      if (status) status.textContent = '상세 리포트가 생성되었습니다.';
       navigate('#/reports/gpt-detailed');
     }
   });
@@ -202,15 +199,15 @@ export function mountReportPage({ navigate } = {}) {
   document.querySelector('#regenerate-gpt-report')?.addEventListener('click', async () => {
     const status = document.querySelector('#gpt-report-status');
     const reportId = window.localStorage.getItem('soundcare.lastDetailedReportId');
-    if (status) status.textContent = 'Regenerating report...';
+    if (status) status.textContent = '리포트를 다시 생성하는 중입니다...';
     try {
       const report = await regenerateReport(reportId);
       if (report?.reportId) {
         window.localStorage.setItem('soundcare.lastDetailedReportId', report.reportId);
       }
-      if (status) status.textContent = 'Report regenerated.';
+      if (status) status.textContent = '리포트가 다시 생성되었습니다.';
     } catch (error) {
-      if (status) status.textContent = `Regenerate failed: ${error.message}`;
+      if (status) status.textContent = `다시 생성 실패: ${error.message}`;
     }
   });
 
@@ -218,14 +215,14 @@ export function mountReportPage({ navigate } = {}) {
     const status = document.querySelector('#gpt-report-status');
     const reportId = window.localStorage.getItem('soundcare.lastDetailedReportId');
     if (!reportId) {
-      if (status) status.textContent = 'Generate a detailed report first.';
+      if (status) status.textContent = '먼저 상세 리포트를 생성해 주세요.';
       return;
     }
     try {
       const exported = await exportReport(reportId);
-      if (status) status.textContent = `Report exported at ${exported.exportedAt ?? 'now'}.`;
+      if (status) status.textContent = `리포트를 내보냈습니다: ${exported.exportedAt ?? '지금'}.`;
     } catch (error) {
-      if (status) status.textContent = `Export failed: ${error.message}`;
+      if (status) status.textContent = `내보내기 실패: ${error.message}`;
     }
   });
 
@@ -233,15 +230,15 @@ export function mountReportPage({ navigate } = {}) {
     const status = document.querySelector('#gpt-report-status');
     const reportId = window.localStorage.getItem('soundcare.lastDetailedReportId');
     if (!reportId) {
-      if (status) status.textContent = 'No generated report to delete.';
+      if (status) status.textContent = '삭제할 생성 리포트가 없습니다.';
       return;
     }
     try {
       const deleted = await deleteReport(reportId);
       window.localStorage.removeItem('soundcare.lastDetailedReportId');
-      if (status) status.textContent = `Report ${deleted.status ?? 'DELETED'}.`;
+      if (status) status.textContent = `리포트 상태: ${deleted.status ?? '삭제됨'}.`;
     } catch (error) {
-      if (status) status.textContent = `Delete failed: ${error.message}`;
+      if (status) status.textContent = `삭제 실패: ${error.message}`;
     }
   });
 }

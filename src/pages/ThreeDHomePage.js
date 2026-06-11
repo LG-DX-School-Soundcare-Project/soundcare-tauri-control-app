@@ -24,11 +24,9 @@ export async function renderThreeDHomePage() {
   return `
     <section class="page three-view-page" aria-label="3D home view">
       <header class="dashboard-household-header three-view-household-header">
-        <h1 class="three-view-desktop-title">Cho Home</h1>
-        <div class="three-view-mobile-title">
-          <h1>3D View</h1>
-          <p>Seocho Home</p>
-        </div>
+        <h1 class="dashboard-desktop-title">조호성 님의 Home</h1>
+        <div class="dashboard-mobile-title"></div>
+        <p class="dashboard-mobile-sync">Active · 42 dB</p>
       </header>
       <p class="three-view-active-pill"><span></span>Active 42 dB</p>
 
