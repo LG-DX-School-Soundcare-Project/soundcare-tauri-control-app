@@ -141,12 +141,12 @@ function rowMarkup(row, index) {
       data-reaction-row="${index}"
       aria-label="${escapeHtml(row.eventId)} 상세 보기"
     >
-      <span>${escapeHtml(row.time)}</span>
-      <strong>${escapeHtml(row.reactionType)}</strong>
-      <span>${escapeHtml(row.eventId)}</span>
-      <span>${escapeHtml(row.noiseClass)}</span>
-      <span>${escapeHtml(row.db)}</span>
-      <span>${escapeHtml(row.room)}</span>
+      <span class="reaction-cell" data-label="?쒓컙">${escapeHtml(row.time)}</span>
+      <strong class="reaction-cell" data-label="諛섏쓳">${escapeHtml(row.reactionType)}</strong>
+      <span class="reaction-cell" data-label="?곌껐 ?대깽??ID">${escapeHtml(row.eventId)}</span>
+      <span class="reaction-cell" data-label="湲곌린">${escapeHtml(row.noiseClass)}</span>
+      <span class="reaction-cell" data-label="dB">${escapeHtml(row.db)}</span>
+      <span class="reaction-cell" data-label="怨듦컙">${escapeHtml(row.room)}</span>
     </button>
   `;
 }
