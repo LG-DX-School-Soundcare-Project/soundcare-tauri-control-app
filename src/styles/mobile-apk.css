@@ -882,11 +882,134 @@
     font-size: 14px;
   }
 
+  .settings-card {
+    height: auto;
+    min-height: 0;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .settings-card h2,
+  .settings-card p,
+  .settings-switch-row strong,
+  .settings-switch-row--compact small,
+  .settings-static-note,
+  #settings-save-status,
+  #gpt-consent-status,
+  #data-deletion-status {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: keep-all;
+  }
+
+  .settings-range-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    margin-top: 0;
+  }
+
+  .settings-range-row output {
+    font-size: 15px;
+  }
+
+  .settings-dual-ranges {
+    gap: 12px;
+    margin-top: 0;
+  }
+
+  .settings-switch-row {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 10px;
+    margin-top: 0;
+    font-size: 14px;
+  }
+
+  .settings-switch {
+    width: 48px;
+    height: 28px;
+  }
+
+  .settings-switch::after {
+    top: 4px;
+    left: 4px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .settings-switch-row input:checked + .settings-switch::after {
+    transform: translateX(20px);
+  }
+
+  .settings-switch-row strong {
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  .settings-switch-row--compact {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+  }
+
+  .settings-switch-row--compact small {
+    display: block;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .settings-consent-row,
+  .settings-data-controls,
+  .settings-save-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .settings-consent-row,
+  .settings-data-controls {
+    align-items: start;
+    margin-top: 0;
+  }
+
+  .settings-outline-button,
+  .settings-save-button,
+  .settings-reset-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    height: auto;
+    padding: 10px 14px;
+    font-size: 13px;
+    line-height: 1.2;
+    white-space: normal;
+  }
+
+  .settings-save-card {
+    min-height: 0;
+    height: auto;
+    max-height: none;
+  }
+
+  .settings-save-card h2,
+  .settings-save-card #settings-save-button,
+  .settings-save-card #settings-reset-button,
+  #settings-save-status {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  #settings-save-status,
+  #gpt-consent-status,
+  #data-deletion-status {
+    display: block;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
   .settings-avoidance-card,
   .settings-consent-card,
   .settings-data-card,
   .settings-save-card {
-    min-height: 106px;
+    min-height: 0;
   }
 
   .settings-layout {
@@ -915,14 +1038,15 @@
 
   .profile-identity-card {
     display: grid;
-    grid-template-columns: 120px minmax(0, 1fr);
+    width: 100%;
+    grid-template-columns: 128px minmax(0, 1fr);
     align-items: center;
     gap: 24px;
   }
 
   .profile-photo-placeholder {
-    width: 116px;
-    height: 116px;
+    width: 120px;
+    height: 120px;
   }
 
   .profile-identity-card h2 {

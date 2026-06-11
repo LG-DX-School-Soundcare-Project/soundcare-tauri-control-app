@@ -173,17 +173,17 @@
   background: #ffffff;
 }
 
+.profile-identity-card {
+  grid-template-columns: 1fr;
+  gap: 34px;
+}
+
 .system-card,
 .system-guide-card,
 .system-error-log,
 .system-overall-banner {
   border: none;
   background: #ffffff;
-}
-
-.profile-identity-card {
-  grid-template-columns: 1fr;
-  gap: 34px;
 }
 
 .profile-photo-placeholder {
