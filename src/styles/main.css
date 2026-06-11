@@ -2597,7 +2597,7 @@ input[type="checkbox"] { width: auto; }
 .reaction-table-head,
 .reaction-history-row {
   display: grid;
-  grid-template-columns: 118px 179px 200px 170px 91px 133px minmax(120px, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   align-items: center;
 }
 
@@ -3833,7 +3833,7 @@ input[type="checkbox"] { width: auto; }
 
   .reaction-table-head,
   .reaction-history-row {
-    grid-template-columns: 92px 150px 170px 150px 70px 110px minmax(96px, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
   .reaction-detail-panel dl {
@@ -4046,6 +4046,48 @@ input[type="checkbox"] { width: auto; }
     font-size: 22px;
   }
 
+  .reaction-table-head {
+    display: none;
+  }
+
+  .reaction-table-body {
+    gap: 12px;
+  }
+
+  .reaction-history-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    justify-items: stretch;
+    min-height: auto;
+    padding: 16px;
+    border: 1px solid var(--surface-muted);
+    border-radius: 14px;
+    text-align: left;
+  }
+
+  .reaction-cell {
+    display: grid;
+    gap: 6px;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--surface-muted);
+    text-align: left;
+  }
+
+  .reaction-cell::before {
+    content: attr(data-label);
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .reaction-history-row > span,
+  .reaction-history-row > strong {
+    text-align: left;
+  }
+
   .reaction-filter-chips {
     grid-template-columns: 1fr;
   }
@@ -4068,6 +4110,12 @@ input[type="checkbox"] { width: auto; }
   .reaction-pending-note span {
     width: 50px;
     height: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .reaction-history-row {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -4841,8 +4889,9 @@ input[type="checkbox"] { width: auto; }
 .reaction-table-head,
 .reaction-history-row {
   display: grid;
-  grid-template-columns: 118px 179px 200px 170px 91px 133px minmax(120px, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   align-items: center;
+  justify-items: center;
 }
 
 .reaction-table-head {
@@ -4885,9 +4934,16 @@ input[type="checkbox"] { width: auto; }
   background: transparent;
   color: #4b5563;
   box-shadow: none;
-  text-align: left;
+  text-align: center;
   font-size: 21px;
   font-weight: 500;
+}
+
+.reaction-table-head > span,
+.reaction-history-row > span,
+.reaction-history-row > strong {
+  width: 100%;
+  text-align: center;
 }
 
 .reaction-detail-panel {
@@ -5445,13 +5501,17 @@ input[type="checkbox"] { width: auto; }
   gap: var(--ui-gap);
 }
 
+.reaction-table-block {
+  grid-column: 1 / -1;
+}
+
 .reaction-table-panel {
   overflow-x: auto;
 }
 
 .reaction-table-head,
 .reaction-history-row {
-  min-width: 820px;
+  min-width: 0;
 }
 
 .gpt-detail-grid {
@@ -5613,6 +5673,76 @@ input[type="checkbox"] { width: auto; }
 
   .profile-action-buttons {
     flex-wrap: wrap;
+  }
+
+  .reaction-table-head {
+    display: none;
+  }
+
+  .reaction-table-body {
+    gap: 10px;
+  }
+
+  .reaction-table-block {
+    overflow: visible;
+  }
+
+  .reaction-history-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    justify-items: stretch;
+    min-width: 0;
+    min-height: auto;
+    padding: 10px;
+    border: 1px solid var(--surface-muted);
+    border-radius: 10px;
+    text-align: left;
+    font-size: 15px;
+    line-height: 1.25;
+  }
+
+  .reaction-cell {
+    display: grid;
+    gap: 4px;
+    width: 100%;
+    min-width: 0;
+    padding: 8px 9px;
+    border-radius: 8px;
+    background: var(--surface-muted);
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+
+  .reaction-cell::before {
+    content: attr(data-label);
+    color: #6b7280;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .reaction-history-row > .reaction-cell {
+    text-align: left;
+  }
+
+  .reaction-history-row > .reaction-cell:nth-child(3),
+  .reaction-history-row > .reaction-cell:nth-child(4) {
+    grid-column: 1 / -1;
+  }
+
+  .reaction-history-row > strong.reaction-cell {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 360px) {
+  .reaction-history-row {
+    grid-template-columns: 1fr;
+  }
+
+  .reaction-history-row > .reaction-cell:nth-child(3),
+  .reaction-history-row > .reaction-cell:nth-child(4) {
+    grid-column: auto;
   }
 }
 
