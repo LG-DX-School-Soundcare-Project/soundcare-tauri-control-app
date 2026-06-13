@@ -1740,6 +1740,24 @@ button:active,
   background: #bdc0c0 !important;
 }
 
+/* Device detail: the rules above are unscoped and outrank the responsive
+   1fr collapse in main.css / mobile-apk.css. Re-assert the single-column
+   stack on phones so the measurement/recommendation columns don't overflow
+   off-screen. */
+@media (max-width: 640px) {
+  .device-detail-page {
+    padding: 24px;
+  }
+
+  .device-detail-page .device-detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .device-detail-page .device-detail-card {
+    min-height: auto;
+  }
+}
+
 /* --- Report page: invisible wrapper buttons must stay invisible --- */
 .report-face-trigger,
 .report-face-trigger:hover,
