@@ -356,8 +356,21 @@ input[type='range']::-webkit-slider-thumb {
 .gpt-withdraw-modal {
   background: var(--neu-surface);
   border: 0;
-  border-radius: var(--neu-radius-lg);
+  border-radius: var(--neu-radius-md);
   box-shadow: var(--neu-outset-lg);
+  /* 한글이 음절 단위로 끊겨 "오프라인 / 으로 계속"처럼 어색하게 줄바꿈되는
+     문제 방지 — 단어(어절) 단위로만 줄바꿈 */
+  word-break: keep-all;
+}
+
+/* 내부 정보 카드(알약)는 모달 셸보다 작은 곡률 — lg(30px)는 과함 */
+.data-delete-card,
+.device-failure-card,
+.server-failure-card,
+.low-confidence-card,
+.gpt-consent-card,
+.gpt-withdraw-card {
+  border-radius: var(--neu-radius-sm);
 }
 
 .modal-backdrop,
@@ -655,7 +668,9 @@ input[type='range']::-webkit-slider-thumb {
   background: var(--neu-surface) !important;
   border: 0 !important;
   box-shadow: var(--neu-outset-lg) !important;
-  border-radius: var(--neu-radius-lg) !important;
+  /* lg(30px)는 과한 곡률 — md(24px)로 완화 */
+  border-radius: var(--neu-radius-md) !important;
+  word-break: keep-all;
 }
 
 /* 반응 기록 테이블 — 행별 그림자 제거(겹침 아티팩트), 컨테이너만 입체 */
