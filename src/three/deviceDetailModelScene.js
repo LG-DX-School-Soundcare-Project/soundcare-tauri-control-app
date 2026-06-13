@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { assetUrl, createDracoGltfLoader, disposeObject } from './loaders.js';
+import { attachModelLoadingOrb } from '../components/modelLoadingOrb.js';
 
 const MODEL_PATHS = {
   washer: 'assets/models/wash/washing_machine_lg_drumspin_optimized.glb',
@@ -42,6 +43,7 @@ export function createDeviceDetailModelScene(container, { modelType = 'washer' }
   container.innerHTML = '';
   container.classList.add('is-loading');
   container.appendChild(renderer.domElement);
+  attachModelLoadingOrb(container);
 
   addLighting(scene);
   resizeRenderer();

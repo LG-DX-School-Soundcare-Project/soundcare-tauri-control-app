@@ -4,102 +4,122 @@ import './styles/three-home-fixes.css';
 import './styles/accessibility.css';
 import './styles/mobile-apk.css';
 import './styles/polish.css';
-import { renderLoginPage, mountLoginPage } from './pages/LoginPage.js';
-import { renderCreateAccountPage, mountCreateAccountPage } from './pages/CreateAccount.js';
-import {
-  cleanupHomeDashboardPage,
-  renderHomeDashboardPage,
-  mountHomeDashboardPage
-} from './pages/HomeDashboardPage.js';
-import { renderSensitiveApplianceSettingsPage, mountSensitiveApplianceSettingsPage } from './pages/SensitiveApplianceSettingsPage.js';
-import { cleanupThreeDHomePage, mountThreeDHomePage, renderThreeDHomePage } from './pages/ThreeDHomePage.js';
-import { cleanupDeviceListPage, mountDeviceListPage, renderDeviceListPage } from './pages/DeviceListPage.js';
-import { cleanupDeviceDetailPage, mountDeviceDetailPage, renderDeviceDetailPage } from './pages/DeviceDetailPage.js';
-import { cleanupReportPage, mountReportPage, renderReportPage } from './pages/ReportPage.js';
-import {
-  cleanupReactionHistoryPage,
-  mountReactionHistoryPage,
-  renderReactionHistoryPage
-} from './pages/ReactionHistoryPage.js';
-import { renderGPTDetailedReportPage } from './pages/GPTDetailedReportPage.js';
-import { mountSystemStatusPage, renderSystemStatusPage } from './pages/SystemStatusPage.js';
-import { cleanupSettingsPage, mountSettingsPage, renderSettingsPage } from './pages/SettingsPage.js';
-import { mountProfilePage, renderProfilePage } from './pages/ProfilePage.js';
+import './styles/neumorphism.css';
+import './components/liquidGlassLoader.js';
 import { escapeHtml } from './utils/html.js';
+
+// APK(WebView)는 상태바/제스처바 아래까지 그려지므로 safe-area 패딩 대상으로 표시한다.
+if (/Android/i.test(navigator.userAgent)) {
+  document.documentElement.classList.add('is-apk');
+}
 
 const app = document.querySelector('#root');
 let currentCleanup = null;
 
+// 페이지 모듈은 lazy 로딩: 스플래시가 먼저 뜨고, 첫 라우트만 즉시 로드.
+// 나머지 라우트는 스플래시가 사라진 뒤 백그라운드에서 미리 받아둔다(prefetch).
 const routes = [
-  { pattern: /^#\/login$/, title: 'Login', render: renderLoginPage, mount: mountLoginPage },
-  { pattern: /^#\/create-account$/, title: 'Create Account', render: renderCreateAccountPage, mount: mountCreateAccountPage },
+  {
+    pattern: /^#\/login$/,
+    title: 'Login',
+    load: () => import('./pages/LoginPage.js'),
+    exports: { render: 'renderLoginPage', mount: 'mountLoginPage' }
+  },
+  {
+    pattern: /^#\/create-account$/,
+    title: 'Create Account',
+    load: () => import('./pages/CreateAccount.js'),
+    exports: { render: 'renderCreateAccountPage', mount: 'mountCreateAccountPage' }
+  },
   {
     pattern: /^#\/home$/,
     title: 'Home',
-    render: renderHomeDashboardPage,
-    mount: mountHomeDashboardPage,
-    cleanup: cleanupHomeDashboardPage
+    load: () => import('./pages/HomeDashboardPage.js'),
+    exports: {
+      render: 'renderHomeDashboardPage',
+      mount: 'mountHomeDashboardPage',
+      cleanup: 'cleanupHomeDashboardPage'
+    }
   },
   {
     pattern: /^#\/three-home$/,
     title: '3D View',
-    render: renderThreeDHomePage,
-    mount: mountThreeDHomePage,
-    cleanup: cleanupThreeDHomePage
+    load: () => import('./pages/ThreeDHomePage.js'),
+    exports: {
+      render: 'renderThreeDHomePage',
+      mount: 'mountThreeDHomePage',
+      cleanup: 'cleanupThreeDHomePage'
+    }
   },
   {
     pattern: /^#\/devices$/,
     title: 'Devices',
-    render: renderDeviceListPage,
-    mount: mountDeviceListPage,
-    cleanup: cleanupDeviceListPage
+    load: () => import('./pages/DeviceListPage.js'),
+    exports: {
+      render: 'renderDeviceListPage',
+      mount: 'mountDeviceListPage',
+      cleanup: 'cleanupDeviceListPage'
+    }
   },
   {
     pattern: /^#\/devices\/(?<deviceId>[^/]+)$/,
     title: 'Device Detail',
-    render: renderDeviceDetailPage,
-    mount: mountDeviceDetailPage,
-    cleanup: cleanupDeviceDetailPage
+    load: () => import('./pages/DeviceDetailPage.js'),
+    exports: {
+      render: 'renderDeviceDetailPage',
+      mount: 'mountDeviceDetailPage',
+      cleanup: 'cleanupDeviceDetailPage'
+    }
   },
   {
     pattern: /^#\/sensitive-appliances$/,
     title: 'Sensitive Appliances',
-    render: renderSensitiveApplianceSettingsPage,
-    mount: mountSensitiveApplianceSettingsPage
+    load: () => import('./pages/SensitiveApplianceSettingsPage.js'),
+    exports: {
+      render: 'renderSensitiveApplianceSettingsPage',
+      mount: 'mountSensitiveApplianceSettingsPage'
+    }
   },
   {
     pattern: /^#\/reports$/,
     title: 'Report',
-    render: renderReportPage,
-    mount: mountReportPage,
-    cleanup: cleanupReportPage
+    load: () => import('./pages/ReportPage.js'),
+    exports: { render: 'renderReportPage', mount: 'mountReportPage', cleanup: 'cleanupReportPage' }
   },
   {
     pattern: /^#\/reports\/reaction-history$/,
     title: 'Reaction History',
-    render: renderReactionHistoryPage,
-    mount: mountReactionHistoryPage,
-    cleanup: cleanupReactionHistoryPage
+    load: () => import('./pages/ReactionHistoryPage.js'),
+    exports: {
+      render: 'renderReactionHistoryPage',
+      mount: 'mountReactionHistoryPage',
+      cleanup: 'cleanupReactionHistoryPage'
+    }
   },
   {
     pattern: /^#\/reports\/gpt-detailed$/,
     title: 'GPT Detailed Report',
-    render: renderGPTDetailedReportPage
+    load: () => import('./pages/GPTDetailedReportPage.js'),
+    exports: { render: 'renderGPTDetailedReportPage' }
   },
   {
     pattern: /^#\/reports\/system-status$/,
     title: 'System Status',
-    render: renderSystemStatusPage,
-    mount: mountSystemStatusPage
+    load: () => import('./pages/SystemStatusPage.js'),
+    exports: { render: 'renderSystemStatusPage', mount: 'mountSystemStatusPage' }
   },
   {
     pattern: /^#\/settings$/,
     title: 'Settings',
-    render: renderSettingsPage,
-    mount: mountSettingsPage,
-    cleanup: cleanupSettingsPage
+    load: () => import('./pages/SettingsPage.js'),
+    exports: { render: 'renderSettingsPage', mount: 'mountSettingsPage', cleanup: 'cleanupSettingsPage' }
   },
-  { pattern: /^#\/profile$/, title: 'Profile', render: renderProfilePage, mount: mountProfilePage }
+  {
+    pattern: /^#\/profile$/,
+    title: 'Profile',
+    load: () => import('./pages/ProfilePage.js'),
+    exports: { render: 'renderProfilePage', mount: 'mountProfilePage' }
+  }
 ];
 
 const primaryNavItems = [
@@ -232,13 +252,18 @@ async function renderRoute() {
   const hash = window.location.hash || '#/login';
   const { route, params } = matchRoute(hash);
   currentCleanup?.();
-  currentCleanup = route.cleanup ?? null;
+  currentCleanup = null;
   app.innerHTML = shell('<section class="page"><p>Loading</p></section>', route.title);
 
   try {
-    const content = await route.render({ params, navigate });
+    const mod = await route.load();
+    const render = mod[route.exports.render];
+    const mount = route.exports.mount ? mod[route.exports.mount] : null;
+    currentCleanup = route.exports.cleanup ? mod[route.exports.cleanup] : null;
+
+    const content = await render({ params, navigate });
     app.innerHTML = shell(content, route.title);
-    route.mount?.({ params, navigate });
+    mount?.({ params, navigate });
   } catch (error) {
     app.innerHTML = shell(
       `
@@ -254,13 +279,87 @@ async function renderRoute() {
   }
 }
 
+// 스플래시가 사라진 뒤, 나머지 페이지 모듈을 백그라운드에서 미리 로드 (이동 시 즉시 표시)
+function prefetchRemainingRoutes() {
+  const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1200));
+  idle(() => {
+    routes.forEach((route) => {
+      route.load().catch(() => {});
+    });
+  });
+}
+
+// 시작 스플래시: 첫 라우트 렌더 + orb 로드 + 페이지의 모든 3D 씬 로딩 완료 후 페이드아웃
+const SPLASH_MIN_MS = 1200;
+const SPLASH_ORB_MAX_WAIT_MS = 5000; // orb glb가 늦어도 이 시간 이후엔 진행
+const SPLASH_SCENES_MAX_WAIT_MS = 10000; // 다른 3D 모델 로딩 대기 상한
+const SPLASH_GRACE_MS = 600; // 전부 준비된 뒤 잠깐 유지
+const splashShownAt = Date.now();
+
+function waitForOrb() {
+  const el = document.querySelector('#app-splash liquid-glass-loader');
+  if (!el) return Promise.resolve(false);
+
+  return new Promise((resolve) => {
+    const tick = () => {
+      if (el.root && el.root.children.length > 0) {
+        resolve(true);
+      } else if (Date.now() - splashShownAt > SPLASH_ORB_MAX_WAIT_MS) {
+        resolve(false);
+      } else {
+        setTimeout(tick, 100);
+      }
+    };
+    tick();
+  });
+}
+
+// 첫 화면의 3D 씬(.is-loading 컨테이너)이 전부 로딩될 때까지 대기
+function waitForScenes() {
+  return new Promise((resolve) => {
+    const tick = () => {
+      if (Date.now() - splashShownAt > SPLASH_SCENES_MAX_WAIT_MS) {
+        resolve(false);
+        return;
+      }
+      if (!document.querySelector('#root .is-loading')) {
+        resolve(true);
+        return;
+      }
+      setTimeout(tick, 120);
+    };
+    // 라우트 렌더 직후 씬 마운트가 끝나도록 잠깐 기다린 뒤 확인 시작
+    setTimeout(tick, 300);
+  });
+}
+
+function dismissSplash() {
+  const splash = document.querySelector('#app-splash');
+  if (!splash) {
+    prefetchRemainingRoutes();
+    return;
+  }
+
+  const minWait = new Promise((resolve) =>
+    setTimeout(resolve, Math.max(0, SPLASH_MIN_MS - (Date.now() - splashShownAt)))
+  );
+
+  Promise.all([minWait, waitForOrb(), waitForScenes()]).then(() => {
+    setTimeout(() => {
+      splash.classList.add('is-hidden');
+      setTimeout(() => splash.remove(), 500);
+      prefetchRemainingRoutes();
+    }, SPLASH_GRACE_MS);
+  });
+}
+
 window.addEventListener('hashchange', renderRoute);
 
 if (!window.location.hash) {
   window.location.hash = '#/login';
 }
 
-renderRoute();
+renderRoute().finally(dismissSplash);
 window.addEventListener('beforeunload', () => {
   currentCleanup?.();
 });

@@ -145,7 +145,7 @@ function errorRow(row) {
 }
 
 export async function renderSystemStatusPage() {
-  const systemStatus = await fetchSystemStatus();
+  const systemStatus = await fetchSystemStatus().catch(() => ({}));
   statusCards = buildStatusCards(systemStatus);
   errorRows = buildErrorRows(systemStatus);
 
