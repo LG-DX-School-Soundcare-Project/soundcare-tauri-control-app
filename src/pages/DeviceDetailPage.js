@@ -96,7 +96,6 @@ export async function renderDeviceDetailPage({ params }) {
           <p>기기 &gt; ${escapeHtml(detail.title)}</p>
           <h1>${escapeHtml(detail.title)}</h1>
         </div>
-        <button class="related-events-button" type="button">이벤트</button>
       </header>
 
       <div class="device-detail-layout">

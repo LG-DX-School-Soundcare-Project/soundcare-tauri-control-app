@@ -2616,3 +2616,1389 @@ select:focus-visible {
   background: rgba(75, 22, 76, 0.45);
   background-clip: padding-box;
 }
+
+/* ============================================================
+   Final visual direction: soft mint neumorphic care UI.
+   Structure, routing, data, and component responsibilities stay
+   unchanged; this layer only unifies surface, depth, and color.
+   ============================================================ */
+
+:root {
+  --pp-ink: #2b2f3d;
+  --pp-ink-strong: #18212f;
+  --pp-muted: #7a8091;
+  --pp-pink: #28c7b0;
+  --pp-pink-soft: #eafbf7;
+  --pp-card-radius: 22px;
+  --pp-ring: 0 0 0 4px rgba(40, 199, 176, 0.24);
+
+  --care-mint: #28c7b0;
+  --care-mint-deep: #149a88;
+  --care-mint-dark: #087f70;
+  --care-mint-soft: #eafbf7;
+  --care-bg: #f5fbf9;
+  --care-bg-strong: #f8fbfc;
+  --care-card: #ffffff;
+  --care-border: #dfeeea;
+  --care-border-strong: #cde7e1;
+  --care-text: #2b2f3d;
+  --care-subtext: #7a8091;
+  --care-blue: #5aa9e6;
+  --care-blue-soft: #eef7ff;
+  --care-lavender: #9b8afb;
+  --care-lavender-soft: #f2eeff;
+  --care-stable: #2f8f5b;
+  --care-stable-soft: #eaf7f0;
+  --care-warning: #b95464;
+  --care-warning-soft: #fbecef;
+  --care-caution: #f2a96b;
+  --care-caution-soft: #fff3e8;
+  --care-neutral: #4b5563;
+  --care-neutral-soft: #f3f4f6;
+  --care-shadow: 18px 18px 42px rgba(111, 137, 132, 0.14), -12px -12px 28px rgba(255, 255, 255, 0.88);
+  --care-shadow-soft: 10px 10px 26px rgba(111, 137, 132, 0.11), -8px -8px 20px rgba(255, 255, 255, 0.82);
+  --care-inset: inset 1px 1px 1px rgba(255, 255, 255, 0.92), inset -1px -1px 1px rgba(167, 196, 190, 0.18);
+}
+
+body,
+.app-shell--desktop,
+.thinq-dashboard-page,
+.device-list-page,
+.device-detail-page,
+.basic-report-page,
+.three-view-page {
+  background:
+    radial-gradient(900px 520px at 88% -12%, rgba(40, 199, 176, 0.13), transparent 62%),
+    radial-gradient(760px 560px at -12% 96%, rgba(90, 169, 230, 0.09), transparent 58%),
+    linear-gradient(145deg, var(--care-bg-strong) 0%, var(--care-bg) 100%) !important;
+  color: var(--care-text);
+}
+
+.dashboard-household-header h1,
+.device-list-header h1,
+.basic-report-header h1,
+.reaction-history-header h1,
+.gpt-detail-header h1,
+.settings-page-header h1,
+.profile-page-header h1,
+.system-page-header h1,
+.page-header h1,
+.three-view-desktop-title,
+.three-view-stage h2 {
+  color: var(--care-text) !important;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.dashboard-household-header p,
+.device-list-heading p,
+.basic-report-header p,
+.three-view-mobile-source,
+.appliance-noise-card p,
+.device-detail-title-group p,
+.measurement-summary dt,
+.measurement-event-list li p,
+.gpt-report-card p,
+.gpt-report-note,
+.donut-legend small {
+  color: var(--care-subtext) !important;
+}
+
+.app-shell--desktop .sidebar {
+  border: 1px solid rgba(223, 238, 234, 0.9);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: var(--care-shadow-soft);
+  backdrop-filter: blur(16px);
+}
+
+.app-shell--desktop .sidebar h1 {
+  color: var(--care-mint-deep);
+  -webkit-text-fill-color: var(--care-mint-deep);
+}
+
+.app-shell--desktop .sidebar nav a,
+.sidebar-nav-item,
+.sidebar-footer-link {
+  border: 1px solid transparent;
+  border-radius: 18px;
+  color: var(--care-text);
+}
+
+.app-shell--desktop .sidebar nav a.is-active,
+.app-shell--desktop .sidebar nav a:hover,
+.sidebar-nav-item.is-active,
+.sidebar-nav-item:hover {
+  border-color: rgba(40, 199, 176, 0.22);
+  background: linear-gradient(145deg, #f4fffc 0%, var(--care-mint-soft) 100%);
+  color: var(--care-mint-deep) !important;
+  box-shadow: 8px 8px 18px rgba(40, 199, 176, 0.13), -6px -6px 16px rgba(255, 255, 255, 0.88) !important;
+}
+
+.sidebar-footer-link:hover {
+  border-color: rgba(40, 199, 176, 0.2);
+  background: var(--care-mint-soft);
+}
+
+.sidebar-footer-link:hover .settings-symbol--gear,
+.settings-symbol--gear:hover {
+  background: var(--care-mint-deep);
+}
+
+.dashboard-home-card,
+.dashboard-info-card,
+.device-list-card,
+.device-detail-card,
+.device-detail-model-viewer,
+.measurement-summary dl > div,
+.measurement-event-list li p,
+.three-view-stage,
+.three-view-container,
+.appliance-noise-card,
+.basic-report-page .report-appliance-card,
+.basic-report-page .report-overview-panel,
+.basic-report-page .report-detail-card,
+.basic-report-page .report-summary-block,
+.basic-report-page .report-ranking-block,
+.basic-report-page .report-caution-box,
+.account-card,
+.login-card {
+  border: 1px solid rgba(223, 238, 234, 0.86) !important;
+  border-radius: var(--pp-card-radius) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  box-shadow: var(--care-shadow), var(--care-inset) !important;
+}
+
+.dashboard-home-card:hover,
+.device-list-card:hover,
+.appliance-noise-card:hover,
+.basic-report-page .report-appliance-card:hover,
+.basic-report-page .report-detail-card:hover {
+  border-color: rgba(40, 199, 176, 0.22) !important;
+  background: linear-gradient(145deg, #ffffff 0%, #f5fffc 100%) !important;
+  box-shadow: 20px 20px 48px rgba(111, 137, 132, 0.16), -12px -12px 30px rgba(255, 255, 255, 0.9), var(--care-inset) !important;
+}
+
+.dashboard-home-card:hover {
+  transform: translateY(-2px);
+}
+
+.dashboard-home-card .dashboard-sync,
+.dashboard-summary-column > .dashboard-climate-card strong,
+.dashboard-summary-column > .dashboard-noise-card p,
+.report-metric-box,
+.reaction-pill,
+.donut-legend p,
+.gpt-report-note,
+.device-filter-trigger,
+.device-filter-bar input,
+.device-warning-banner button,
+.device-recommendation-card button,
+.related-events-button {
+  border: 1px solid rgba(223, 238, 234, 0.82) !important;
+  border-radius: 18px !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  box-shadow: 7px 7px 16px rgba(111, 137, 132, 0.09), -5px -5px 14px rgba(255, 255, 255, 0.86), var(--care-inset) !important;
+}
+
+.dashboard-summary-column > .dashboard-climate-card strong:first-of-type,
+.dashboard-summary-column > .dashboard-noise-card p,
+.reaction-pill--positive,
+.report-metric-box--soft,
+.basic-report-page .report-appliance-card .report-metric-box--soft,
+.device-status-badge.is-stable,
+.measurement-summary dl > div.measurement-status--stable {
+  border-color: rgba(47, 143, 91, 0.16) !important;
+  background: linear-gradient(145deg, #f6fffa, var(--care-stable-soft)) !important;
+  color: var(--care-stable) !important;
+}
+
+.dashboard-summary-column > .dashboard-climate-card strong:last-of-type {
+  border-color: rgba(90, 169, 230, 0.15) !important;
+  background: linear-gradient(145deg, #ffffff, var(--care-blue-soft)) !important;
+}
+
+.reaction-pill--negative,
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft),
+.device-status-badge.is-warning,
+.measurement-summary dl > div.measurement-status--warning {
+  border-color: rgba(185, 84, 100, 0.16) !important;
+  background: linear-gradient(145deg, #fffafa, var(--care-warning-soft)) !important;
+  color: var(--care-warning) !important;
+}
+
+.device-status-badge.is-connection,
+.measurement-summary dl > div.measurement-status--connection,
+.basic-report-page .donut-legend p:nth-of-type(2),
+.basic-report-page .donut-legend small {
+  border-color: rgba(75, 85, 99, 0.12) !important;
+  background: linear-gradient(145deg, #ffffff, var(--care-neutral-soft)) !important;
+  color: var(--care-neutral) !important;
+}
+
+.dashboard-report-button,
+.device-list-page .device-add-button,
+.basic-report-page .report-period-button,
+.basic-report-page #generate-gpt-report {
+  border: 1px solid rgba(20, 154, 136, 0.2) !important;
+  border-radius: 999px !important;
+  background: linear-gradient(145deg, #32d8c2 0%, var(--care-mint) 45%, var(--care-mint-deep) 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 10px 12px 26px rgba(20, 154, 136, 0.24), -6px -6px 16px rgba(255, 255, 255, 0.74), inset 0 1px 1px rgba(255, 255, 255, 0.38) !important;
+}
+
+.dashboard-report-button:hover,
+.device-list-page .device-add-button:hover,
+.basic-report-page .report-period-button:hover,
+.basic-report-page #generate-gpt-report:hover {
+  background: linear-gradient(145deg, #2bcab6 0%, var(--care-mint-deep) 100%) !important;
+  box-shadow: 12px 16px 30px rgba(20, 154, 136, 0.28), -6px -6px 18px rgba(255, 255, 255, 0.76), inset 0 1px 1px rgba(255, 255, 255, 0.35) !important;
+}
+
+.device-list-page .device-filter-bar {
+  border: 1px solid rgba(223, 238, 234, 0.88) !important;
+  border-radius: 24px !important;
+  background: rgba(255, 255, 255, 0.82) !important;
+  box-shadow: var(--care-shadow-soft), var(--care-inset) !important;
+}
+
+.device-list-page .device-filter-trigger,
+.device-list-page .device-filter-bar input,
+.device-list-page .device-filter-menu,
+.report-period-menu {
+  background: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 8px 8px 18px rgba(111, 137, 132, 0.1), -6px -6px 16px rgba(255, 255, 255, 0.88), var(--care-inset) !important;
+}
+
+.device-list-page .device-filter-menu,
+.report-period-menu {
+  border: 1px solid rgba(40, 199, 176, 0.22) !important;
+  border-radius: 18px !important;
+}
+
+.device-list-page .device-filter-menu button:hover,
+.report-period-menu button:hover {
+  background: var(--care-mint-soft) !important;
+  color: var(--care-mint-deep) !important;
+}
+
+.device-warning-banner {
+  border-color: rgba(242, 169, 107, 0.28) !important;
+  background: linear-gradient(145deg, #fffdfb 0%, var(--care-caution-soft) 100%) !important;
+}
+
+.device-warning-banner button {
+  color: var(--care-mint-deep) !important;
+}
+
+.device-warning-dot {
+  background: var(--care-warning) !important;
+}
+
+@keyframes pp-pulse {
+  0%, 100% { box-shadow: 0 0 0 6px rgba(185, 84, 100, 0.18); }
+  50% { box-shadow: 0 0 0 11px rgba(185, 84, 100, 0.08); }
+}
+
+.device-list-picture,
+.device-picture-slot,
+.appliance-picture-slot,
+.detail-card-icon,
+.dashboard-summary-column > .dashboard-report-shortcut h2::before {
+  border: 1px solid rgba(40, 199, 176, 0.14) !important;
+  background: linear-gradient(145deg, #ffffff 0%, var(--care-mint-soft) 100%) !important;
+  box-shadow: inset 2px 2px 8px rgba(111, 137, 132, 0.08), inset -3px -3px 10px rgba(255, 255, 255, 0.92) !important;
+}
+
+.device-list-card:hover .device-detail-icon {
+  background: var(--care-mint) !important;
+  color: #ffffff !important;
+  box-shadow: 7px 8px 16px rgba(20, 154, 136, 0.22), -4px -4px 12px rgba(255, 255, 255, 0.88) !important;
+}
+
+.dashboard-progress,
+.reaction-split-bar,
+.ranking-bar {
+  background: #e3ece9 !important;
+  box-shadow: inset 2px 2px 5px rgba(111, 137, 132, 0.1), inset -2px -2px 6px rgba(255, 255, 255, 0.72) !important;
+}
+
+.dashboard-progress span,
+.reaction-split-bar__positive,
+.ranking-bar--danger span {
+  background: linear-gradient(90deg, var(--care-mint), var(--care-blue)) !important;
+}
+
+.reaction-split-bar__negative {
+  background: var(--care-warning) !important;
+}
+
+.ranking-bar--orange span {
+  background: linear-gradient(90deg, var(--care-blue), var(--care-lavender)) !important;
+}
+
+.ranking-bar--yellow span {
+  background: linear-gradient(90deg, var(--care-caution), var(--care-lavender)) !important;
+}
+
+.basic-report-page .report-summary-block::after,
+.basic-report-page .report-ranking-block::after,
+.basic-report-page .report-caution-box::after {
+  opacity: 0.9;
+}
+
+.basic-report-page .donut-chart {
+  box-shadow: 10px 12px 24px rgba(111, 137, 132, 0.12), -7px -7px 18px rgba(255, 255, 255, 0.86), inset 0 0 0 14px rgba(255, 255, 255, 0.9) !important;
+}
+
+.basic-report-page .donut-chart strong {
+  color: var(--care-mint-dark) !important;
+}
+
+.basic-report-page .gpt-report-card .detail-card-icon,
+.basic-report-page .low-noise-detail-card .detail-card-icon {
+  background: linear-gradient(145deg, #ffffff 0%, var(--care-mint-soft) 100%) !important;
+}
+
+.device-detail-page .measurement-summary strong,
+.device-detail-page .measurement-summary dd,
+.report-metric-box strong,
+.donut-legend p b {
+  color: var(--care-text) !important;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box--soft strong,
+.basic-report-page .report-appliance-card .report-metric-box--soft span,
+.reaction-pill--positive {
+  color: var(--care-stable) !important;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) strong,
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) span,
+.reaction-pill--negative {
+  color: var(--care-warning) !important;
+}
+
+input:focus-visible,
+button:focus-visible,
+a:focus-visible,
+.dashboard-home-card:focus-visible,
+.device-list-card:focus-visible,
+.device-detail-back:focus-visible {
+  box-shadow: var(--pp-ring), var(--care-shadow-soft) !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(40, 199, 176, 0.32);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(20, 154, 136, 0.48);
+  background-clip: padding-box;
+}
+
+/* --- Direction correction: neutral gray canvas + premium teal accents --- */
+:root {
+  --pp-pink: #3fb8af;
+  --pp-pink-soft: #e9f7f5;
+  --pp-ring: 0 0 0 4px rgba(63, 184, 175, 0.24);
+
+  --care-mint: #3fb8af;
+  --care-mint-deep: #247f79;
+  --care-mint-dark: #126862;
+  --care-mint-soft: #e9f7f5;
+  --care-bg: #f3f4f6;
+  --care-bg-strong: #f3f4f6;
+  --care-border: #dfe7e6;
+  --care-border-strong: #c9dfdc;
+  --care-shadow: 18px 18px 42px rgba(35, 56, 59, 0.12), -12px -12px 28px rgba(255, 255, 255, 0.86);
+  --care-shadow-soft: 10px 10px 24px rgba(35, 56, 59, 0.1), -7px -7px 18px rgba(255, 255, 255, 0.84);
+  --care-inset: inset 1px 1px 1px rgba(255, 255, 255, 0.92), inset -1px -1px 1px rgba(83, 122, 125, 0.14);
+}
+
+body,
+.app-shell--desktop,
+.thinq-dashboard-page,
+.device-list-page,
+.device-detail-page,
+.basic-report-page,
+.three-view-page {
+  background: #f3f4f6 !important;
+}
+
+.app-shell--desktop .sidebar h1 {
+  color: var(--care-mint-deep);
+  -webkit-text-fill-color: var(--care-mint-deep);
+}
+
+.app-shell--desktop .sidebar nav a.is-active,
+.app-shell--desktop .sidebar nav a:hover,
+.sidebar-nav-item.is-active,
+.sidebar-nav-item:hover {
+  border-color: rgba(63, 184, 175, 0.28) !important;
+  background: linear-gradient(145deg, #f7fffd 0%, #e9f7f5 100%) !important;
+  color: var(--care-mint-deep) !important;
+  box-shadow:
+    9px 10px 22px rgba(63, 184, 175, 0.16),
+    -7px -7px 18px rgba(255, 255, 255, 0.9),
+    inset -3px 0 0 var(--care-mint) !important;
+}
+
+.sidebar-footer-link:hover,
+.device-list-page .device-filter-menu button:hover,
+.report-period-menu button:hover {
+  background: #e9f7f5 !important;
+  color: var(--care-mint-deep) !important;
+}
+
+.dashboard-home-card,
+.dashboard-info-card,
+.device-list-card,
+.device-detail-card,
+.device-detail-model-viewer,
+.measurement-summary dl > div,
+.measurement-event-list li p,
+.three-view-stage,
+.three-view-container,
+.appliance-noise-card,
+.basic-report-page .report-appliance-card,
+.basic-report-page .report-overview-panel,
+.basic-report-page .report-detail-card,
+.basic-report-page .report-summary-block,
+.basic-report-page .report-ranking-block,
+.basic-report-page .report-caution-box,
+.account-card,
+.login-card {
+  border-color: rgba(201, 223, 220, 0.82) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: var(--care-shadow), var(--care-inset) !important;
+}
+
+.dashboard-home-card:hover,
+.device-list-card:hover,
+.appliance-noise-card:hover,
+.basic-report-page .report-appliance-card:hover,
+.basic-report-page .report-detail-card:hover {
+  border-color: rgba(63, 184, 175, 0.28) !important;
+  background: linear-gradient(145deg, #ffffff 0%, #f7fffd 100%) !important;
+  box-shadow:
+    20px 20px 48px rgba(35, 56, 59, 0.14),
+    -12px -12px 30px rgba(255, 255, 255, 0.9),
+    var(--care-inset) !important;
+}
+
+.dashboard-report-button,
+.device-list-page .device-add-button,
+.basic-report-page .report-period-button,
+.basic-report-page #generate-gpt-report {
+  border-color: rgba(36, 127, 121, 0.24) !important;
+  background: linear-gradient(145deg, #58d2ca 0%, #3fb8af 46%, #247f79 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    10px 12px 26px rgba(36, 127, 121, 0.25),
+    -6px -6px 16px rgba(255, 255, 255, 0.74),
+    inset 0 1px 1px rgba(255, 255, 255, 0.38) !important;
+}
+
+.dashboard-report-button:hover,
+.device-list-page .device-add-button:hover,
+.basic-report-page .report-period-button:hover,
+.basic-report-page #generate-gpt-report:hover {
+  background: linear-gradient(145deg, #4bc7bf 0%, #247f79 100%) !important;
+  box-shadow:
+    12px 16px 30px rgba(36, 127, 121, 0.3),
+    -6px -6px 18px rgba(255, 255, 255, 0.76),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35) !important;
+}
+
+.device-list-page .device-filter-bar {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(201, 223, 220, 0.9) !important;
+}
+
+.device-list-page .device-filter-trigger,
+.device-list-page .device-filter-bar input,
+.device-list-page .device-filter-menu,
+.report-period-menu {
+  border-color: rgba(201, 223, 220, 0.88) !important;
+  background: #ffffff !important;
+  box-shadow:
+    9px 9px 20px rgba(35, 56, 59, 0.1),
+    -7px -7px 18px rgba(255, 255, 255, 0.9),
+    var(--care-inset) !important;
+}
+
+.device-list-page .device-filter-menu,
+.report-period-menu {
+  border-color: rgba(63, 184, 175, 0.28) !important;
+}
+
+.device-list-card:hover .device-detail-icon,
+.dashboard-progress span,
+.reaction-split-bar__positive,
+.ranking-bar--danger span {
+  background: linear-gradient(90deg, #3fb8af, #5aa9e6) !important;
+}
+
+.device-list-card:hover .device-detail-icon {
+  background: #3fb8af !important;
+  color: #ffffff !important;
+}
+
+.device-list-picture,
+.device-picture-slot,
+.appliance-picture-slot,
+.detail-card-icon,
+.dashboard-summary-column > .dashboard-report-shortcut h2::before,
+.basic-report-page .gpt-report-card .detail-card-icon,
+.basic-report-page .low-noise-detail-card .detail-card-icon {
+  border-color: rgba(63, 184, 175, 0.18) !important;
+  background: linear-gradient(145deg, #ffffff 0%, #edf8f6 100%) !important;
+}
+
+.basic-report-page .donut-chart {
+  background: conic-gradient(#3fb8af 0 58%, #4b5563 58% 100%) !important;
+}
+
+.basic-report-page .donut-chart strong {
+  color: #126862 !important;
+}
+
+.basic-report-page .legend-dot--red,
+.basic-report-page .gpt-report-note span {
+  background: #3fb8af !important;
+}
+
+.basic-report-page .donut-legend p:first-of-type {
+  border-color: rgba(63, 184, 175, 0.18) !important;
+  background: #e9f7f5 !important;
+}
+
+.basic-report-page .donut-legend p:first-of-type strong,
+.basic-report-page .donut-legend p:first-of-type b {
+  color: #247f79 !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(63, 184, 175, 0.36);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(36, 127, 121, 0.52);
+  background-clip: padding-box;
+}
+
+/* ============================================================
+   Functional neumorphism: light gray surfaces + teal product accent.
+   This intentionally mirrors the reference mood while preserving all
+   existing layout, data, and behavior.
+   ============================================================ */
+
+:root {
+  --neo-bg: #f3f4f6;
+  --neo-surface: #f3f4f6;
+  --neo-surface-soft: #f7f8f9;
+  --neo-text: #1f2933;
+  --neo-muted: #6f7b86;
+  --neo-accent: #3fb8af;
+  --neo-accent-deep: #247f79;
+  --neo-accent-soft: #e6f7f5;
+  --neo-danger: #d83b4c;
+  --neo-danger-soft: #fff1f3;
+  --neo-stable: #2f8f5b;
+  --neo-stable-soft: #eaf7f0;
+  --neo-warning: #b95464;
+  --neo-warning-soft: #fbecef;
+  --neo-raised:
+    12px 12px 26px rgba(35, 48, 54, 0.14),
+    -10px -10px 24px rgba(255, 255, 255, 0.92);
+  --neo-raised-strong:
+    18px 18px 38px rgba(35, 48, 54, 0.18),
+    -14px -14px 30px rgba(255, 255, 255, 0.96);
+  --neo-inset:
+    inset 7px 7px 14px rgba(35, 48, 54, 0.1),
+    inset -7px -7px 14px rgba(255, 255, 255, 0.92);
+  --neo-inset-soft:
+    inset 4px 4px 9px rgba(35, 48, 54, 0.08),
+    inset -4px -4px 9px rgba(255, 255, 255, 0.9);
+}
+
+body,
+.app-shell--desktop,
+.thinq-dashboard-page,
+.device-list-page,
+.device-detail-page,
+.basic-report-page,
+.three-view-page {
+  background: var(--neo-bg) !important;
+  color: var(--neo-text) !important;
+}
+
+.app-shell--desktop .sidebar {
+  border: 0 !important;
+  border-radius: 26px !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised-strong) !important;
+}
+
+.app-shell--desktop .sidebar h1 {
+  color: var(--neo-accent-deep) !important;
+  -webkit-text-fill-color: var(--neo-accent-deep) !important;
+}
+
+.app-shell--desktop .sidebar nav a,
+.sidebar-nav-item,
+.sidebar-footer-link {
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: var(--neo-surface) !important;
+  color: var(--neo-text) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.app-shell--desktop .sidebar nav a.is-active,
+.app-shell--desktop .sidebar nav a:hover,
+.sidebar-nav-item.is-active,
+.sidebar-nav-item:hover,
+.sidebar-footer-link:hover {
+  background: var(--neo-accent-soft) !important;
+  color: var(--neo-accent-deep) !important;
+  box-shadow:
+    var(--neo-raised),
+    inset -3px 0 0 var(--neo-accent) !important;
+}
+
+.settings-symbol--gear {
+  background: var(--neo-muted) !important;
+}
+
+.sidebar-footer-link:hover .settings-symbol--gear {
+  background: var(--neo-accent) !important;
+}
+
+.dashboard-household-header h1,
+.device-list-header h1,
+.basic-report-header h1,
+.reaction-history-header h1,
+.gpt-detail-header h1,
+.settings-page-header h1,
+.profile-page-header h1,
+.system-page-header h1,
+.page-header h1,
+.three-view-stage h2,
+.three-view-desktop-title {
+  color: var(--neo-text) !important;
+  font-weight: 800 !important;
+}
+
+.dashboard-household-header p,
+.device-list-heading p,
+.basic-report-header p,
+.device-detail-title-group p,
+.three-view-mobile-source,
+.appliance-noise-card p,
+.gpt-report-card p,
+.gpt-report-note,
+.donut-legend small {
+  color: var(--neo-muted) !important;
+}
+
+.dashboard-home-card,
+.dashboard-info-card,
+.device-list-card,
+.device-detail-card,
+.device-detail-model-viewer,
+.measurement-summary dl > div,
+.measurement-event-list li p,
+.three-view-stage,
+.three-view-container,
+.appliance-noise-card,
+.basic-report-page .report-appliance-card,
+.basic-report-page .report-overview-panel,
+.basic-report-page .report-detail-card,
+.basic-report-page .report-summary-block,
+.basic-report-page .report-ranking-block,
+.basic-report-page .report-caution-box,
+.account-card,
+.login-card {
+  border: 0 !important;
+  border-radius: 18px !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.dashboard-home-card:hover,
+.device-list-card:hover,
+.appliance-noise-card:hover,
+.basic-report-page .report-appliance-card:hover,
+.basic-report-page .report-detail-card:hover {
+  background: var(--neo-surface-soft) !important;
+  box-shadow: var(--neo-raised-strong) !important;
+  transform: translateY(-2px);
+}
+
+.device-list-page .device-filter-bar {
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-list-page .device-filter-trigger,
+.device-list-page .device-filter-bar input,
+.report-period-menu,
+.device-list-page .device-filter-menu {
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: var(--neo-surface) !important;
+  color: var(--neo-text) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-list-page .device-filter-bar input {
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.device-list-page .device-filter-trigger:hover,
+.device-list-page .device-filter-bar input:hover,
+.device-list-page .device-filter-bar input:focus,
+.device-list-page .device-filter-bar input:focus-visible {
+  color: var(--neo-accent-deep) !important;
+  box-shadow:
+    var(--neo-inset-soft),
+    0 0 0 2px rgba(63, 184, 175, 0.16) !important;
+}
+
+.device-list-page .device-filter-menu button,
+.report-period-menu button {
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: var(--neo-text) !important;
+}
+
+.device-list-page .device-filter-menu button:hover,
+.report-period-menu button:hover {
+  background: rgba(63, 184, 175, 0.14) !important;
+  color: var(--neo-accent-deep) !important;
+}
+
+.dashboard-report-button,
+.device-list-page .device-add-button,
+.basic-report-page .report-period-button,
+.basic-report-page #generate-gpt-report {
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: linear-gradient(145deg, #48c4bc 0%, var(--neo-accent) 56%, var(--neo-accent-deep) 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    8px 8px 18px rgba(35, 48, 54, 0.2),
+    -7px -7px 18px rgba(255, 255, 255, 0.88),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+}
+
+.dashboard-report-button:hover,
+.device-list-page .device-add-button:hover,
+.basic-report-page .report-period-button:hover,
+.basic-report-page #generate-gpt-report:hover {
+  background: linear-gradient(145deg, #55d1c8 0%, var(--neo-accent) 42%, #126862 100%) !important;
+  box-shadow:
+    10px 12px 24px rgba(35, 48, 54, 0.22),
+    -7px -7px 18px rgba(255, 255, 255, 0.9),
+    0 0 0 3px rgba(63, 184, 175, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34) !important;
+}
+
+.dashboard-home-card .dashboard-sync,
+.dashboard-summary-column > .dashboard-climate-card strong,
+.dashboard-summary-column > .dashboard-noise-card p,
+.report-metric-box,
+.reaction-pill,
+.donut-legend p,
+.gpt-report-note,
+.device-warning-banner button,
+.device-recommendation-card button,
+.related-events-button {
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.device-list-picture,
+.device-picture-slot,
+.appliance-picture-slot,
+.detail-card-icon,
+.dashboard-summary-column > .dashboard-report-shortcut h2::before,
+.basic-report-page .gpt-report-card .detail-card-icon,
+.basic-report-page .low-noise-detail-card .detail-card-icon {
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.device-list-card:hover .device-detail-icon {
+  background: var(--neo-accent) !important;
+  color: #ffffff !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-status-badge,
+.dashboard-summary-column > .dashboard-noise-card p {
+  border: 0 !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.device-status-badge.is-stable,
+.dashboard-summary-column > .dashboard-noise-card p,
+.reaction-pill--positive,
+.basic-report-page .report-appliance-card .report-metric-box--soft,
+.measurement-summary dl > div.measurement-status--stable {
+  background: var(--neo-stable-soft) !important;
+  color: var(--neo-stable) !important;
+}
+
+.device-status-badge.is-warning,
+.reaction-pill--negative,
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft),
+.measurement-summary dl > div.measurement-status--warning {
+  background: var(--neo-warning-soft) !important;
+  color: var(--neo-warning) !important;
+}
+
+.device-status-badge.is-connection,
+.measurement-summary dl > div.measurement-status--connection,
+.basic-report-page .donut-legend p:nth-of-type(2),
+.basic-report-page .donut-legend small {
+  background: #eceff1 !important;
+  color: #4b5563 !important;
+}
+
+.device-warning-banner {
+  border: 1px solid rgba(216, 59, 76, 0.18) !important;
+  background: #fff4f5 !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-warning-dot {
+  background: var(--neo-danger) !important;
+}
+
+@keyframes pp-pulse {
+  0%, 100% { box-shadow: 0 0 0 8px rgba(216, 59, 76, 0.15); }
+  50% { box-shadow: 0 0 0 13px rgba(216, 59, 76, 0.06); }
+}
+
+.dashboard-progress,
+.reaction-split-bar,
+.ranking-bar {
+  background: #dfe5e7 !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.dashboard-progress span,
+.reaction-split-bar__positive,
+.ranking-bar--danger span,
+.legend-dot--red,
+.gpt-report-note span {
+  background: var(--neo-accent) !important;
+}
+
+.ranking-bar--orange span {
+  background: linear-gradient(90deg, #5aa9e6, #9b8afb) !important;
+}
+
+.ranking-bar--yellow span {
+  background: linear-gradient(90deg, #f2a96b, #9b8afb) !important;
+}
+
+.reaction-split-bar__negative {
+  background: var(--neo-warning) !important;
+}
+
+.basic-report-page .donut-chart {
+  background: conic-gradient(var(--neo-accent) 0 58%, #4b5563 58% 100%) !important;
+  box-shadow: var(--neo-inset) !important;
+}
+
+.basic-report-page .donut-chart strong {
+  color: #126862 !important;
+}
+
+.basic-report-page .donut-legend p:first-of-type {
+  background: var(--neo-accent-soft) !important;
+  color: var(--neo-accent-deep) !important;
+}
+
+.basic-report-page .donut-legend p:nth-of-type(2) {
+  background: #eceff1 !important;
+}
+
+input:focus-visible,
+button:focus-visible,
+a:focus-visible,
+.dashboard-home-card:focus-visible,
+.device-list-card:focus-visible,
+.device-detail-back:focus-visible {
+  box-shadow:
+    0 0 0 4px rgba(63, 184, 175, 0.2),
+    var(--neo-raised) !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(63, 184, 175, 0.34);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(36, 127, 121, 0.5);
+  background-clip: padding-box;
+}
+
+/* --- Reference-matched neumorphism strength pass --- */
+:root {
+  --neo-bg: #eef3f4;
+  --neo-surface: #eef3f4;
+  --neo-surface-soft: #f1f5f6;
+  --neo-text: #1f2933;
+  --neo-muted: #697783;
+  --neo-accent: #3fb8af;
+  --neo-accent-deep: #247f79;
+  --neo-danger: #cf2f49;
+  --neo-danger-soft: #fff1f4;
+  --neo-raised:
+    9px 9px 18px rgba(134, 146, 150, 0.42),
+    -9px -9px 18px rgba(255, 255, 255, 0.96);
+  --neo-raised-strong:
+    13px 13px 24px rgba(122, 135, 140, 0.48),
+    -11px -11px 22px rgba(255, 255, 255, 0.98);
+  --neo-inset:
+    inset 7px 7px 13px rgba(134, 146, 150, 0.3),
+    inset -7px -7px 13px rgba(255, 255, 255, 0.98);
+  --neo-inset-soft:
+    inset 5px 5px 10px rgba(134, 146, 150, 0.24),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.96);
+}
+
+body,
+.app-shell--desktop,
+.thinq-dashboard-page,
+.device-list-page,
+.device-detail-page,
+.basic-report-page,
+.three-view-page {
+  background: var(--neo-bg) !important;
+}
+
+.app-shell--desktop .sidebar {
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised-strong) !important;
+}
+
+.app-shell--desktop .sidebar nav a,
+.sidebar-nav-item,
+.sidebar-footer-link,
+.dashboard-home-card,
+.dashboard-info-card,
+.device-list-card,
+.device-detail-card,
+.device-detail-model-viewer,
+.measurement-summary dl > div,
+.measurement-event-list li p,
+.three-view-stage,
+.three-view-container,
+.appliance-noise-card,
+.basic-report-page .report-appliance-card,
+.basic-report-page .report-overview-panel,
+.basic-report-page .report-detail-card,
+.basic-report-page .report-summary-block,
+.basic-report-page .report-ranking-block,
+.basic-report-page .report-caution-box,
+.account-card,
+.login-card {
+  border: 0 !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.dashboard-home-card,
+.dashboard-info-card,
+.device-list-card,
+.device-detail-card,
+.device-detail-model-viewer,
+.three-view-stage,
+.three-view-container,
+.appliance-noise-card,
+.basic-report-page .report-appliance-card,
+.basic-report-page .report-overview-panel,
+.basic-report-page .report-detail-card {
+  border-radius: 12px !important;
+}
+
+.app-shell--desktop .sidebar nav a.is-active,
+.app-shell--desktop .sidebar nav a:hover,
+.sidebar-nav-item.is-active,
+.sidebar-nav-item:hover {
+  background: #e0f2f0 !important;
+  color: var(--neo-accent-deep) !important;
+  box-shadow: var(--neo-raised), inset -3px 0 0 var(--neo-accent) !important;
+}
+
+.dashboard-home-card:hover,
+.device-list-card:hover,
+.appliance-noise-card:hover,
+.basic-report-page .report-appliance-card:hover,
+.basic-report-page .report-detail-card:hover {
+  background: var(--neo-surface-soft) !important;
+  box-shadow: var(--neo-raised-strong) !important;
+  transform: translateY(-2px);
+}
+
+.device-list-page .device-filter-bar {
+  border: 0 !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-list-page .device-filter-trigger,
+.report-period-menu,
+.device-list-page .device-filter-menu {
+  border: 0 !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-list-page .device-filter-bar input {
+  border: 0 !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-inset) !important;
+}
+
+.device-list-page .device-filter-trigger:hover,
+.device-list-page .device-filter-bar input:hover,
+.device-list-page .device-filter-bar input:focus,
+.device-list-page .device-filter-bar input:focus-visible {
+  color: var(--neo-accent-deep) !important;
+  box-shadow: var(--neo-inset), 0 0 0 2px rgba(63, 184, 175, 0.18) !important;
+}
+
+.dashboard-report-button,
+.device-list-page .device-add-button,
+.basic-report-page .report-period-button,
+.basic-report-page #generate-gpt-report {
+  border: 0 !important;
+  background: linear-gradient(145deg, #45c1b9, #36a9a1) !important;
+  color: #ffffff !important;
+  box-shadow:
+    8px 8px 16px rgba(108, 121, 126, 0.42),
+    -7px -7px 15px rgba(255, 255, 255, 0.95) !important;
+}
+
+.dashboard-report-button:hover,
+.device-list-page .device-add-button:hover,
+.basic-report-page .report-period-button:hover,
+.basic-report-page #generate-gpt-report:hover {
+  background: linear-gradient(145deg, #4dccc4, #247f79) !important;
+  box-shadow:
+    10px 10px 20px rgba(94, 108, 113, 0.48),
+    -8px -8px 17px rgba(255, 255, 255, 0.98) !important;
+}
+
+.dashboard-home-card .dashboard-sync,
+.dashboard-summary-column > .dashboard-climate-card strong,
+.dashboard-summary-column > .dashboard-noise-card p,
+.report-metric-box,
+.reaction-pill,
+.donut-legend p,
+.gpt-report-note,
+.device-warning-banner button,
+.device-recommendation-card button,
+.related-events-button {
+  border: 0 !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.device-list-picture,
+.device-picture-slot,
+.appliance-picture-slot,
+.detail-card-icon,
+.dashboard-summary-column > .dashboard-report-shortcut h2::before,
+.basic-report-page .gpt-report-card .detail-card-icon,
+.basic-report-page .low-noise-detail-card .detail-card-icon {
+  border: 0 !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-inset) !important;
+}
+
+.device-list-card:hover .device-detail-icon {
+  background: var(--neo-accent) !important;
+  color: #ffffff !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-warning-banner {
+  border: 1px solid rgba(207, 47, 73, 0.22) !important;
+  background: #fff4f6 !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-warning-dot {
+  background: var(--neo-danger) !important;
+}
+
+.dashboard-progress,
+.reaction-split-bar,
+.ranking-bar {
+  background: #dde4e6 !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.dashboard-progress span,
+.reaction-split-bar__positive,
+.ranking-bar--danger span,
+.legend-dot--red,
+.gpt-report-note span {
+  background: var(--neo-accent) !important;
+}
+
+.basic-report-page .donut-chart {
+  background: conic-gradient(var(--neo-accent) 0 58%, #56616b 58% 100%) !important;
+  box-shadow: var(--neo-inset) !important;
+}
+
+.basic-report-page .donut-chart strong {
+  color: #126862 !important;
+}
+
+.basic-report-page .donut-legend p:first-of-type {
+  background: #e0f2f0 !important;
+  color: var(--neo-accent-deep) !important;
+}
+
+.basic-report-page .donut-legend p:nth-of-type(2),
+.basic-report-page .donut-legend small {
+  background: #e6ebed !important;
+  color: #4b5563 !important;
+}
+
+/* Home dashboard hero card: subtle product-grade neumorphic detail */
+.thinq-dashboard-page .dashboard-home-card h2,
+.thinq-dashboard-page .dashboard-home-scene,
+.thinq-dashboard-page .dashboard-sync {
+  position: relative;
+  z-index: 1;
+}
+
+.thinq-dashboard-page .dashboard-home-card h2 {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border-radius: 16px;
+  background: rgba(238, 243, 244, 0.82);
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.thinq-dashboard-page .dashboard-home-card h2::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--neo-accent);
+  box-shadow:
+    0 0 0 6px rgba(63, 184, 175, 0.12),
+    0 0 18px rgba(63, 184, 175, 0.42);
+}
+
+.thinq-dashboard-page .dashboard-home-card {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at 18% 18%, rgba(63, 184, 175, 0.11), transparent 30%),
+    radial-gradient(circle at 84% 78%, rgba(63, 184, 175, 0.06), transparent 34%),
+    linear-gradient(145deg, #f4f8f7 0%, #dfeaea 58%, #d5e6e4 100%) !important;
+}
+
+.thinq-dashboard-page .dashboard-sync {
+  min-height: 28px;
+  padding: 0 11px;
+  border-radius: 999px !important;
+  background: rgba(238, 243, 244, 0.82) !important;
+  color: var(--neo-accent-deep) !important;
+  font-size: 11.5px;
+  font-weight: 800;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+/* ThreeDHome main view card: match the richer Home card surface tone */
+.three-view-page .three-view-stage {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at 18% 18%, rgba(63, 184, 175, 0.1), transparent 30%),
+    radial-gradient(circle at 84% 78%, rgba(63, 184, 175, 0.055), transparent 34%),
+    linear-gradient(145deg, #f4f8f7 0%, #dfeaea 58%, #d5e6e4 100%) !important;
+}
+
+.three-view-page .three-view-container {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 48%),
+    linear-gradient(145deg, #f6faf9 0%, #e9f1f1 100%) !important;
+}
+
+/* Device cards: make hover feedback clearer while keeping the neumorphic tone */
+.device-list-page .device-list-card:hover {
+  background:
+    linear-gradient(145deg, #edf8f6 0%, #d2e7e5 100%) !important;
+}
+
+/* Device detail back button: raised neumorphic control with mint hover */
+.device-detail-page .device-detail-back {
+  display: inline-grid !important;
+  width: 46px !important;
+  height: 46px !important;
+  margin: 0 0 12px !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: var(--neo-surface) !important;
+  color: var(--neo-text) !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  box-shadow: var(--neo-raised) !important;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease !important;
+}
+
+.device-detail-page .device-detail-back:hover {
+  background: var(--neo-accent) !important;
+  color: #ffffff !important;
+  box-shadow:
+    9px 9px 18px rgba(36, 127, 121, 0.28),
+    -7px -7px 16px rgba(255, 255, 255, 0.92) !important;
+  transform: translateY(-1px);
+}
+
+/* Device detail cards: subtle accent without tinting the whole card */
+.device-detail-page .device-detail-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.device-detail-page .device-detail-card::before {
+  content: none;
+}
+
+.device-detail-page .device-detail-card h2 {
+  color: var(--neo-text) !important;
+}
+
+.device-detail-page .device-measurement-card .measurement-summary strong {
+  color: var(--neo-accent-deep) !important;
+}
+
+.device-detail-page .device-detail-model-viewer {
+  box-shadow: var(--neo-inset) !important;
+}
+
+.device-detail-page .device-recommendation-card p {
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: var(--neo-surface);
+  box-shadow: var(--neo-raised);
+}
+
+/* Report page: keep reaction meaning colors consistent, separate from mint branding */
+.basic-report-page .report-appliance-card .report-metric-box--soft,
+.basic-report-page .reaction-pill--positive {
+  background: var(--neo-stable-soft) !important;
+  color: var(--neo-stable) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box--soft strong,
+.basic-report-page .report-appliance-card .report-metric-box--soft span,
+.basic-report-page .reaction-pill--positive {
+  color: var(--neo-stable) !important;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft),
+.basic-report-page .reaction-pill--negative {
+  background: var(--neo-warning-soft) !important;
+  color: var(--neo-warning) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) strong,
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) span,
+.basic-report-page .reaction-pill--negative {
+  color: var(--neo-warning) !important;
+}
+
+.basic-report-page .reaction-split-bar__positive {
+  background: var(--neo-stable) !important;
+}
+
+.basic-report-page .reaction-split-bar__negative {
+  background: var(--neo-warning) !important;
+}
+
+/* Report low-noise donut: softer neumorphic chart surface */
+.basic-report-page .low-noise-content {
+  align-items: center;
+}
+
+.basic-report-page .donut-chart {
+  background:
+    conic-gradient(var(--neo-accent) 0 58%, #8b969d 58% 100%) !important;
+  box-shadow:
+    14px 14px 26px rgba(111, 125, 130, 0.36),
+    -12px -12px 24px rgba(255, 255, 255, 0.98),
+    inset 5px 5px 9px rgba(255, 255, 255, 0.32),
+    inset -6px -6px 12px rgba(55, 68, 74, 0.2) !important;
+}
+
+.basic-report-page .donut-chart::after {
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.98), rgba(238, 243, 244, 0.96) 58%, rgba(216, 226, 228, 0.9)) !important;
+  box-shadow:
+    inset 7px 7px 13px rgba(122, 136, 140, 0.34),
+    inset -7px -7px 13px rgba(255, 255, 255, 0.98),
+    0 2px 6px rgba(255, 255, 255, 0.6) !important;
+}
+
+.basic-report-page .donut-chart strong {
+  color: var(--neo-accent-deep) !important;
+}
+
+.basic-report-page .donut-chart span {
+  color: var(--neo-muted) !important;
+}
+
+.basic-report-page .legend-dot--red {
+  background: var(--neo-accent) !important;
+}
+
+.basic-report-page .legend-dot--gray {
+  background: #8b969d !important;
+}
+
+/* Report ranking bars: unified mint depth scale */
+.basic-report-page .ranking-bar span,
+.basic-report-page .ranking-bar--danger span,
+.basic-report-page .ranking-bar--orange span,
+.basic-report-page .ranking-bar--yellow span {
+  background:
+    linear-gradient(90deg, #82d9d1 0%, #55c8bf 52%, #3fb8af 100%) !important;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.42),
+    inset 0 -1px 2px rgba(36, 127, 121, 0.22),
+    0 2px 5px rgba(63, 184, 175, 0.22) !important;
+}
