@@ -587,7 +587,7 @@
   }
 
   .report-appliance-grid::before {
-    content: "Main summary";
+    content: "주요 요약";
     grid-column: 1 / -1;
     margin-bottom: 10px;
     color: var(--apk-ink);

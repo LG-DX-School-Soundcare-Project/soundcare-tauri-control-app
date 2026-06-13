@@ -1722,3 +1722,33 @@ body,
     grid-template-columns: 1fr !important;
   }
 }
+
+/* 리포트 디테일 카드 제목 옆 아이콘 자리 — 아이콘 이미지가 제거돼 빈 회색
+   박스만 남아 제목 배치가 어색했다. 장식 아이콘이므로 숨겨 제목만 깔끔히. */
+.detail-card-icon {
+  display: none !important;
+}
+
+/* 리포트(모바일): 외곽 패널이 카드인데 그 안의 반응요약/순위/주의 블록이 또
+   카드라 "카드 속 카드"로 답답했다. 외곽 패널을 평평하게 만들어 안쪽 섹션
+   카드들만 일정 간격으로 깔끔히 떨어져 보이게 한다. */
+@media (max-width: 640px) {
+  .basic-report-page .report-overview-panel {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+/* 데스크탑 리포트: '주요 요약' 기기 카드가 318x236으로 과도하게 커서 휑했다.
+   4열로 한 줄에 모으고 높이를 콘텐츠에 맞춰 컴팩트하게. */
+@media (min-width: 641px) {
+  .basic-report-page .report-appliance-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .basic-report-page .report-appliance-card {
+    min-height: 0 !important;
+  }
+}
