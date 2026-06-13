@@ -51,19 +51,17 @@ let reactionRows = [
 
 const tableColumns = ['시간', '반응', '연결 이벤트 ID', '기기', 'dB', '공간'];
 
+// `field` decides which row property a filter option matches against:
+// positive/negative live on reactionType, pending/manual on status.
 const REACTION_MAP = [
-  { value: 'positive', label: '긍정' },
-  { value: 'negative', label: '부정' },
-  { value: 'pending', label: '대기' },
-  { value: 'manual', label: '수동' }
+  { value: 'positive', label: '긍정', field: 'reactionType' },
+  { value: 'negative', label: '부정', field: 'reactionType' },
+  { value: 'pending', label: '대기', field: 'status' },
+  { value: 'manual', label: '수동', field: 'status' }
 ];
 
 function reactionLabel(value) {
   return REACTION_MAP.find((r) => r.value === String(value).toLowerCase())?.label ?? value;
-}
-
-function reactionValueFromLabel(label) {
-  return REACTION_MAP.find((r) => r.label === label)?.value ?? String(label).toLowerCase();
 }
 
 const filterFields = [
@@ -230,7 +228,9 @@ function matchesDevice(row, selectedDevice) {
 
 function matchesReaction(row, selectedReaction) {
   if (selectedReaction === '모두') return true;
-  return row.reactionType === reactionValueFromLabel(selectedReaction);
+  const entry = REACTION_MAP.find((r) => r.label === selectedReaction);
+  if (!entry) return true;
+  return String(row[entry.field] ?? '').toLowerCase() === entry.value;
 }
 
 function matchesSearch(row, keyword) {
@@ -289,7 +289,7 @@ export async function renderReactionHistoryPage() {
         </section>
         <div class="reaction-pending-note-row">
           <p class="reaction-table-note">
-            Pending 반응은 이벤트 매칭을 기다립니다. 매칭이 없으면 수동 반응 이벤트를 생성하세요.
+            대기 중인 반응은 이벤트 매칭을 기다립니다. 매칭이 없으면 수동 반응 이벤트를 생성하세요.
           </p>
         </div>
       </div>
