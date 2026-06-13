@@ -1975,3 +1975,74 @@ body,
 .gpt-report-card button:hover {
   background: linear-gradient(155deg, #4ee9d3 0%, #2bccb6 52%, #19bba4 100%) !important;
 }
+
+/* 모바일 리포트 헤더: 부제목이 127px 컬럼에 갇혀 4줄로 구겨졌다. 제목과 '조회 기간'
+   버튼은 한 줄에 두고, 부제목은 두 컬럼을 가로질러 전체 폭을 쓰게 한다. */
+@media (max-width: 640px) {
+  .basic-report-heading {
+    display: contents !important;
+  }
+
+  .basic-report-header {
+    grid-template-columns: 1fr auto !important;
+    grid-template-areas: "title actions" "copy copy" !important;
+    align-items: center !important;
+    column-gap: 14px !important;
+    row-gap: 8px !important;
+  }
+
+  .basic-report-header .report-period-dropdown {
+    align-self: center;
+  }
+}
+
+/* 모바일 홈 '실내 환경' 카드: 제목 + 온도/습도 두 알약이 위로 몰리고 아래가
+   ~40px 비어 옆 '소음 상태' 카드와 높이가 안 맞아 보였다. 두 알약을 카드 높이에
+   맞춰 동일한 타일로 채워 균형을 맞춘다. */
+@media (max-width: 640px) {
+  .dashboard-summary-column > .dashboard-climate-card {
+    grid-template-rows: auto 1fr 1fr !important;
+    align-items: stretch !important;
+    row-gap: 12px !important;
+  }
+
+  .dashboard-summary-column > .dashboard-climate-card strong {
+    min-height: 0 !important;
+    height: 100% !important;
+    align-self: stretch !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* 3D 기기 카드(모바일): 공간(방) 라벨이 아이콘 타일에 바로 붙어 겹쳐 보였다.
+   행 간격을 줘서 제목·공간·아이콘·dB 가 서로 떨어지게 한다. */
+@media (max-width: 640px) {
+  .appliance-noise-card {
+    row-gap: 10px !important;
+  }
+
+  .appliance-noise-card p {
+    align-self: center !important;
+    margin: 0 !important;
+  }
+
+  /* 기기 페이지 헤더: '기기 추가' 버튼을 세로(가운데) 배치 대신 제목과 가로 배치 */
+  .device-list-header {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+  }
+
+  .device-list-heading {
+    min-width: 0;
+  }
+
+  .device-list-header .device-add-button {
+    width: auto !important;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
