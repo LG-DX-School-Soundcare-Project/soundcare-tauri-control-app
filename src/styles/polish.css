@@ -25,19 +25,18 @@ body,
 
 /* --- Sidebar: brand + real icons --- */
 .app-shell--desktop .sidebar h1 {
-  background: var(--ink);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  background: none;
+  color: #149a88;
+  -webkit-text-fill-color: #149a88;
   font-weight: 800;
   letter-spacing: -0.01em;
 }
 
 .app-shell--desktop .sidebar nav a,
 .sidebar-nav-item {
-  border-radius: 12px;
+  border-radius: 14px;
   font-weight: 600;
-  color: var(--ink);
+  color: #2b2f3d;
   transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
 }
 
@@ -45,9 +44,9 @@ body,
 .app-shell--desktop .sidebar nav a:hover,
 .sidebar-nav-item.is-active,
 .sidebar-nav-item:hover {
-  background: var(--surface-muted);
-  color: #111827 !important;
-  box-shadow: inset 3px 0 0 #111827 !important;
+  background: #eafbf7;
+  color: #149a88 !important;
+  box-shadow: inset 3px 0 0 #28c7b0 !important;
 }
 
 /* Between 761px and 1000px a legacy rule lays the sidebar nav out as four
@@ -99,14 +98,14 @@ body,
   display: block;
   width: 26px;
   height: 26px;
-  background: var(--ink);
+  background: #7a8091;
   -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.484.484 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.61 3.61 0 0 1 8.4 12c0-1.98 1.62-3.6 3.6-3.6s3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>') center / contain no-repeat;
   mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.484.484 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.61 3.61 0 0 1 8.4 12c0-1.98 1.62-3.6 3.6-3.6s3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>') center / contain no-repeat;
   transition: background 0.18s ease, transform 0.3s ease;
 }
 
 .sidebar-footer-link {
-  border-radius: 12px;
+  border-radius: 14px;
   transition: background 0.18s ease;
 }
 
@@ -130,11 +129,11 @@ body,
 }
 
 .sidebar-footer-link:hover {
-  background: var(--control-bg);
+  background: #eafbf7;
 }
 
 .sidebar-footer-link:hover .settings-symbol--gear {
-  background: var(--pp-ink);
+  background: #149a88;
   transform: rotate(40deg);
 }
 
@@ -374,7 +373,7 @@ body,
 }
 
 .dashboard-home-card:hover {
-  background: var(--control-bg);
+  background: #eafbf7;
   transform: translateY(-2px);
 }
 
@@ -402,12 +401,12 @@ body,
   align-items: center;
   align-self: flex-end;
   width: fit-content;
-  margin-left: auto;
+  margin: 8px 0 0 auto;
   gap: 6px;
   padding: 5px 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.13);
-  color: rgba(255, 255, 255, 0.88);
+  background: #ffffff;
+  color: #2b2f3d;
   font-size: 12px;
   font-weight: 600;
   backdrop-filter: blur(6px);
@@ -548,6 +547,209 @@ button:active,
   box-shadow:
     0 8px 16px rgba(17, 24, 39, 0.1),
     0 2px 6px rgba(17, 24, 39, 0.05);
+}
+
+/* --- Home dashboard right cards: small visual details --- */
+.dashboard-summary-column > .dashboard-climate-card,
+.dashboard-summary-column > .dashboard-noise-card,
+.dashboard-summary-column > .dashboard-report-shortcut {
+  position: relative;
+  display: grid;
+  align-content: stretch;
+  gap: 12px;
+  padding: 22px 24px;
+  overflow: hidden;
+}
+
+.dashboard-summary-column > .dashboard-climate-card h2,
+.dashboard-summary-column > .dashboard-noise-card h2,
+.dashboard-summary-column > .dashboard-report-shortcut h2 {
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  min-height: 30px;
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+.dashboard-summary-column > .dashboard-climate-card h2,
+.dashboard-summary-column > .dashboard-noise-card h2 {
+  gap: 0;
+}
+
+.dashboard-summary-column > .dashboard-climate-card h2::before,
+.dashboard-summary-column > .dashboard-noise-card h2::before,
+.dashboard-summary-column > .dashboard-report-shortcut h2::before {
+  content: "";
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: #eafbf7;
+}
+
+.dashboard-summary-column > .dashboard-climate-card h2::before,
+.dashboard-summary-column > .dashboard-noise-card h2::before {
+  content: none;
+}
+
+.dashboard-summary-column > .dashboard-climate-card h2::before {
+  background:
+    radial-gradient(circle at 50% 72%, #28c7b0 0 5px, transparent 6px),
+    linear-gradient(#28c7b0, #28c7b0) 14px 8px / 3px 15px no-repeat,
+    #eafbf7;
+}
+
+.dashboard-summary-column > .dashboard-climate-card strong {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 42px;
+  margin: 0;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.dashboard-summary-column > .dashboard-climate-card strong + strong {
+  margin-top: 0;
+}
+
+.dashboard-summary-column > .dashboard-climate-card strong::before {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #7a8091;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0;
+}
+
+.dashboard-summary-column > .dashboard-climate-card strong:first-of-type {
+  background: #eafbf7;
+  color: #2b2f3d;
+  font-size: clamp(22px, 1.8vw, 28px);
+}
+
+.dashboard-summary-column > .dashboard-climate-card strong:first-of-type::before {
+  content: "온도";
+}
+
+.dashboard-summary-column > .dashboard-climate-card strong:last-of-type {
+  background: #eef7ff;
+  color: #2b2f3d;
+  font-size: clamp(22px, 1.8vw, 28px);
+}
+
+.dashboard-summary-column > .dashboard-climate-card strong:last-of-type::before {
+  content: "습도";
+}
+
+.dashboard-summary-column > .dashboard-noise-card {
+  grid-template-columns: minmax(0, 1fr) 86px;
+  grid-template-rows: auto auto auto 8px;
+  column-gap: 18px;
+  align-items: center;
+  padding-right: 24px;
+}
+
+.dashboard-summary-column > .dashboard-noise-card h2,
+.dashboard-summary-column > .dashboard-noise-card strong,
+.dashboard-summary-column > .dashboard-noise-card p,
+.dashboard-summary-column > .dashboard-noise-card .dashboard-progress {
+  grid-column: 1;
+}
+
+.dashboard-summary-column > .dashboard-noise-card h2::before {
+  background:
+    linear-gradient(#28c7b0, #28c7b0) 8px 12px / 2px 8px no-repeat,
+    linear-gradient(#28c7b0, #28c7b0) 13px 8px / 2px 16px no-repeat,
+    linear-gradient(#28c7b0, #28c7b0) 18px 11px / 2px 10px no-repeat,
+    #eafbf7;
+}
+
+.dashboard-summary-column > .dashboard-noise-card strong {
+  margin-top: 0;
+  transform: translateY(-2px);
+}
+
+.dashboard-summary-column > .dashboard-noise-card p,
+.dashboard-summary-column > .dashboard-noise-card .dashboard-progress {
+  transform: translateY(-14px);
+}
+
+.dashboard-summary-column > .dashboard-noise-card::after {
+  content: "";
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  width: 82px;
+  height: 54px;
+  transform: translateY(-50%);
+  opacity: 0.38;
+  background:
+    linear-gradient(#28c7b0, #28c7b0) 3px 24px / 4px 10px no-repeat,
+    linear-gradient(#28c7b0, #28c7b0) 15px 16px / 5px 26px no-repeat,
+    linear-gradient(#28c7b0, #28c7b0) 28px 7px / 6px 44px no-repeat,
+    linear-gradient(#28c7b0, #28c7b0) 43px 0 / 7px 58px no-repeat,
+    linear-gradient(#28c7b0, #28c7b0) 59px 9px / 6px 40px no-repeat,
+    linear-gradient(#5aa9e6, #5aa9e6) 74px 18px / 5px 22px no-repeat,
+    linear-gradient(#5aa9e6, #5aa9e6) 87px 25px / 4px 8px no-repeat;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.dashboard-summary-column > .dashboard-noise-card p {
+  display: inline-flex;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #eaf7f0;
+  color: #149a88;
+  font-weight: 750;
+}
+
+.dashboard-summary-column > .dashboard-noise-card .dashboard-progress {
+  align-self: end;
+  margin-top: 4px;
+  background: #e6eaf0 !important;
+}
+
+.dashboard-summary-column > .dashboard-noise-card .dashboard-progress span {
+  background: linear-gradient(90deg, #28c7b0, #5aa9e6) !important;
+}
+
+.dashboard-summary-column > .dashboard-report-shortcut h2::before {
+  background:
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><path fill="%2328c7b0" d="M15 4l2.1 6.1L23 12.2l-5.9 2.1L15 21l-2.1-6.7L7 12.2l5.9-2.1L15 4z"/><path fill="%2328c7b0" fill-opacity=".72" d="M23.5 18l1 2.9 2.9 1-2.9 1-1 2.9-1-2.9-2.9-1 2.9-1 1-2.9zM6.8 18.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2z"/></svg>') center / 22px 22px no-repeat,
+    #eafbf7;
+}
+
+.dashboard-summary-column > .dashboard-report-shortcut p {
+  margin: 0;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #7a8091;
+  line-height: 1.45;
+}
+
+.dashboard-summary-column > .dashboard-report-shortcut .dashboard-report-button {
+  align-self: end;
+  margin-top: auto;
+  background: #28c7b0;
+  color: #ffffff;
+  box-shadow: 0 10px 20px rgba(40, 199, 176, 0.18);
+}
+
+.dashboard-summary-column > .dashboard-report-shortcut .dashboard-report-button:hover {
+  background: #149a88;
+  color: #ffffff;
+  box-shadow: 0 14px 26px rgba(20, 154, 136, 0.2);
 }
 
 /* --- Report page prototype: align with dashboard/device tone ---
@@ -872,15 +1074,17 @@ button:active,
 }
 
 .basic-report-page .low-noise-detail-card .detail-card-icon {
-  background: transparent;
+  background: #ffffff;
 }
 
 .basic-report-page .low-noise-detail-card .detail-card-icon::before {
   content: "";
   display: block;
-  width: 28px;
-  height: 28px;
-  background: url("/assets/icons/switch-transfer-icon.png") center / contain no-repeat;
+  width: 25px;
+  height: 25px;
+  background: #383838;
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M7.5 7.25h9.05l-2.3-2.3 1.4-1.4L20.35 8.25l-4.7 4.7-1.4-1.4 2.3-2.3H7.5a3.5 3.5 0 0 0-3.5 3.5v.5H2v-.5a5.5 5.5 0 0 1 5.5-5.5Zm9 9.5H7.45l2.3 2.3-1.4 1.4-4.7-4.7 4.7-4.7 1.4 1.4-2.3 2.3h9.05a3.5 3.5 0 0 0 3.5-3.5v-.5h2v.5a5.5 5.5 0 0 1-5.5 5.5Z"/></svg>') center / contain no-repeat;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M7.5 7.25h9.05l-2.3-2.3 1.4-1.4L20.35 8.25l-4.7 4.7-1.4-1.4 2.3-2.3H7.5a3.5 3.5 0 0 0-3.5 3.5v.5H2v-.5a5.5 5.5 0 0 1 5.5-5.5Zm9 9.5H7.45l2.3 2.3-1.4 1.4-4.7-4.7 4.7-4.7 1.4 1.4-2.3 2.3h9.05a3.5 3.5 0 0 0 3.5-3.5v-.5h2v.5a5.5 5.5 0 0 1-5.5 5.5Z"/></svg>') center / contain no-repeat;
 }
 
 .basic-report-page .gpt-report-card .detail-card-icon {
@@ -1026,6 +1230,262 @@ button:active,
   background: #2b2b2b;
 }
 
+/* Report page: mint-care color refinement */
+.basic-report-page .report-period-button {
+  background: #28c7b0;
+  color: #ffffff;
+}
+
+.basic-report-page .report-period-button:hover,
+.basic-report-page .report-period-button:active {
+  background: #149a88;
+  color: #ffffff;
+}
+
+.basic-report-page .report-period-menu button {
+  background: #ffffff;
+  color: #2b2f3d;
+}
+
+.basic-report-page .report-period-menu button:hover {
+  background: #f4fcfa;
+  color: #149a88;
+}
+
+.basic-report-page .report-appliance-card,
+.basic-report-page .report-overview-panel,
+.basic-report-page .report-detail-card {
+  border: 1px solid #e6eaf0;
+}
+
+.basic-report-page .report-appliance-card h2,
+.basic-report-page .report-panel-heading,
+.basic-report-page .report-detail-card h2,
+.basic-report-page .report-metric-box strong,
+.basic-report-page .sensitivity-ranking [role="listitem"] > span:first-child,
+.basic-report-page .donut-chart strong,
+.basic-report-page .donut-legend p b {
+  color: #2b2f3d;
+}
+
+.basic-report-page .basic-report-header p,
+.basic-report-page .report-metric-box span,
+.basic-report-page .donut-chart span,
+.basic-report-page .donut-legend p,
+.basic-report-page .donut-legend small,
+.basic-report-page .gpt-report-card p,
+.basic-report-page .gpt-report-note,
+.basic-report-page .gpt-report-card small {
+  color: #7a8091;
+}
+
+.basic-report-page .report-metric-box,
+.basic-report-page .report-summary-block,
+.basic-report-page .report-ranking-block,
+.basic-report-page .donut-legend p {
+  border: 1px solid #e6eaf0;
+  background: #f8f8fc;
+}
+
+.basic-report-page .report-metric-box:not(.report-metric-box--soft),
+.basic-report-page .reaction-pill--positive {
+  background: #eaf7f0;
+  color: #2f8f5b;
+}
+
+.basic-report-page .report-metric-box--soft,
+.basic-report-page .reaction-pill--negative {
+  background: #fbecef;
+  color: #b95464;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box--soft {
+  background: #eaf7f0;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box--soft strong,
+.basic-report-page .report-appliance-card .report-metric-box--soft span {
+  color: #2f8f5b;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) {
+  background: #fbecef;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) strong,
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) span {
+  color: #b95464;
+}
+
+.basic-report-page .report-appliance-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.basic-report-page .report-appliance-card h2 {
+  max-width: 152px;
+  margin-bottom: 12px;
+  font-size: 30px;
+  line-height: 1.06;
+}
+
+.basic-report-page .report-appliance-card .report-face-viewer {
+  top: 16px;
+  left: calc(50% + 48px);
+  right: auto;
+  width: 84px;
+  height: 84px;
+  transform: translateX(-50%);
+}
+
+.basic-report-page .report-appliance-card .report-face-trigger {
+  top: 16px;
+  left: calc(50% + 48px);
+  right: auto;
+  width: 84px;
+  height: 84px;
+  transform: translateX(-50%) !important;
+}
+
+.basic-report-page .report-appliance-card h2 {
+  display: flex;
+  min-height: 84px;
+  max-width: 206px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  padding-right: 100px;
+  text-align: left;
+}
+
+.basic-report-page .report-appliance-metrics {
+  align-self: end;
+  gap: 14px;
+  margin-top: 0;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box {
+  min-height: 98px;
+  padding: 16px 14px 14px;
+  border-radius: 16px;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box strong {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box span {
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+.basic-report-page .reaction-split-bar,
+.basic-report-page .ranking-bar {
+  background: #e6eaf0;
+}
+
+.basic-report-page .reaction-split-bar__positive {
+  background: #2f8f5b;
+}
+
+.basic-report-page .reaction-split-bar__negative {
+  background: #b95464;
+}
+
+.basic-report-page .ranking-bar--danger span {
+  background: linear-gradient(90deg, #28c7b0, #5aa9e6);
+}
+
+.basic-report-page .ranking-bar--orange span {
+  background: linear-gradient(90deg, #5aa9e6, #9b8afb);
+}
+
+.basic-report-page .ranking-bar--yellow span {
+  background: linear-gradient(90deg, #f2a96b, #9b8afb);
+}
+
+.basic-report-page .report-caution-box {
+  background: #fff3e8;
+}
+
+.basic-report-page .report-caution-box > span:not(.report-panel-heading) {
+  color: #9a5c25;
+}
+
+.basic-report-page .report-caution-box strong {
+  color: #b76b29;
+}
+
+.basic-report-page .detail-card-icon,
+.basic-report-page .low-noise-detail-card .detail-card-icon {
+  background: #eafbf7;
+  color: #149a88;
+}
+
+.basic-report-page .low-noise-detail-card .detail-card-icon::before {
+  background: #149a88;
+}
+
+.basic-report-page .gpt-report-card .detail-card-icon {
+  background: #eafbf7;
+}
+
+.basic-report-page .donut-chart {
+  background: conic-gradient(#28c7b0 0 58%, #4b5563 58% 100%);
+}
+
+.basic-report-page .legend-dot--red,
+.basic-report-page .gpt-report-note span {
+  background: #28c7b0;
+}
+
+.basic-report-page .legend-dot--gray {
+  background: #4b5563;
+}
+
+.basic-report-page .donut-legend p:first-of-type {
+  border: 1px solid rgba(40, 199, 176, 0.16);
+  background: #eafbf7;
+}
+
+.basic-report-page .donut-legend p:first-of-type strong,
+.basic-report-page .donut-legend p:first-of-type b {
+  color: #149a88;
+}
+
+.basic-report-page .donut-legend p:nth-of-type(2) {
+  border: 1px solid rgba(75, 85, 99, 0.14);
+  background: #f3f4f6;
+}
+
+.basic-report-page .donut-legend p:nth-of-type(2) strong,
+.basic-report-page .donut-legend p:nth-of-type(2) b {
+  color: #4b5563;
+}
+
+.basic-report-page .donut-chart strong {
+  color: #087f70;
+}
+
+.basic-report-page .donut-legend small,
+.basic-report-page .gpt-report-note {
+  background: #eafbf7;
+}
+
+.basic-report-page .donut-legend small {
+  background: #fafbfc;
+}
+
+.basic-report-page #generate-gpt-report {
+  background: #28c7b0;
+  color: #ffffff;
+}
+
+.basic-report-page #generate-gpt-report:hover {
+  background: #149a88;
+}
+
 }
 
 @media (min-width: 641px) and (max-width: 1180px) {
@@ -1138,13 +1598,13 @@ button:active,
   display: grid;
   width: 100%;
   min-width: 160px;
-  gap: 4px;
-  padding: 8px;
+  gap: 0;
+  padding: 0;
+  border: 0;
   border-radius: 14px;
   background: #ffffff;
-  box-shadow:
-    0 12px 24px rgba(17, 24, 39, 0.1),
-    0 3px 8px rgba(17, 24, 39, 0.06);
+  box-shadow: none;
+  overflow: hidden;
 }
 
 .device-filter-menu[hidden] {
@@ -1155,14 +1615,14 @@ button:active,
   width: 100%;
   height: 38px;
   padding: 0 12px;
-  border-radius: 10px;
+  border-radius: 0;
   text-align: left;
   font-size: 14px;
   font-weight: 700;
 }
 
 .device-filter-menu button:hover {
-  background: #bdc0c0;
+  background: #f4fcfa;
 }
 
 .device-warning-banner {
@@ -1182,7 +1642,7 @@ button:active,
 .device-list-page .device-warning-banner button,
 .device-list-page .device-list-meta p:first-child,
 .device-list-page .device-list-meta p:nth-child(2),
-.device-list-page .device-refresh-icon {
+.device-list-page .device-detail-icon {
   color: var(--ink);
 }
 
@@ -1191,6 +1651,24 @@ button:active,
 .device-list-page .device-list-card,
 .device-list-page .device-add-button {
   background: #ffffff;
+}
+
+.device-list-page .device-filter-bar,
+.device-list-page .device-warning-banner {
+  background: #eafbf7;
+}
+
+.device-list-page .device-filter-bar {
+  background: #28c7b0;
+}
+
+.device-list-page .device-warning-banner {
+  background: #ffffff;
+}
+
+.device-list-page .device-warning-banner button {
+  background: #eafbf7;
+  color: #28c7b0;
 }
 
 .device-list-page .device-filter-bar,
@@ -1210,17 +1688,49 @@ button:active,
   background: var(--surface-muted);
 }
 
+.device-list-page .device-filter-trigger,
+.device-list-page .device-filter-bar input,
+.device-list-page .device-filter-menu,
+.device-list-page .device-filter-menu button {
+  background: #ffffff !important;
+}
+
+.device-list-page .device-filter-menu {
+  border: 0.1px solid #28c7b0;
+}
+
+.device-list-page .device-filter-menu button + button {
+  border-top: 0;
+}
+
+.device-list-page .device-filter-menu button:hover {
+  background: #f4fcfa !important;
+}
+
 .device-list-page .device-add-button {
-  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #28c7b0;
+  color: #ffffff;
   box-shadow:
     0 4px 10px rgba(17, 24, 39, 0.08),
     0 1px 3px rgba(17, 24, 39, 0.04);
 }
 
+.device-list-page .device-add-button::before {
+  content: "+";
+  color: inherit;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+}
+
 .device-list-page .device-add-button:hover,
 .device-list-page .device-add-button:active {
-  background: var(--surface-muted);
-  color: var(--ink);
+  background: #149a88;
+  color: #ffffff;
 }
 
 .device-list-page .device-add-button:hover {
@@ -1274,9 +1784,13 @@ button:active,
 
 .device-list-card {
   color: var(--ink);
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 34px;
+  padding: 30px 58px 28px 42px;
 }
 
 .device-list-card:hover {
+  background: #f4fcfa;
   transform: translateY(-3px);
   box-shadow:
     0 16px 32px rgba(17, 24, 39, 0.1),
@@ -1285,49 +1799,99 @@ button:active,
 
 .device-list-picture {
   display: grid;
+  width: 104px;
+  height: 142px;
   place-items: center;
   border-radius: 14px;
 }
 
 .device-list-picture::after {
   content: "";
-  width: 36px;
-  height: 36px;
+  width: 46px;
+  height: 46px;
   background: rgba(75, 22, 76, 0.32);
   -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm1.5 2.6a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 8a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm0 2.4a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2z"/></svg>') center / contain no-repeat;
   mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm1.5 2.6a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 8a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm0 2.4a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2z"/></svg>') center / contain no-repeat;
 }
 
 .device-list-meta p:first-child {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--ink);
 }
 
+.device-list-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.device-list-title-row > span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.device-status-badge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.device-status-badge.is-stable {
+  background: #eaf7f0;
+  color: #2f8f5b;
+}
+
+.device-status-badge.is-warning {
+  background: #fbecef;
+  color: #b95464;
+}
+
+.device-status-badge.is-connection {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
 .device-list-meta p:nth-child(2) {
+  font-size: 26px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
 
 .device-list-meta p:last-child {
-  font-size: 12.5px;
+  font-size: 15px;
   color: #6b7280;
 }
 
-.device-refresh-icon {
+.device-detail-icon {
+  position: absolute;
+  top: 14px;
+  right: 18px;
   display: inline-grid;
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   place-items: center;
   border-radius: 50%;
   color: var(--ink);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
   transition: background 0.16s ease, color 0.16s ease;
 }
 
-.device-list-card:hover .device-refresh-icon {
-  background: var(--surface-muted);
-  color: var(--ink);
+.device-list-card:hover .device-detail-icon {
+  background: #28c7b0;
+  color: #ffffff;
 }
 
 /* --- Device detail --- */
@@ -2069,4 +2633,1390 @@ select:focus-visible {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(75, 22, 76, 0.45);
   background-clip: padding-box;
+}
+
+/* ============================================================
+   Final visual direction: soft mint neumorphic care UI.
+   Structure, routing, data, and component responsibilities stay
+   unchanged; this layer only unifies surface, depth, and color.
+   ============================================================ */
+
+:root {
+  --pp-ink: #2b2f3d;
+  --pp-ink-strong: #18212f;
+  --pp-muted: #7a8091;
+  --pp-pink: #28c7b0;
+  --pp-pink-soft: #eafbf7;
+  --pp-card-radius: 22px;
+  --pp-ring: 0 0 0 4px rgba(40, 199, 176, 0.24);
+
+  --care-mint: #28c7b0;
+  --care-mint-deep: #149a88;
+  --care-mint-dark: #087f70;
+  --care-mint-soft: #eafbf7;
+  --care-bg: #f5fbf9;
+  --care-bg-strong: #f8fbfc;
+  --care-card: #ffffff;
+  --care-border: #dfeeea;
+  --care-border-strong: #cde7e1;
+  --care-text: #2b2f3d;
+  --care-subtext: #7a8091;
+  --care-blue: #5aa9e6;
+  --care-blue-soft: #eef7ff;
+  --care-lavender: #9b8afb;
+  --care-lavender-soft: #f2eeff;
+  --care-stable: #2f8f5b;
+  --care-stable-soft: #eaf7f0;
+  --care-warning: #b95464;
+  --care-warning-soft: #fbecef;
+  --care-caution: #f2a96b;
+  --care-caution-soft: #fff3e8;
+  --care-neutral: #4b5563;
+  --care-neutral-soft: #f3f4f6;
+  --care-shadow: 18px 18px 42px rgba(111, 137, 132, 0.14), -12px -12px 28px rgba(255, 255, 255, 0.88);
+  --care-shadow-soft: 10px 10px 26px rgba(111, 137, 132, 0.11), -8px -8px 20px rgba(255, 255, 255, 0.82);
+  --care-inset: inset 1px 1px 1px rgba(255, 255, 255, 0.92), inset -1px -1px 1px rgba(167, 196, 190, 0.18);
+}
+
+body,
+.app-shell--desktop,
+.thinq-dashboard-page,
+.device-list-page,
+.device-detail-page,
+.basic-report-page,
+.three-view-page {
+  background:
+    radial-gradient(900px 520px at 88% -12%, rgba(40, 199, 176, 0.13), transparent 62%),
+    radial-gradient(760px 560px at -12% 96%, rgba(90, 169, 230, 0.09), transparent 58%),
+    linear-gradient(145deg, var(--care-bg-strong) 0%, var(--care-bg) 100%) !important;
+  color: var(--care-text);
+}
+
+.dashboard-household-header h1,
+.device-list-header h1,
+.basic-report-header h1,
+.reaction-history-header h1,
+.gpt-detail-header h1,
+.settings-page-header h1,
+.profile-page-header h1,
+.system-page-header h1,
+.page-header h1,
+.three-view-desktop-title,
+.three-view-stage h2 {
+  color: var(--care-text) !important;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.dashboard-household-header p,
+.device-list-heading p,
+.basic-report-header p,
+.three-view-mobile-source,
+.appliance-noise-card p,
+.device-detail-title-group p,
+.measurement-summary dt,
+.measurement-event-list li p,
+.gpt-report-card p,
+.gpt-report-note,
+.donut-legend small {
+  color: var(--care-subtext) !important;
+}
+
+.app-shell--desktop .sidebar {
+  border: 1px solid rgba(223, 238, 234, 0.9);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: var(--care-shadow-soft);
+  backdrop-filter: blur(16px);
+}
+
+.app-shell--desktop .sidebar h1 {
+  color: var(--care-mint-deep);
+  -webkit-text-fill-color: var(--care-mint-deep);
+}
+
+.app-shell--desktop .sidebar nav a,
+.sidebar-nav-item,
+.sidebar-footer-link {
+  border: 1px solid transparent;
+  border-radius: 18px;
+  color: var(--care-text);
+}
+
+.app-shell--desktop .sidebar nav a.is-active,
+.app-shell--desktop .sidebar nav a:hover,
+.sidebar-nav-item.is-active,
+.sidebar-nav-item:hover {
+  border-color: rgba(40, 199, 176, 0.22);
+  background: linear-gradient(145deg, #f4fffc 0%, var(--care-mint-soft) 100%);
+  color: var(--care-mint-deep) !important;
+  box-shadow: 8px 8px 18px rgba(40, 199, 176, 0.13), -6px -6px 16px rgba(255, 255, 255, 0.88) !important;
+}
+
+.sidebar-footer-link:hover {
+  border-color: rgba(40, 199, 176, 0.2);
+  background: var(--care-mint-soft);
+}
+
+.sidebar-footer-link:hover .settings-symbol--gear,
+.settings-symbol--gear:hover {
+  background: var(--care-mint-deep);
+}
+
+.dashboard-home-card,
+.dashboard-info-card,
+.device-list-card,
+.device-detail-card,
+.device-detail-model-viewer,
+.measurement-summary dl > div,
+.measurement-event-list li p,
+.three-view-stage,
+.three-view-container,
+.appliance-noise-card,
+.basic-report-page .report-appliance-card,
+.basic-report-page .report-overview-panel,
+.basic-report-page .report-detail-card,
+.basic-report-page .report-summary-block,
+.basic-report-page .report-ranking-block,
+.basic-report-page .report-caution-box,
+.account-card,
+.login-card {
+  border: 1px solid rgba(223, 238, 234, 0.86) !important;
+  border-radius: var(--pp-card-radius) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  box-shadow: var(--care-shadow), var(--care-inset) !important;
+}
+
+.dashboard-home-card:hover,
+.device-list-card:hover,
+.appliance-noise-card:hover,
+.basic-report-page .report-appliance-card:hover,
+.basic-report-page .report-detail-card:hover {
+  border-color: rgba(40, 199, 176, 0.22) !important;
+  background: linear-gradient(145deg, #ffffff 0%, #f5fffc 100%) !important;
+  box-shadow: 20px 20px 48px rgba(111, 137, 132, 0.16), -12px -12px 30px rgba(255, 255, 255, 0.9), var(--care-inset) !important;
+}
+
+.dashboard-home-card:hover {
+  transform: translateY(-2px);
+}
+
+.dashboard-home-card .dashboard-sync,
+.dashboard-summary-column > .dashboard-climate-card strong,
+.dashboard-summary-column > .dashboard-noise-card p,
+.report-metric-box,
+.reaction-pill,
+.donut-legend p,
+.gpt-report-note,
+.device-filter-trigger,
+.device-filter-bar input,
+.device-warning-banner button,
+.device-recommendation-card button,
+.related-events-button {
+  border: 1px solid rgba(223, 238, 234, 0.82) !important;
+  border-radius: 18px !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  box-shadow: 7px 7px 16px rgba(111, 137, 132, 0.09), -5px -5px 14px rgba(255, 255, 255, 0.86), var(--care-inset) !important;
+}
+
+.dashboard-summary-column > .dashboard-climate-card strong:first-of-type,
+.dashboard-summary-column > .dashboard-noise-card p,
+.reaction-pill--positive,
+.report-metric-box--soft,
+.basic-report-page .report-appliance-card .report-metric-box--soft,
+.device-status-badge.is-stable,
+.measurement-summary dl > div.measurement-status--stable {
+  border-color: rgba(47, 143, 91, 0.16) !important;
+  background: linear-gradient(145deg, #f6fffa, var(--care-stable-soft)) !important;
+  color: var(--care-stable) !important;
+}
+
+.dashboard-summary-column > .dashboard-climate-card strong:last-of-type {
+  border-color: rgba(90, 169, 230, 0.15) !important;
+  background: linear-gradient(145deg, #ffffff, var(--care-blue-soft)) !important;
+}
+
+.reaction-pill--negative,
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft),
+.device-status-badge.is-warning,
+.measurement-summary dl > div.measurement-status--warning {
+  border-color: rgba(185, 84, 100, 0.16) !important;
+  background: linear-gradient(145deg, #fffafa, var(--care-warning-soft)) !important;
+  color: var(--care-warning) !important;
+}
+
+.device-status-badge.is-connection,
+.measurement-summary dl > div.measurement-status--connection,
+.basic-report-page .donut-legend p:nth-of-type(2),
+.basic-report-page .donut-legend small {
+  border-color: rgba(75, 85, 99, 0.12) !important;
+  background: linear-gradient(145deg, #ffffff, var(--care-neutral-soft)) !important;
+  color: var(--care-neutral) !important;
+}
+
+.dashboard-report-button,
+.device-list-page .device-add-button,
+.basic-report-page .report-period-button,
+.basic-report-page #generate-gpt-report {
+  border: 1px solid rgba(20, 154, 136, 0.2) !important;
+  border-radius: 999px !important;
+  background: linear-gradient(145deg, #32d8c2 0%, var(--care-mint) 45%, var(--care-mint-deep) 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 10px 12px 26px rgba(20, 154, 136, 0.24), -6px -6px 16px rgba(255, 255, 255, 0.74), inset 0 1px 1px rgba(255, 255, 255, 0.38) !important;
+}
+
+.dashboard-report-button:hover,
+.device-list-page .device-add-button:hover,
+.basic-report-page .report-period-button:hover,
+.basic-report-page #generate-gpt-report:hover {
+  background: linear-gradient(145deg, #2bcab6 0%, var(--care-mint-deep) 100%) !important;
+  box-shadow: 12px 16px 30px rgba(20, 154, 136, 0.28), -6px -6px 18px rgba(255, 255, 255, 0.76), inset 0 1px 1px rgba(255, 255, 255, 0.35) !important;
+}
+
+.device-list-page .device-filter-bar {
+  border: 1px solid rgba(223, 238, 234, 0.88) !important;
+  border-radius: 24px !important;
+  background: rgba(255, 255, 255, 0.82) !important;
+  box-shadow: var(--care-shadow-soft), var(--care-inset) !important;
+}
+
+.device-list-page .device-filter-trigger,
+.device-list-page .device-filter-bar input,
+.device-list-page .device-filter-menu,
+.report-period-menu {
+  background: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 8px 8px 18px rgba(111, 137, 132, 0.1), -6px -6px 16px rgba(255, 255, 255, 0.88), var(--care-inset) !important;
+}
+
+.device-list-page .device-filter-menu,
+.report-period-menu {
+  border: 1px solid rgba(40, 199, 176, 0.22) !important;
+  border-radius: 18px !important;
+}
+
+.device-list-page .device-filter-menu button:hover,
+.report-period-menu button:hover {
+  background: var(--care-mint-soft) !important;
+  color: var(--care-mint-deep) !important;
+}
+
+.device-warning-banner {
+  border-color: rgba(242, 169, 107, 0.28) !important;
+  background: linear-gradient(145deg, #fffdfb 0%, var(--care-caution-soft) 100%) !important;
+}
+
+.device-warning-banner button {
+  color: var(--care-mint-deep) !important;
+}
+
+.device-warning-dot {
+  background: var(--care-warning) !important;
+}
+
+@keyframes pp-pulse {
+  0%, 100% { box-shadow: 0 0 0 6px rgba(185, 84, 100, 0.18); }
+  50% { box-shadow: 0 0 0 11px rgba(185, 84, 100, 0.08); }
+}
+
+.device-list-picture,
+.device-picture-slot,
+.appliance-picture-slot,
+.detail-card-icon,
+.dashboard-summary-column > .dashboard-report-shortcut h2::before {
+  border: 1px solid rgba(40, 199, 176, 0.14) !important;
+  background: linear-gradient(145deg, #ffffff 0%, var(--care-mint-soft) 100%) !important;
+  box-shadow: inset 2px 2px 8px rgba(111, 137, 132, 0.08), inset -3px -3px 10px rgba(255, 255, 255, 0.92) !important;
+}
+
+.device-list-card:hover .device-detail-icon {
+  background: var(--care-mint) !important;
+  color: #ffffff !important;
+  box-shadow: 7px 8px 16px rgba(20, 154, 136, 0.22), -4px -4px 12px rgba(255, 255, 255, 0.88) !important;
+}
+
+.dashboard-progress,
+.reaction-split-bar,
+.ranking-bar {
+  background: #e3ece9 !important;
+  box-shadow: inset 2px 2px 5px rgba(111, 137, 132, 0.1), inset -2px -2px 6px rgba(255, 255, 255, 0.72) !important;
+}
+
+.dashboard-progress span,
+.reaction-split-bar__positive,
+.ranking-bar--danger span {
+  background: linear-gradient(90deg, var(--care-mint), var(--care-blue)) !important;
+}
+
+.reaction-split-bar__negative {
+  background: var(--care-warning) !important;
+}
+
+.ranking-bar--orange span {
+  background: linear-gradient(90deg, var(--care-blue), var(--care-lavender)) !important;
+}
+
+.ranking-bar--yellow span {
+  background: linear-gradient(90deg, var(--care-caution), var(--care-lavender)) !important;
+}
+
+.basic-report-page .report-summary-block::after,
+.basic-report-page .report-ranking-block::after,
+.basic-report-page .report-caution-box::after {
+  opacity: 0.9;
+}
+
+.basic-report-page .donut-chart {
+  box-shadow: 10px 12px 24px rgba(111, 137, 132, 0.12), -7px -7px 18px rgba(255, 255, 255, 0.86), inset 0 0 0 14px rgba(255, 255, 255, 0.9) !important;
+}
+
+.basic-report-page .donut-chart strong {
+  color: var(--care-mint-dark) !important;
+}
+
+.basic-report-page .gpt-report-card .detail-card-icon,
+.basic-report-page .low-noise-detail-card .detail-card-icon {
+  background: linear-gradient(145deg, #ffffff 0%, var(--care-mint-soft) 100%) !important;
+}
+
+.device-detail-page .measurement-summary strong,
+.device-detail-page .measurement-summary dd,
+.report-metric-box strong,
+.donut-legend p b {
+  color: var(--care-text) !important;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box--soft strong,
+.basic-report-page .report-appliance-card .report-metric-box--soft span,
+.reaction-pill--positive {
+  color: var(--care-stable) !important;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) strong,
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) span,
+.reaction-pill--negative {
+  color: var(--care-warning) !important;
+}
+
+input:focus-visible,
+button:focus-visible,
+a:focus-visible,
+.dashboard-home-card:focus-visible,
+.device-list-card:focus-visible,
+.device-detail-back:focus-visible {
+  box-shadow: var(--pp-ring), var(--care-shadow-soft) !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(40, 199, 176, 0.32);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(20, 154, 136, 0.48);
+  background-clip: padding-box;
+}
+
+/* --- Direction correction: neutral gray canvas + premium teal accents --- */
+:root {
+  --pp-pink: #3fb8af;
+  --pp-pink-soft: #e9f7f5;
+  --pp-ring: 0 0 0 4px rgba(63, 184, 175, 0.24);
+
+  --care-mint: #3fb8af;
+  --care-mint-deep: #247f79;
+  --care-mint-dark: #126862;
+  --care-mint-soft: #e9f7f5;
+  --care-bg: #f3f4f6;
+  --care-bg-strong: #f3f4f6;
+  --care-border: #dfe7e6;
+  --care-border-strong: #c9dfdc;
+  --care-shadow: 18px 18px 42px rgba(35, 56, 59, 0.12), -12px -12px 28px rgba(255, 255, 255, 0.86);
+  --care-shadow-soft: 10px 10px 24px rgba(35, 56, 59, 0.1), -7px -7px 18px rgba(255, 255, 255, 0.84);
+  --care-inset: inset 1px 1px 1px rgba(255, 255, 255, 0.92), inset -1px -1px 1px rgba(83, 122, 125, 0.14);
+}
+
+body,
+.app-shell--desktop,
+.thinq-dashboard-page,
+.device-list-page,
+.device-detail-page,
+.basic-report-page,
+.three-view-page {
+  background: #f3f4f6 !important;
+}
+
+.app-shell--desktop .sidebar h1 {
+  color: var(--care-mint-deep);
+  -webkit-text-fill-color: var(--care-mint-deep);
+}
+
+.app-shell--desktop .sidebar nav a.is-active,
+.app-shell--desktop .sidebar nav a:hover,
+.sidebar-nav-item.is-active,
+.sidebar-nav-item:hover {
+  border-color: rgba(63, 184, 175, 0.28) !important;
+  background: linear-gradient(145deg, #f7fffd 0%, #e9f7f5 100%) !important;
+  color: var(--care-mint-deep) !important;
+  box-shadow:
+    9px 10px 22px rgba(63, 184, 175, 0.16),
+    -7px -7px 18px rgba(255, 255, 255, 0.9),
+    inset -3px 0 0 var(--care-mint) !important;
+}
+
+.sidebar-footer-link:hover,
+.device-list-page .device-filter-menu button:hover,
+.report-period-menu button:hover {
+  background: #e9f7f5 !important;
+  color: var(--care-mint-deep) !important;
+}
+
+.dashboard-home-card,
+.dashboard-info-card,
+.device-list-card,
+.device-detail-card,
+.device-detail-model-viewer,
+.measurement-summary dl > div,
+.measurement-event-list li p,
+.three-view-stage,
+.three-view-container,
+.appliance-noise-card,
+.basic-report-page .report-appliance-card,
+.basic-report-page .report-overview-panel,
+.basic-report-page .report-detail-card,
+.basic-report-page .report-summary-block,
+.basic-report-page .report-ranking-block,
+.basic-report-page .report-caution-box,
+.account-card,
+.login-card {
+  border-color: rgba(201, 223, 220, 0.82) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: var(--care-shadow), var(--care-inset) !important;
+}
+
+.dashboard-home-card:hover,
+.device-list-card:hover,
+.appliance-noise-card:hover,
+.basic-report-page .report-appliance-card:hover,
+.basic-report-page .report-detail-card:hover {
+  border-color: rgba(63, 184, 175, 0.28) !important;
+  background: linear-gradient(145deg, #ffffff 0%, #f7fffd 100%) !important;
+  box-shadow:
+    20px 20px 48px rgba(35, 56, 59, 0.14),
+    -12px -12px 30px rgba(255, 255, 255, 0.9),
+    var(--care-inset) !important;
+}
+
+.dashboard-report-button,
+.device-list-page .device-add-button,
+.basic-report-page .report-period-button,
+.basic-report-page #generate-gpt-report {
+  border-color: rgba(36, 127, 121, 0.24) !important;
+  background: linear-gradient(145deg, #58d2ca 0%, #3fb8af 46%, #247f79 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    10px 12px 26px rgba(36, 127, 121, 0.25),
+    -6px -6px 16px rgba(255, 255, 255, 0.74),
+    inset 0 1px 1px rgba(255, 255, 255, 0.38) !important;
+}
+
+.dashboard-report-button:hover,
+.device-list-page .device-add-button:hover,
+.basic-report-page .report-period-button:hover,
+.basic-report-page #generate-gpt-report:hover {
+  background: linear-gradient(145deg, #4bc7bf 0%, #247f79 100%) !important;
+  box-shadow:
+    12px 16px 30px rgba(36, 127, 121, 0.3),
+    -6px -6px 18px rgba(255, 255, 255, 0.76),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35) !important;
+}
+
+.device-list-page .device-filter-bar {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(201, 223, 220, 0.9) !important;
+}
+
+.device-list-page .device-filter-trigger,
+.device-list-page .device-filter-bar input,
+.device-list-page .device-filter-menu,
+.report-period-menu {
+  border-color: rgba(201, 223, 220, 0.88) !important;
+  background: #ffffff !important;
+  box-shadow:
+    9px 9px 20px rgba(35, 56, 59, 0.1),
+    -7px -7px 18px rgba(255, 255, 255, 0.9),
+    var(--care-inset) !important;
+}
+
+.device-list-page .device-filter-menu,
+.report-period-menu {
+  border-color: rgba(63, 184, 175, 0.28) !important;
+}
+
+.device-list-card:hover .device-detail-icon,
+.dashboard-progress span,
+.reaction-split-bar__positive,
+.ranking-bar--danger span {
+  background: linear-gradient(90deg, #3fb8af, #5aa9e6) !important;
+}
+
+.device-list-card:hover .device-detail-icon {
+  background: #3fb8af !important;
+  color: #ffffff !important;
+}
+
+.device-list-picture,
+.device-picture-slot,
+.appliance-picture-slot,
+.detail-card-icon,
+.dashboard-summary-column > .dashboard-report-shortcut h2::before,
+.basic-report-page .gpt-report-card .detail-card-icon,
+.basic-report-page .low-noise-detail-card .detail-card-icon {
+  border-color: rgba(63, 184, 175, 0.18) !important;
+  background: linear-gradient(145deg, #ffffff 0%, #edf8f6 100%) !important;
+}
+
+.basic-report-page .donut-chart {
+  background: conic-gradient(#3fb8af 0 58%, #4b5563 58% 100%) !important;
+}
+
+.basic-report-page .donut-chart strong {
+  color: #126862 !important;
+}
+
+.basic-report-page .legend-dot--red,
+.basic-report-page .gpt-report-note span {
+  background: #3fb8af !important;
+}
+
+.basic-report-page .donut-legend p:first-of-type {
+  border-color: rgba(63, 184, 175, 0.18) !important;
+  background: #e9f7f5 !important;
+}
+
+.basic-report-page .donut-legend p:first-of-type strong,
+.basic-report-page .donut-legend p:first-of-type b {
+  color: #247f79 !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(63, 184, 175, 0.36);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(36, 127, 121, 0.52);
+  background-clip: padding-box;
+}
+
+/* ============================================================
+   Functional neumorphism: light gray surfaces + teal product accent.
+   This intentionally mirrors the reference mood while preserving all
+   existing layout, data, and behavior.
+   ============================================================ */
+
+:root {
+  --neo-bg: #f3f4f6;
+  --neo-surface: #f3f4f6;
+  --neo-surface-soft: #f7f8f9;
+  --neo-text: #1f2933;
+  --neo-muted: #6f7b86;
+  --neo-accent: #3fb8af;
+  --neo-accent-deep: #247f79;
+  --neo-accent-soft: #e6f7f5;
+  --neo-danger: #d83b4c;
+  --neo-danger-soft: #fff1f3;
+  --neo-stable: #2f8f5b;
+  --neo-stable-soft: #eaf7f0;
+  --neo-warning: #b95464;
+  --neo-warning-soft: #fbecef;
+  --neo-raised:
+    12px 12px 26px rgba(35, 48, 54, 0.14),
+    -10px -10px 24px rgba(255, 255, 255, 0.92);
+  --neo-raised-strong:
+    18px 18px 38px rgba(35, 48, 54, 0.18),
+    -14px -14px 30px rgba(255, 255, 255, 0.96);
+  --neo-inset:
+    inset 7px 7px 14px rgba(35, 48, 54, 0.1),
+    inset -7px -7px 14px rgba(255, 255, 255, 0.92);
+  --neo-inset-soft:
+    inset 4px 4px 9px rgba(35, 48, 54, 0.08),
+    inset -4px -4px 9px rgba(255, 255, 255, 0.9);
+}
+
+body,
+.app-shell--desktop,
+.thinq-dashboard-page,
+.device-list-page,
+.device-detail-page,
+.basic-report-page,
+.three-view-page {
+  background: var(--neo-bg) !important;
+  color: var(--neo-text) !important;
+}
+
+.app-shell--desktop .sidebar {
+  border: 0 !important;
+  border-radius: 26px !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised-strong) !important;
+}
+
+.app-shell--desktop .sidebar h1 {
+  color: var(--neo-accent-deep) !important;
+  -webkit-text-fill-color: var(--neo-accent-deep) !important;
+}
+
+.app-shell--desktop .sidebar nav a,
+.sidebar-nav-item,
+.sidebar-footer-link {
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: var(--neo-surface) !important;
+  color: var(--neo-text) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.app-shell--desktop .sidebar nav a.is-active,
+.app-shell--desktop .sidebar nav a:hover,
+.sidebar-nav-item.is-active,
+.sidebar-nav-item:hover,
+.sidebar-footer-link:hover {
+  background: var(--neo-accent-soft) !important;
+  color: var(--neo-accent-deep) !important;
+  box-shadow:
+    var(--neo-raised),
+    inset -3px 0 0 var(--neo-accent) !important;
+}
+
+.settings-symbol--gear {
+  background: var(--neo-muted) !important;
+}
+
+.sidebar-footer-link:hover .settings-symbol--gear {
+  background: var(--neo-accent) !important;
+}
+
+.dashboard-household-header h1,
+.device-list-header h1,
+.basic-report-header h1,
+.reaction-history-header h1,
+.gpt-detail-header h1,
+.settings-page-header h1,
+.profile-page-header h1,
+.system-page-header h1,
+.page-header h1,
+.three-view-stage h2,
+.three-view-desktop-title {
+  color: var(--neo-text) !important;
+  font-weight: 800 !important;
+}
+
+.dashboard-household-header p,
+.device-list-heading p,
+.basic-report-header p,
+.device-detail-title-group p,
+.three-view-mobile-source,
+.appliance-noise-card p,
+.gpt-report-card p,
+.gpt-report-note,
+.donut-legend small {
+  color: var(--neo-muted) !important;
+}
+
+.dashboard-home-card,
+.dashboard-info-card,
+.device-list-card,
+.device-detail-card,
+.device-detail-model-viewer,
+.measurement-summary dl > div,
+.measurement-event-list li p,
+.three-view-stage,
+.three-view-container,
+.appliance-noise-card,
+.basic-report-page .report-appliance-card,
+.basic-report-page .report-overview-panel,
+.basic-report-page .report-detail-card,
+.basic-report-page .report-summary-block,
+.basic-report-page .report-ranking-block,
+.basic-report-page .report-caution-box,
+.account-card,
+.login-card {
+  border: 0 !important;
+  border-radius: 18px !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.dashboard-home-card:hover,
+.device-list-card:hover,
+.appliance-noise-card:hover,
+.basic-report-page .report-appliance-card:hover,
+.basic-report-page .report-detail-card:hover {
+  background: var(--neo-surface-soft) !important;
+  box-shadow: var(--neo-raised-strong) !important;
+  transform: translateY(-2px);
+}
+
+.device-list-page .device-filter-bar {
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-list-page .device-filter-trigger,
+.device-list-page .device-filter-bar input,
+.report-period-menu,
+.device-list-page .device-filter-menu {
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: var(--neo-surface) !important;
+  color: var(--neo-text) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-list-page .device-filter-bar input {
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.device-list-page .device-filter-trigger:hover,
+.device-list-page .device-filter-bar input:hover,
+.device-list-page .device-filter-bar input:focus,
+.device-list-page .device-filter-bar input:focus-visible {
+  color: var(--neo-accent-deep) !important;
+  box-shadow:
+    var(--neo-inset-soft),
+    0 0 0 2px rgba(63, 184, 175, 0.16) !important;
+}
+
+.device-list-page .device-filter-menu button,
+.report-period-menu button {
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: var(--neo-text) !important;
+}
+
+.device-list-page .device-filter-menu button:hover,
+.report-period-menu button:hover {
+  background: rgba(63, 184, 175, 0.14) !important;
+  color: var(--neo-accent-deep) !important;
+}
+
+.dashboard-report-button,
+.device-list-page .device-add-button,
+.basic-report-page .report-period-button,
+.basic-report-page #generate-gpt-report {
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: linear-gradient(145deg, #48c4bc 0%, var(--neo-accent) 56%, var(--neo-accent-deep) 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    8px 8px 18px rgba(35, 48, 54, 0.2),
+    -7px -7px 18px rgba(255, 255, 255, 0.88),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+}
+
+.dashboard-report-button:hover,
+.device-list-page .device-add-button:hover,
+.basic-report-page .report-period-button:hover,
+.basic-report-page #generate-gpt-report:hover {
+  background: linear-gradient(145deg, #55d1c8 0%, var(--neo-accent) 42%, #126862 100%) !important;
+  box-shadow:
+    10px 12px 24px rgba(35, 48, 54, 0.22),
+    -7px -7px 18px rgba(255, 255, 255, 0.9),
+    0 0 0 3px rgba(63, 184, 175, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34) !important;
+}
+
+.dashboard-home-card .dashboard-sync,
+.dashboard-summary-column > .dashboard-climate-card strong,
+.dashboard-summary-column > .dashboard-noise-card p,
+.report-metric-box,
+.reaction-pill,
+.donut-legend p,
+.gpt-report-note,
+.device-warning-banner button,
+.device-recommendation-card button,
+.related-events-button {
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.device-list-picture,
+.device-picture-slot,
+.appliance-picture-slot,
+.detail-card-icon,
+.dashboard-summary-column > .dashboard-report-shortcut h2::before,
+.basic-report-page .gpt-report-card .detail-card-icon,
+.basic-report-page .low-noise-detail-card .detail-card-icon {
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.device-list-card:hover .device-detail-icon {
+  background: var(--neo-accent) !important;
+  color: #ffffff !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-status-badge,
+.dashboard-summary-column > .dashboard-noise-card p {
+  border: 0 !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.device-status-badge.is-stable,
+.dashboard-summary-column > .dashboard-noise-card p,
+.reaction-pill--positive,
+.basic-report-page .report-appliance-card .report-metric-box--soft,
+.measurement-summary dl > div.measurement-status--stable {
+  background: var(--neo-stable-soft) !important;
+  color: var(--neo-stable) !important;
+}
+
+.device-status-badge.is-warning,
+.reaction-pill--negative,
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft),
+.measurement-summary dl > div.measurement-status--warning {
+  background: var(--neo-warning-soft) !important;
+  color: var(--neo-warning) !important;
+}
+
+.device-status-badge.is-connection,
+.measurement-summary dl > div.measurement-status--connection,
+.basic-report-page .donut-legend p:nth-of-type(2),
+.basic-report-page .donut-legend small {
+  background: #eceff1 !important;
+  color: #4b5563 !important;
+}
+
+.device-warning-banner {
+  border: 1px solid rgba(216, 59, 76, 0.18) !important;
+  background: #fff4f5 !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-warning-dot {
+  background: var(--neo-danger) !important;
+}
+
+@keyframes pp-pulse {
+  0%, 100% { box-shadow: 0 0 0 8px rgba(216, 59, 76, 0.15); }
+  50% { box-shadow: 0 0 0 13px rgba(216, 59, 76, 0.06); }
+}
+
+.dashboard-progress,
+.reaction-split-bar,
+.ranking-bar {
+  background: #dfe5e7 !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.dashboard-progress span,
+.reaction-split-bar__positive,
+.ranking-bar--danger span,
+.legend-dot--red,
+.gpt-report-note span {
+  background: var(--neo-accent) !important;
+}
+
+.ranking-bar--orange span {
+  background: linear-gradient(90deg, #5aa9e6, #9b8afb) !important;
+}
+
+.ranking-bar--yellow span {
+  background: linear-gradient(90deg, #f2a96b, #9b8afb) !important;
+}
+
+.reaction-split-bar__negative {
+  background: var(--neo-warning) !important;
+}
+
+.basic-report-page .donut-chart {
+  background: conic-gradient(var(--neo-accent) 0 58%, #4b5563 58% 100%) !important;
+  box-shadow: var(--neo-inset) !important;
+}
+
+.basic-report-page .donut-chart strong {
+  color: #126862 !important;
+}
+
+.basic-report-page .donut-legend p:first-of-type {
+  background: var(--neo-accent-soft) !important;
+  color: var(--neo-accent-deep) !important;
+}
+
+.basic-report-page .donut-legend p:nth-of-type(2) {
+  background: #eceff1 !important;
+}
+
+input:focus-visible,
+button:focus-visible,
+a:focus-visible,
+.dashboard-home-card:focus-visible,
+.device-list-card:focus-visible,
+.device-detail-back:focus-visible {
+  box-shadow:
+    0 0 0 4px rgba(63, 184, 175, 0.2),
+    var(--neo-raised) !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(63, 184, 175, 0.34);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(36, 127, 121, 0.5);
+  background-clip: padding-box;
+}
+
+/* --- Reference-matched neumorphism strength pass --- */
+:root {
+  --neo-bg: #eef3f4;
+  --neo-surface: #eef3f4;
+  --neo-surface-soft: #f1f5f6;
+  --neo-text: #1f2933;
+  --neo-muted: #697783;
+  --neo-accent: #3fb8af;
+  --neo-accent-deep: #247f79;
+  --neo-danger: #cf2f49;
+  --neo-danger-soft: #fff1f4;
+  --neo-raised:
+    9px 9px 18px rgba(134, 146, 150, 0.42),
+    -9px -9px 18px rgba(255, 255, 255, 0.96);
+  --neo-raised-strong:
+    13px 13px 24px rgba(122, 135, 140, 0.48),
+    -11px -11px 22px rgba(255, 255, 255, 0.98);
+  --neo-inset:
+    inset 7px 7px 13px rgba(134, 146, 150, 0.3),
+    inset -7px -7px 13px rgba(255, 255, 255, 0.98);
+  --neo-inset-soft:
+    inset 5px 5px 10px rgba(134, 146, 150, 0.24),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.96);
+}
+
+body,
+.app-shell--desktop,
+.thinq-dashboard-page,
+.device-list-page,
+.device-detail-page,
+.basic-report-page,
+.three-view-page {
+  background: var(--neo-bg) !important;
+}
+
+.app-shell--desktop .sidebar {
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised-strong) !important;
+}
+
+.app-shell--desktop .sidebar nav a,
+.sidebar-nav-item,
+.sidebar-footer-link,
+.dashboard-home-card,
+.dashboard-info-card,
+.device-list-card,
+.device-detail-card,
+.device-detail-model-viewer,
+.measurement-summary dl > div,
+.measurement-event-list li p,
+.three-view-stage,
+.three-view-container,
+.appliance-noise-card,
+.basic-report-page .report-appliance-card,
+.basic-report-page .report-overview-panel,
+.basic-report-page .report-detail-card,
+.basic-report-page .report-summary-block,
+.basic-report-page .report-ranking-block,
+.basic-report-page .report-caution-box,
+.account-card,
+.login-card {
+  border: 0 !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.dashboard-home-card,
+.dashboard-info-card,
+.device-list-card,
+.device-detail-card,
+.device-detail-model-viewer,
+.three-view-stage,
+.three-view-container,
+.appliance-noise-card,
+.basic-report-page .report-appliance-card,
+.basic-report-page .report-overview-panel,
+.basic-report-page .report-detail-card {
+  border-radius: 12px !important;
+}
+
+.app-shell--desktop .sidebar nav a.is-active,
+.app-shell--desktop .sidebar nav a:hover,
+.sidebar-nav-item.is-active,
+.sidebar-nav-item:hover {
+  background: #e0f2f0 !important;
+  color: var(--neo-accent-deep) !important;
+  box-shadow: var(--neo-raised), inset -3px 0 0 var(--neo-accent) !important;
+}
+
+.dashboard-home-card:hover,
+.device-list-card:hover,
+.appliance-noise-card:hover,
+.basic-report-page .report-appliance-card:hover,
+.basic-report-page .report-detail-card:hover {
+  background: var(--neo-surface-soft) !important;
+  box-shadow: var(--neo-raised-strong) !important;
+  transform: translateY(-2px);
+}
+
+.device-list-page .device-filter-bar {
+  border: 0 !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-list-page .device-filter-trigger,
+.report-period-menu,
+.device-list-page .device-filter-menu {
+  border: 0 !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-list-page .device-filter-bar input {
+  border: 0 !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-inset) !important;
+}
+
+.device-list-page .device-filter-trigger:hover,
+.device-list-page .device-filter-bar input:hover,
+.device-list-page .device-filter-bar input:focus,
+.device-list-page .device-filter-bar input:focus-visible {
+  color: var(--neo-accent-deep) !important;
+  box-shadow: var(--neo-inset), 0 0 0 2px rgba(63, 184, 175, 0.18) !important;
+}
+
+.dashboard-report-button,
+.device-list-page .device-add-button,
+.basic-report-page .report-period-button,
+.basic-report-page #generate-gpt-report {
+  border: 0 !important;
+  background: linear-gradient(145deg, #45c1b9, #36a9a1) !important;
+  color: #ffffff !important;
+  box-shadow:
+    8px 8px 16px rgba(108, 121, 126, 0.42),
+    -7px -7px 15px rgba(255, 255, 255, 0.95) !important;
+}
+
+.dashboard-report-button:hover,
+.device-list-page .device-add-button:hover,
+.basic-report-page .report-period-button:hover,
+.basic-report-page #generate-gpt-report:hover {
+  background: linear-gradient(145deg, #4dccc4, #247f79) !important;
+  box-shadow:
+    10px 10px 20px rgba(94, 108, 113, 0.48),
+    -8px -8px 17px rgba(255, 255, 255, 0.98) !important;
+}
+
+.dashboard-home-card .dashboard-sync,
+.dashboard-summary-column > .dashboard-climate-card strong,
+.dashboard-summary-column > .dashboard-noise-card p,
+.report-metric-box,
+.reaction-pill,
+.donut-legend p,
+.gpt-report-note,
+.device-warning-banner button,
+.device-recommendation-card button,
+.related-events-button {
+  border: 0 !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.device-list-picture,
+.device-picture-slot,
+.appliance-picture-slot,
+.detail-card-icon,
+.dashboard-summary-column > .dashboard-report-shortcut h2::before,
+.basic-report-page .gpt-report-card .detail-card-icon,
+.basic-report-page .low-noise-detail-card .detail-card-icon {
+  border: 0 !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-inset) !important;
+}
+
+.device-list-card:hover .device-detail-icon {
+  background: var(--neo-accent) !important;
+  color: #ffffff !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-warning-banner {
+  border: 1px solid rgba(207, 47, 73, 0.22) !important;
+  background: #fff4f6 !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.device-warning-dot {
+  background: var(--neo-danger) !important;
+}
+
+.dashboard-progress,
+.reaction-split-bar,
+.ranking-bar {
+  background: #dde4e6 !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.dashboard-progress span,
+.reaction-split-bar__positive,
+.ranking-bar--danger span,
+.legend-dot--red,
+.gpt-report-note span {
+  background: var(--neo-accent) !important;
+}
+
+.basic-report-page .donut-chart {
+  background: conic-gradient(var(--neo-accent) 0 58%, #56616b 58% 100%) !important;
+  box-shadow: var(--neo-inset) !important;
+}
+
+.basic-report-page .donut-chart strong {
+  color: #126862 !important;
+}
+
+.basic-report-page .donut-legend p:first-of-type {
+  background: #e0f2f0 !important;
+  color: var(--neo-accent-deep) !important;
+}
+
+.basic-report-page .donut-legend p:nth-of-type(2),
+.basic-report-page .donut-legend small {
+  background: #e6ebed !important;
+  color: #4b5563 !important;
+}
+
+/* Home dashboard hero card: subtle product-grade neumorphic detail */
+.thinq-dashboard-page .dashboard-home-card h2,
+.thinq-dashboard-page .dashboard-home-scene,
+.thinq-dashboard-page .dashboard-sync {
+  position: relative;
+  z-index: 1;
+}
+
+.thinq-dashboard-page .dashboard-home-card h2 {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border-radius: 16px;
+  background: rgba(238, 243, 244, 0.82);
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.thinq-dashboard-page .dashboard-home-card h2::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--neo-accent);
+  box-shadow:
+    0 0 0 6px rgba(63, 184, 175, 0.12),
+    0 0 18px rgba(63, 184, 175, 0.42);
+}
+
+.thinq-dashboard-page .dashboard-home-card {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at 18% 18%, rgba(63, 184, 175, 0.11), transparent 30%),
+    radial-gradient(circle at 84% 78%, rgba(63, 184, 175, 0.06), transparent 34%),
+    linear-gradient(145deg, #f4f8f7 0%, #dfeaea 58%, #d5e6e4 100%) !important;
+}
+
+.thinq-dashboard-page .dashboard-sync {
+  min-height: 28px;
+  padding: 0 11px;
+  border-radius: 999px !important;
+  background: rgba(238, 243, 244, 0.82) !important;
+  color: var(--neo-accent-deep) !important;
+  font-size: 11.5px;
+  font-weight: 800;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+/* ThreeDHome main view card: match the richer Home card surface tone */
+.three-view-page .three-view-stage {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at 18% 18%, rgba(63, 184, 175, 0.1), transparent 30%),
+    radial-gradient(circle at 84% 78%, rgba(63, 184, 175, 0.055), transparent 34%),
+    linear-gradient(145deg, #f4f8f7 0%, #dfeaea 58%, #d5e6e4 100%) !important;
+}
+
+.three-view-page .three-view-container {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 48%),
+    linear-gradient(145deg, #f6faf9 0%, #e9f1f1 100%) !important;
+}
+
+/* Device cards: make hover feedback clearer while keeping the neumorphic tone */
+.device-list-page .device-list-card:hover {
+  background:
+    linear-gradient(145deg, #edf8f6 0%, #d2e7e5 100%) !important;
+}
+
+/* Device detail back button: raised neumorphic control with mint hover */
+.device-detail-page .device-detail-back {
+  display: inline-grid !important;
+  width: 46px !important;
+  height: 46px !important;
+  margin: 0 0 12px !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: var(--neo-surface) !important;
+  color: var(--neo-text) !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  box-shadow: var(--neo-raised) !important;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease !important;
+}
+
+.device-detail-page .device-detail-back:hover {
+  background: var(--neo-accent) !important;
+  color: #ffffff !important;
+  box-shadow:
+    9px 9px 18px rgba(36, 127, 121, 0.28),
+    -7px -7px 16px rgba(255, 255, 255, 0.92) !important;
+  transform: translateY(-1px);
+}
+
+/* Device detail cards: subtle accent without tinting the whole card */
+.device-detail-page .device-detail-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.device-detail-page .device-detail-card::before {
+  content: none;
+}
+
+.device-detail-page .device-detail-card h2 {
+  color: var(--neo-text) !important;
+}
+
+.device-detail-page .device-measurement-card .measurement-summary strong {
+  color: var(--neo-accent-deep) !important;
+}
+
+.device-detail-page .device-detail-model-viewer {
+  box-shadow: var(--neo-inset) !important;
+}
+
+.device-detail-page .device-recommendation-card p {
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: var(--neo-surface);
+  box-shadow: var(--neo-raised);
+}
+
+/* Report page: keep reaction meaning colors consistent, separate from mint branding */
+.basic-report-page .report-appliance-card .report-metric-box--soft,
+.basic-report-page .reaction-pill--positive {
+  background: var(--neo-stable-soft) !important;
+  color: var(--neo-stable) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box--soft strong,
+.basic-report-page .report-appliance-card .report-metric-box--soft span,
+.basic-report-page .reaction-pill--positive {
+  color: var(--neo-stable) !important;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft),
+.basic-report-page .reaction-pill--negative {
+  background: var(--neo-warning-soft) !important;
+  color: var(--neo-warning) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) strong,
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) span,
+.basic-report-page .reaction-pill--negative {
+  color: var(--neo-warning) !important;
+}
+
+.basic-report-page .reaction-split-bar__positive {
+  background: var(--neo-stable) !important;
+}
+
+.basic-report-page .reaction-split-bar__negative {
+  background: var(--neo-warning) !important;
+}
+
+/* Report low-noise donut: softer neumorphic chart surface */
+.basic-report-page .low-noise-content {
+  align-items: center;
+}
+
+.basic-report-page .donut-chart {
+  background:
+    conic-gradient(var(--neo-accent) 0 58%, #8b969d 58% 100%) !important;
+  box-shadow:
+    14px 14px 26px rgba(111, 125, 130, 0.36),
+    -12px -12px 24px rgba(255, 255, 255, 0.98),
+    inset 5px 5px 9px rgba(255, 255, 255, 0.32),
+    inset -6px -6px 12px rgba(55, 68, 74, 0.2) !important;
+}
+
+.basic-report-page .donut-chart::after {
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.98), rgba(238, 243, 244, 0.96) 58%, rgba(216, 226, 228, 0.9)) !important;
+  box-shadow:
+    inset 7px 7px 13px rgba(122, 136, 140, 0.34),
+    inset -7px -7px 13px rgba(255, 255, 255, 0.98),
+    0 2px 6px rgba(255, 255, 255, 0.6) !important;
+}
+
+.basic-report-page .donut-chart strong {
+  color: var(--neo-accent-deep) !important;
+}
+
+.basic-report-page .donut-chart span {
+  color: var(--neo-muted) !important;
+}
+
+.basic-report-page .legend-dot--red {
+  background: var(--neo-accent) !important;
+}
+
+.basic-report-page .legend-dot--gray {
+  background: #8b969d !important;
+}
+
+/* Report ranking bars: unified mint depth scale */
+.basic-report-page .ranking-bar span,
+.basic-report-page .ranking-bar--danger span,
+.basic-report-page .ranking-bar--orange span,
+.basic-report-page .ranking-bar--yellow span {
+  background:
+    linear-gradient(90deg, #82d9d1 0%, #55c8bf 52%, #3fb8af 100%) !important;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.42),
+    inset 0 -1px 2px rgba(36, 127, 121, 0.22),
+    0 2px 5px rgba(63, 184, 175, 0.22) !important;
 }
