@@ -685,13 +685,20 @@
   .report-overview-panel {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 22px;
     width: 100%;
     min-height: 0;
     margin: 16px 0 18px;
-    padding: 20px 18px 12px;
+    padding: 22px 22px 18px;
     border: 2px solid var(--apk-border);
     border-radius: var(--apk-card-radius);
+  }
+
+  /* 헤딩 / 알약줄 / 분할바(또는 순위 목록)가 서로 붙지 않도록 간격을 준다 */
+  .report-summary-block,
+  .report-ranking-block {
+    display: grid;
+    gap: 14px;
   }
 
   .report-panel-heading {
@@ -701,6 +708,13 @@
   .reaction-pill-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+  }
+
+  /* 순위 막대가 카드 우측 가장자리에 바짝 붙지 않도록 살짝 안쪽으로 */
+  .sensitivity-ranking {
+    display: grid;
+    gap: 12px;
+    padding-right: 4px;
   }
 
   .reaction-pill {
