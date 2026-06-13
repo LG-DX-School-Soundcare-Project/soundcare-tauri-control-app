@@ -1051,3 +1051,59 @@ input[type='range']::-webkit-slider-thumb {
     height: 2.6rem;
   }
 }
+
+/* ============================================================
+   설정 / 프로필 / 시스템 탭 — 분리된 버튼 → 세그먼트 컨트롤
+   (데스크탑 + 모바일 공통). 컨테이너 = 오목한 트랙,
+   세그먼트 = 동일 폭·무그림자, 활성 = 민트 thumb.
+   ============================================================ */
+.settings-category-panel,
+.profile-category-panel,
+.system-category-panel {
+  display: flex !important;
+  gap: 4px !important;
+  width: 100%;
+  max-width: 460px;
+  padding: 5px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--neu-bg) !important;
+  box-shadow: var(--neu-inset-soft) !important;
+}
+
+.settings-tab,
+.profile-category-panel .settings-tab,
+.system-category-panel .settings-tab {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 10px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--neu-muted) !important;
+  font-weight: 700 !important;
+  white-space: nowrap;
+  transition: color 160ms ease, background 160ms ease;
+}
+
+.settings-tab.is-active,
+.profile-category-panel .settings-tab.is-active,
+.system-category-panel .settings-tab.is-active {
+  background: var(--neu-accent) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 2px 6px rgba(40, 199, 176, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.28) !important;
+}
+
+.settings-tab:not(.is-active):hover,
+.profile-category-panel .settings-tab:not(.is-active):hover,
+.system-category-panel .settings-tab:not(.is-active):hover {
+  color: var(--neu-accent-strong) !important;
+  background: var(--neu-accent-soft) !important;
+}
