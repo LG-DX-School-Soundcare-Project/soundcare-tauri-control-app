@@ -59,8 +59,8 @@ export async function renderGPTDetailedReportPage() {
   return `
     <section class="page gpt-detailed-page" aria-label="GPT Detailed Report Screen">
       <header class="gpt-detail-header">
-        <a class="gpt-detail-back" href="#/reports" aria-label="Back to report">←</a>
-        <h1>GPT Detailed Report</h1>
+        <a class="gpt-detail-back" href="#/reports" aria-label="리포트로 돌아가기">←</a>
+        <h1>GPT 상세 리포트</h1>
       </header>
 
       <div class="gpt-detail-grid">

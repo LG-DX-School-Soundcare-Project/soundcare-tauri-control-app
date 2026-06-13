@@ -771,12 +771,14 @@ input[type='range']::-webkit-slider-thumb {
    crimson→#4b164c, green→#dd88cf, orange/yellow→중간톤 램프
    ============================================================ */
 :root {
-  --neu-neg: #4b164c;
-  --neu-rank2: #7c2f72;
-  --neu-rank3: #b75aa6;
-  --neu-pos: #dd88cf;
-  --neu-pos-text: #a8458f;
-  --neu-track: #e7e0e6;
+  /* mint 통일: 리포트/도넛/순위 팔레트를 보라 → 민트 계열로.
+     긍정=민트, 부정=로즈(care-warning), 순위=민트 램프, 트랙=중립 */
+  --neu-neg: #b95464;
+  --neu-rank2: #2aa897;
+  --neu-rank3: #7ad7c9;
+  --neu-pos: #28c7b0;
+  --neu-pos-text: #0f766e;
+  --neu-track: #e4efec;
 }
 
 /* 반응 픽/막대 */
@@ -792,6 +794,12 @@ input[type='range']::-webkit-slider-thumb {
 
 .reaction-split-bar__negative { background: var(--neu-neg); }
 .reaction-split-bar__positive { background: var(--neu-pos); }
+
+/* 반응 기록 표 — 반응 값 색상 (긍정=민트, 부정=로즈) */
+.reaction-cell--positive { color: var(--neu-pos-text) !important; }
+.reaction-cell--negative { color: var(--neu-neg) !important; }
+.reaction-cell--pending,
+.reaction-cell--manual { color: var(--neu-muted) !important; }
 
 /* 소음 민감 순위 막대 */
 .ranking-bar { background: var(--neu-track); }
