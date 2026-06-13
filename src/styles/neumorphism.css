@@ -1739,6 +1739,14 @@ body,
     border: 0 !important;
     padding: 0 !important;
   }
+
+  /* 외곽 패널 패딩을 없앤 대신, 카드가 된 각 섹션 블록에 자체 패딩을 줘서
+     알약/분할바/순위 막대가 카드 가장자리에 붙지 않게 한다. */
+  .basic-report-page .report-summary-block,
+  .basic-report-page .report-ranking-block,
+  .basic-report-page .report-caution-box {
+    padding: 18px 20px !important;
+  }
 }
 
 /* 데스크탑 리포트: '주요 요약' 기기 카드가 318x236으로 과도하게 커서 휑했다.
