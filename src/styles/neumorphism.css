@@ -1107,3 +1107,22 @@ input[type='range']::-webkit-slider-thumb {
   color: var(--neu-accent-strong) !important;
   background: var(--neu-accent-soft) !important;
 }
+
+/* ============================================================
+   시스템 상태 페이지 — 민트 UI
+   장식용 골드 좌측 바와 보라 그림자를 민트/중립으로, 정상 상태색을
+   민트로. 경고(앰버)/오류(빨강) 의미색은 유지(상태 가독성).
+   ============================================================ */
+.system-overall-banner::before {
+  background: linear-gradient(180deg, var(--neu-accent), var(--neu-accent-strong)) !important;
+}
+
+.system-overall-banner {
+  box-shadow: var(--neu-outset-sm) !important;
+}
+
+/* 정상/기본 상태 인디케이터 → 민트 (경고·오류 클래스는 더 높은 특이도로 유지) */
+.system-status-pill i,
+.system-progress span {
+  background: var(--neu-accent);
+}
