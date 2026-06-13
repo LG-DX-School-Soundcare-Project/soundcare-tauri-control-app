@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SoundEmitter, normalizeDecibel } from './soundEmitter.js';
 import { assetUrl, createDracoGltfLoader, disposeObject } from './loaders.js';
+import { attachModelLoadingOrb } from '../components/modelLoadingOrb.js';
 
 const MODEL_PATHS = {
   apartment: 'assets/models/house_wall/simple_apartment_walls_optimized.glb',
@@ -91,6 +92,7 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
   container.innerHTML = '';
   container.classList.add('is-loading');
   container.appendChild(renderer.domElement);
+  attachModelLoadingOrb(container);
 
   buildLighting();
   resizeRenderer();

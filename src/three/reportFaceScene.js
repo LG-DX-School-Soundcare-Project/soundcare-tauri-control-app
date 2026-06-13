@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { assetUrl, disposeObject } from './loaders.js';
+import { attachModelLoadingOrb } from '../components/modelLoadingOrb.js';
 
 const FACE_MODELS = {
   positive: {
@@ -57,6 +58,7 @@ export function createReportFaceScene(container, { mood = 'positive' } = {}) {
   container.innerHTML = '';
   container.classList.add('is-loading');
   container.appendChild(renderer.domElement);
+  attachModelLoadingOrb(container);
 
   resizeRenderer();
   const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(resizeRenderer);
