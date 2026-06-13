@@ -28,9 +28,11 @@
   --neu-outset-sm: 3px 3px 6px var(--neu-shadow-dark),
     -3px -3px 6px var(--neu-shadow-light);
   --neu-outset-lg: 14px 14px 28px #d3d3d3, -14px -14px 28px #ffffff;
-  --neu-inset: inset 5px 5px 10px var(--neu-shadow-deep),
-    inset -5px -5px 10px var(--neu-shadow-light);
-  --neu-inset-soft: inset 3px 3px 7px #d0d0d0, inset -3px -3px 7px #ffffff;
+  /* 요청: "안으로 들어간" inset 대신 "밖으로 튀어나온" outset만 사용.
+     inset 토큰을 raised(outset)로 재정의해 전반을 돌출형으로 통일한다. */
+  --neu-inset: 5px 5px 10px var(--neu-shadow-deep),
+    -5px -5px 10px var(--neu-shadow-light);
+  --neu-inset-soft: 3px 3px 7px #d0d0d0, -3px -3px 7px #ffffff;
   --neu-transition: 160ms ease;
 
   /* 기존 앱 토큰 재매핑 */
@@ -189,7 +191,7 @@ button:disabled {
 .settings-save-button:active {
   background: var(--neu-accent-strong);
   color: #ffffff;
-  box-shadow: inset 4px 4px 9px #351036, inset -4px -4px 9px #6a276c;
+  box-shadow: var(--neu-outset-sm);
 }
 
 button.secondary,
@@ -247,7 +249,7 @@ input:not([type='checkbox']):not([type='radio']):not([type='range']):focus,
 select:focus,
 textarea:focus {
   background: var(--neu-accent-soft);
-  box-shadow: inset 4px 4px 9px #d0d0d0, inset -4px -4px 9px #ffffff;
+  box-shadow: var(--neu-outset-sm);
 }
 
 input::placeholder,
@@ -914,7 +916,7 @@ input[type='range']::-webkit-slider-thumb {
 .account-card .account-info-box,
 .account-card .account-availability {
   border-radius: var(--neu-radius-xs);
-  box-shadow: inset 2px 2px 5px #d6d6d6, inset -2px -2px 5px #ffffff;
+  box-shadow: 2px 2px 5px #d6d6d6, -2px -2px 5px #ffffff;
 }
 
 .account-card .account-info-box {
@@ -1166,5 +1168,19 @@ input[type='range']::-webkit-slider-thumb {
     grid-column: 2;
     grid-row: 1;
     margin-top: 0;
+  }
+}
+
+/* 모바일: 실패/동의 팝업 모달이 화면에 거의 꽉 차 텍스트가 가장자리에 붙던
+   문제 — 폭을 줄여 좌우 여백을 확보한다(백드롭 패딩 안에 들어오도록). */
+@media (max-width: 640px) {
+  .consent-modal,
+  .device-failure-modal,
+  .server-failure-modal,
+  .gpt-consent-modal,
+  .gpt-withdraw-modal,
+  .data-delete-modal,
+  .low-confidence-modal {
+    width: min(100%, calc(100vw - 2.5rem)) !important;
   }
 }
