@@ -795,6 +795,17 @@ input[type='range']::-webkit-slider-thumb {
 .reaction-split-bar__negative { background: var(--neu-neg); }
 .reaction-split-bar__positive { background: var(--neu-pos); }
 
+/* 뒤로가기 화살표 — 폰트 글리프(←) 대신 정중앙 SVG 아이콘 */
+.back-arrow-icon {
+  display: block;
+}
+
+.device-detail-back,
+.gpt-detail-back,
+.account-back-button {
+  transform: none;
+}
+
 /* 반응 기록 표 — 반응 값 색상 (긍정=민트, 부정=로즈) */
 .reaction-cell--positive { color: var(--neu-pos-text) !important; }
 .reaction-cell--negative { color: var(--neu-neg) !important; }

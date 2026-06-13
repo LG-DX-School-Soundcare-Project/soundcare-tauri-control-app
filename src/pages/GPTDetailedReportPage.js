@@ -59,7 +59,7 @@ export async function renderGPTDetailedReportPage() {
   return `
     <section class="page gpt-detailed-page" aria-label="GPT Detailed Report Screen">
       <header class="gpt-detail-header">
-        <a class="gpt-detail-back" href="#/reports" aria-label="리포트로 돌아가기">←</a>
+        <a class="gpt-detail-back" href="#/reports" aria-label="리포트로 돌아가기"><svg class="back-arrow-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a>
         <h1>GPT 상세 리포트</h1>
       </header>
 

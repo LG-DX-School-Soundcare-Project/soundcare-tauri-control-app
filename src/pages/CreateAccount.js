@@ -33,7 +33,7 @@ export function renderCreateAccountPage() {
     <section class="account-page">
       <div class="account-window">
         <header class="account-header">
-          <a class="account-back-button" href="#/login" aria-label="로그인으로 돌아가기"><span aria-hidden="true">&larr;</span></a>
+          <a class="account-back-button" href="#/login" aria-label="로그인으로 돌아가기"><svg class="back-arrow-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a>
           <div>
             <h1>계정 생성</h1>
             <a href="#/login">로그인으로 돌아가기</a>

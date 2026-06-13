@@ -92,7 +92,7 @@ export async function renderDeviceDetailPage({ params }) {
     <section class="page device-detail-page" aria-label="기기 상세 화면">
       <header class="device-detail-topbar">
         <div class="device-detail-title-group">
-          <a class="device-detail-back" href="#/devices" aria-label="기기 목록으로 돌아가기">&larr;</a>
+          <a class="device-detail-back" href="#/devices" aria-label="기기 목록으로 돌아가기"><svg class="back-arrow-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a>
           <p>기기 &gt; ${escapeHtml(detail.title)}</p>
           <h1>${escapeHtml(detail.title)}</h1>
         </div>
