@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SoundEmitter, normalizeDecibel } from './soundEmitter.js';
 import { assetUrl, createDracoGltfLoader, disposeObject } from './loaders.js';
 import { attachModelLoadingOrb } from '../components/modelLoadingOrb.js';
+import { getCustomDevices } from '../utils/customDevicesState.js';
 
 const MODEL_PATHS = {
   apartment: 'assets/models/apartment_furnished/smart_home_apartment_furnished.glb',
@@ -10,8 +11,13 @@ const MODEL_PATHS = {
   washer: 'assets/models/wash/washing_machine_lg_drumspin_optimized.glb',
   robot: 'assets/models/robot_vaccum/robot_vacuum_lg_optimized.glb',
   dishwasher: 'assets/models/dishwasher/dishwasher.glb',
-  particle: 'assets/models/sound_wave/futuristic_sound_wave_propagation.glb'
+  particle: 'assets/models/sound_wave/futuristic_sound_wave_propagation.glb',
+  hub: 'assets/models/soundcare/soundcare.glb'
 };
+
+// LG AI 허브(soundcare.glb)를 거실 커피테이블 위에 올릴 때 테이블 가로폭 대비 허브 폭 비율.
+// 시각적으로 조정이 필요하면 이 값만 바꾸면 된다.
+const HUB_TABLE_WIDTH_RATIO = 0.5;
 
 // The furnished apartment GLB is authored in its own (large) units. Scale the
 // whole shell so its widest horizontal span maps to this many world units (≈ metres),
@@ -144,18 +150,23 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
     renderer.domElement.addEventListener('pointerup', handleTvTap);
   }
 
+  let coffeeTableNode = null;
+  let hubEnabled = false;
+
   loadScene();
   animate();
 
   async function loadScene() {
     try {
-      const [apartment, refrigerator, washer, robot, dishwasher, particle] = await Promise.all([
+      hubEnabled = getCustomDevices().some((device) => device.deviceType === 'hub');
+      const [apartment, refrigerator, washer, robot, dishwasher, particle, hub] = await Promise.all([
         loadGltf(MODEL_PATHS.apartment),
         loadGltf(MODEL_PATHS.refrigerator),
         loadGltf(MODEL_PATHS.washer),
         loadGltf(MODEL_PATHS.robot),
         loadGltf(MODEL_PATHS.dishwasher),
-        loadGltf(MODEL_PATHS.particle)
+        loadGltf(MODEL_PATHS.particle),
+        hubEnabled ? loadGltf(MODEL_PATHS.hub) : Promise.resolve(null)
       ]);
       if (disposed) return;
 
@@ -164,6 +175,9 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
       setupWasher(washer, particle, anchors);
       setupRobot(robot, particle, anchors);
       setupDishwasher(dishwasher.scene, particle, anchors);
+      if (hubEnabled && hub) {
+        setupHub(hub.scene);
+      }
       syncEmitters();
       container.classList.remove('is-loading');
     } catch (error) {
@@ -203,6 +217,14 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
         anchors.set(obj.name, obj);
       }
       if (helperPattern.test(obj.name)) {
+        obj.visible = false;
+      }
+      // LG AI 허브 배치 대상: 커피테이블은 위치 기준으로 보관하고,
+      // 허브가 추가된 경우 테이블 위 화분(living_room_coffee_table_plant)은 숨긴다.
+      if (obj.name === 'living_room_coffee_table') {
+        coffeeTableNode = obj;
+      }
+      if (hubEnabled && obj.name === 'living_room_coffee_table_plant') {
         obj.visible = false;
       }
       // The model ships KHR_lights_punctual lights; drop them so they don't fight
@@ -300,6 +322,35 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
     const emitter = createEmitter('dishwasher', particleGltf, new THREE.Vector3(0, 0, 0));
     group.add(emitter.root);
     centerEmitterOnModel(emitter, group, model);
+  }
+
+  // LG AI 허브(soundcare.glb)를 거실 커피테이블 위에 올린다. 테이블 경계를 homeRoot
+  // 로컬 좌표로 환산해 폭 비율로 스케일하고, 테이블 윗면 중앙에 얹는다.
+  function setupHub(model) {
+    if (!coffeeTableNode) return;
+    const group = createApplianceGroup('HubGroup');
+    model.name = 'HubModel';
+    prepareModel(model);
+
+    homeRoot.updateWorldMatrix(true, true);
+    coffeeTableNode.updateWorldMatrix(true, true);
+    const worldBox = new THREE.Box3().setFromObject(coffeeTableNode);
+    const localBox = new THREE.Box3().setFromPoints([
+      homeRoot.worldToLocal(worldBox.min.clone()),
+      homeRoot.worldToLocal(worldBox.max.clone())
+    ]);
+    const tableSize = localBox.getSize(new THREE.Vector3());
+    const tableCenter = localBox.getCenter(new THREE.Vector3());
+
+    const hubSize = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3());
+    const targetWidth = Math.max(0.05, Math.min(tableSize.x, tableSize.z) * HUB_TABLE_WIDTH_RATIO);
+    const scale = hubSize.x > 0 ? targetWidth / hubSize.x : 1;
+    model.scale.setScalar(scale);
+    alignToFloor(model);
+
+    group.add(model);
+    group.position.set(tableCenter.x, localBox.max.y, tableCenter.z);
+    homeRoot.add(group);
   }
 
   // Position an emitter at the bounding-box centre of its appliance model,
