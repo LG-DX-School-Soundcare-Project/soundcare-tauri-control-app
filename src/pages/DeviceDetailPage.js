@@ -28,6 +28,14 @@ const SERVICE_LABEL_MODEL = {
   refrigerator: 'refrigerator'
 };
 
+const ROOM_LABEL_KO = {
+  'Living Room': '거실',
+  Bedroom: '침실',
+  'Laundry Area': '세탁실',
+  Kitchen: '주방',
+  Study: '작업실'
+};
+
 const RECOMMENDATION = {
   robot_vacuum: '22시 이후에는 청소 예약을 피하고, 반복 소음이 감지되면 청소 시작 시간을 늦춰 보세요.',
   washing_machine: '야간에는 탈수 시간을 피하고, 반복 소음이 감지되면 세탁 예약 시간을 조정해 보세요.',
@@ -112,7 +120,7 @@ async function loadDeviceDetail(deviceId) {
     modelLabel: title,
     serviceLabel: label ?? '미지정',
     noiseLabel,
-    roomName: device?.roomName ?? '방 미지정',
+    roomName: ROOM_LABEL_KO[device?.roomName] ?? device?.roomName ?? '방 미지정',
     events,
     recommendation: (label && RECOMMENDATION[label]) || '현재 소음 데이터를 기준으로 권장 사항을 제공합니다.'
   };

@@ -8,7 +8,8 @@ function getFailureReason(device) {
 }
 
 function getAffectedDeviceName(device) {
-  return `${device.id} / ${device.room}`;
+  const name = device?.deviceName || device?.name || device?.id || '기기';
+  return device?.room ? `${name} / ${device.room}` : name;
 }
 
 export function renderDeviceConnectionFailurePopup() {

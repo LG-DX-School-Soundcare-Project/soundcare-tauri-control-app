@@ -19,6 +19,18 @@ const SERVICE_LABEL_KO = {
   background: '배경음'
 };
 
+const ROOM_LABEL_KO = {
+  'Living Room': '거실',
+  Bedroom: '침실',
+  'Laundry Area': '세탁실',
+  Kitchen: '주방',
+  Study: '작업실'
+};
+
+function roomLabel(room) {
+  return ROOM_LABEL_KO[room] ?? room ?? '방 미지정';
+}
+
 // 백엔드(DB)에서 채워지는 활성 예측/기기 카드. 하드코딩 더미는 제거되었다.
 let activePrediction = { modelLabel: 'background', confidence: 1, thresholdValue: 0.7 };
 let applianceCards = [];
@@ -39,7 +51,7 @@ async function loadThreeDHomeData() {
     thresholdValue: 0.7
   };
   activeDb = Math.round(Number(home?.decibelMax ?? home?.decibelAvg ?? 0)) || 0;
-  activeRoom = home?.roomName ?? '방 미지정';
+  activeRoom = roomLabel(home?.roomName);
 
   const devices = home?.registeredDevices ?? [];
   let runtime = null;
@@ -73,7 +85,7 @@ async function loadThreeDHomeData() {
       : null;
     return {
       name: (label && SERVICE_LABEL_KO[label]) || device.name || '기기',
-      room: device.roomName ?? '방 미지정',
+      room: roomLabel(device.roomName),
       decibel: db != null && Number.isFinite(db) ? db : '--',
       deviceId: id
     };
