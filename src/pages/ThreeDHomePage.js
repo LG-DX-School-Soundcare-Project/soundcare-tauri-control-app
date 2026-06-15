@@ -36,6 +36,17 @@ function roomLabel(room) {
   return ROOM_LABEL_KO[room] ?? room ?? '방 미지정';
 }
 
+// serviceLabel/기기명 → 3D GLB 키. 등록된 가전만 3D 홈에 보이게 할 때 사용.
+const GLB_KEY_BY_LABEL = {
+  robot_vacuum: 'robot',
+  washing_machine: 'washer',
+  dishwasher: 'dishwasher',
+  refrigerator: 'refrigerator'
+};
+
+// 계정에 등록된 가전의 GLB 키 목록(3D 홈 표시 대상). 비면 전체 표시로 두지 않고 빈 집.
+let activeApplianceKeys = [];
+
 // 백엔드(DB)에서 채워지는 활성 예측/기기 카드. 하드코딩 더미는 제거되었다.
 let activePrediction = { modelLabel: 'background', confidence: 1, thresholdValue: 0.7 };
 let applianceCards = [];
@@ -88,6 +99,15 @@ async function loadThreeDHomeData(reuseLabels = false) {
     const label = m.serviceLabel ?? m.applianceType;
     if (label && !latestByLabel.has(label)) latestByLabel.set(label, m);
   }
+
+  // 등록된 가전의 GLB 키(3D 표시 대상). label(runtime) 우선, 없으면 device.name(serviceLabel).
+  activeApplianceKeys = devices
+    .map((device) => {
+      const id = device.registeredDeviceId ?? device.id;
+      const label = labelByDevice.get(id) ?? device.name;
+      return GLB_KEY_BY_LABEL[label];
+    })
+    .filter(Boolean);
 
   applianceCards = devices.map((device) => {
     const id = device.registeredDeviceId ?? device.id;
@@ -206,6 +226,8 @@ export function mountThreeDHomePage() {
   loadThreeDHomeData()
     .then(() => {
       updateThreeDHomeDom();
+      // 등록된 가전만 3D 홈에 노출한다.
+      sceneController?.setActiveAppliances?.(activeApplianceKeys);
       maybeShowLowConfidencePopup();
       // 이후 ESP→Agent가 올리는 최신 dB를 주기적으로 폴링해 실시간 갱신한다.
       realtimeStop = startRealtimePoll(async () => {

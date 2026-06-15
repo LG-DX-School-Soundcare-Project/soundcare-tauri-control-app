@@ -190,6 +190,27 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
 
   let coffeeTableNode = null;
   let hubEnabled = false;
+  // null = 전체 표시. 배열이면 해당 가전(GLB 키)만 보이고 나머지는 숨긴다.
+  // (계정에 추가/등록된 가전만 3D 홈에 노출하기 위함)
+  let activeApplianceKeys = null;
+
+  const APPLIANCE_GROUP_BY_KEY = {
+    refrigerator: 'RefrigeratorGroup',
+    washer: 'WasherGroup',
+    robot: 'RobotVacuumGroup',
+    dishwasher: 'DishwasherGroup'
+  };
+
+  function applyActiveAppliances() {
+    if (!activeApplianceKeys) return;
+    const active = new Set(activeApplianceKeys);
+    Object.entries(APPLIANCE_GROUP_BY_KEY).forEach(([key, groupName]) => {
+      const group = applianceGroups[groupName];
+      if (group) group.visible = active.has(key);
+      const emitter = emitters[key];
+      if (emitter) emitter.setVisible(active.has(key) && particlesEnabled);
+    });
+  }
 
   loadScene();
   animate();
@@ -217,6 +238,7 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
         setupHub(hub.scene);
       }
       syncEmitters();
+      applyActiveAppliances();
       container.classList.remove('is-loading');
     } catch (error) {
       console.error(`${isDashboard ? 'Dashboard' : 'Interactive'} GLB scene failed to load.`, error);
@@ -770,6 +792,12 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
     setSoundVisualization(enabled) {
       particlesEnabled = !!enabled;
       Object.values(emitters).forEach((emitter) => emitter.setVisible(particlesEnabled));
+      applyActiveAppliances();
+    },
+    // 계정에 추가/등록된 가전(GLB 키 배열)만 보이게 한다. null이면 전체 표시.
+    setActiveAppliances(keys) {
+      activeApplianceKeys = Array.isArray(keys) ? [...keys] : null;
+      applyActiveAppliances();
     },
     dispose() {
       disposed = true;

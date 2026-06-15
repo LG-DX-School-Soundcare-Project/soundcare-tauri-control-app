@@ -11,6 +11,15 @@ let dashboardSceneMediaCleanup = null;
 let serverFailurePopupCleanup = null;
 let realtimeStop = null;
 
+// serviceLabel/기기명 → 3D GLB 키. 등록된 가전만 3D 홈에 노출한다.
+const GLB_KEY_BY_LABEL = {
+  robot_vacuum: 'robot',
+  washing_machine: 'washer',
+  dishwasher: 'dishwasher',
+  refrigerator: 'refrigerator'
+};
+let activeApplianceKeys = [];
+
 const SERVICE_LABEL_KO = {
   robot_vacuum: '로봇청소기',
   washing_machine: '세탁기',
@@ -98,6 +107,10 @@ export async function renderHomeDashboardPage() {
   });
 
   const { temperature, humidity, syncTime, noiseState, noiseProgress } = deriveDashboard(status);
+  // 등록된 가전의 GLB 키(3D 홈 표시 대상)
+  activeApplianceKeys = (status.registeredDevices ?? [])
+    .map((d) => GLB_KEY_BY_LABEL[d.name])
+    .filter(Boolean);
 
   return `
     <section class="page thinq-dashboard-page" aria-label="메인 대시보드">
@@ -195,6 +208,8 @@ export function mountHomeDashboardPage({ navigate } = {}) {
     if (!dashboardSceneController) {
       dashboardSceneController = createDashboardHomeScene(container);
     }
+    // 등록된 가전만 3D 홈에 노출한다.
+    dashboardSceneController.setActiveAppliances?.(activeApplianceKeys);
   };
 
   const mediaQuery = window.matchMedia?.('(max-width: 640px)');
