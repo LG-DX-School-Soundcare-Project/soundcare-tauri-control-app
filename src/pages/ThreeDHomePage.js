@@ -46,6 +46,8 @@ const GLB_KEY_BY_LABEL = {
 
 // 계정에 등록된 가전의 GLB 키 목록(3D 홈 표시 대상). 비면 전체 표시로 두지 않고 빈 집.
 let activeApplianceKeys = [];
+// 가전별 실시간 측정 dB(소리 GLB 크기/표시용). 값 없으면 null → 숨김.
+let applianceDbByKey = {};
 
 // 백엔드(DB)에서 채워지는 활성 예측/기기 카드. 하드코딩 더미는 제거되었다.
 let activePrediction = { modelLabel: 'background', confidence: 1, thresholdValue: 0.7 };
@@ -109,6 +111,9 @@ async function loadThreeDHomeData(reuseLabels = false) {
     })
     .filter(Boolean);
 
+  // 소리 GLB(emitter)용 가전별 실시간 dB. 값 없으면(--/stale) null → 숨김.
+  applianceDbByKey = {};
+
   applianceCards = devices.map((device) => {
     const id = device.registeredDeviceId ?? device.id;
     const label = labelByDevice.get(id);
@@ -118,6 +123,8 @@ async function loadThreeDHomeData(reuseLabels = false) {
     const db = fresh
       ? Math.round(Number(measurement.decibelMax ?? measurement.decibelAvg ?? measurement.relativeDb))
       : null;
+    const glbKey = GLB_KEY_BY_LABEL[label ?? device.name];
+    if (glbKey) applianceDbByKey[glbKey] = db != null && Number.isFinite(db) ? db : null;
     return {
       name: (label && SERVICE_LABEL_KO[label]) || device.name || '기기',
       room: roomLabel(device.roomName),
@@ -228,11 +235,14 @@ export function mountThreeDHomePage() {
       updateThreeDHomeDom();
       // 등록된 가전만 3D 홈에 노출한다.
       sceneController?.setActiveAppliances?.(activeApplianceKeys);
+      // 소리 GLB를 실시간 측정 dB에 맞춰 키우고(없으면 숨김).
+      sceneController?.setApplianceDecibels?.(applianceDbByKey);
       maybeShowLowConfidencePopup();
       // 이후 ESP→Agent가 올리는 최신 dB를 주기적으로 폴링해 실시간 갱신한다.
       realtimeStop = startRealtimePoll(async () => {
         await loadThreeDHomeData(true);
         updateThreeDHomeDom();
+        sceneController?.setApplianceDecibels?.(applianceDbByKey);
       });
     })
     .catch((error) => console.warn('[SoundCare] 3D 홈 데이터 갱신 실패', error));

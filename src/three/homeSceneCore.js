@@ -201,14 +201,31 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
     dishwasher: 'DishwasherGroup'
   };
 
+  // 가전별 실시간 측정 dB (emitter 크기/표시 제어). 값이 없으면(--) emitter를 숨긴다.
+  let applianceDbByKey = {};
+
   function applyActiveAppliances() {
-    if (!activeApplianceKeys) return;
-    const active = new Set(activeApplianceKeys);
-    Object.entries(APPLIANCE_GROUP_BY_KEY).forEach(([key, groupName]) => {
-      const group = applianceGroups[groupName];
-      if (group) group.visible = active.has(key);
+    if (activeApplianceKeys) {
+      const active = new Set(activeApplianceKeys);
+      Object.entries(APPLIANCE_GROUP_BY_KEY).forEach(([key, groupName]) => {
+        const group = applianceGroups[groupName];
+        if (group) group.visible = active.has(key);
+      });
+    }
+    applyEmitterVisibility();
+  }
+
+  // 소리 GLB(emitter)는 라이브 측정 dB가 있을 때만 표시하고, dB에 따라 크기를 키운다.
+  // dB가 없으면(ESP 비활성/-- ) 숨긴다.
+  function applyEmitterVisibility() {
+    Object.keys(applianceState).forEach((key) => {
       const emitter = emitters[key];
-      if (emitter) emitter.setVisible(active.has(key) && particlesEnabled);
+      if (!emitter) return;
+      const activeOk = !activeApplianceKeys || activeApplianceKeys.includes(key);
+      const db = applianceDbByKey[key];
+      const hasDb = typeof db === 'number' && Number.isFinite(db);
+      if (hasDb) emitter.setDecibel(db);
+      emitter.setVisible(particlesEnabled && activeOk && hasDb);
     });
   }
 
@@ -791,13 +808,18 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
     controls,
     setSoundVisualization(enabled) {
       particlesEnabled = !!enabled;
-      Object.values(emitters).forEach((emitter) => emitter.setVisible(particlesEnabled));
-      applyActiveAppliances();
+      applyEmitterVisibility();
     },
     // 계정에 추가/등록된 가전(GLB 키 배열)만 보이게 한다. null이면 전체 표시.
     setActiveAppliances(keys) {
       activeApplianceKeys = Array.isArray(keys) ? [...keys] : null;
       applyActiveAppliances();
+    },
+    // 가전별 실시간 측정 dB를 반영한다. { refrigerator: 47, washer: 63, ... }.
+    // 값이 숫자가 아니면(-- / 없음) 해당 소리 GLB는 숨긴다.
+    setApplianceDecibels(dbByKey) {
+      applianceDbByKey = dbByKey && typeof dbByKey === 'object' ? { ...dbByKey } : {};
+      applyEmitterVisibility();
     },
     dispose() {
       disposed = true;

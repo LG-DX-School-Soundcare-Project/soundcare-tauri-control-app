@@ -4,6 +4,29 @@ import { getRuntimeSettings } from '../api/deviceApi.js';
 import { mountGptDetailReportPopUp, renderGptDetailReportPopUp } from './gptDetailReportPopUp.js';
 import { createReportFaceScene } from '../three/reportFaceScene.js';
 import { escapeHtml } from '../utils/html.js';
+import { startRealtimePoll } from '../utils/realtimePoll.js';
+
+const RANKING_BAR_CLASSES = ['ranking-bar--danger', 'ranking-bar--orange', 'ranking-bar--yellow'];
+
+// 소음 민감 순위 HTML (렌더 + 실시간 갱신 공용).
+function buildRankingHtml() {
+  if (!sensitivityRanking.length) {
+    return '<span role="listitem"><span>부정 반응 데이터 없음</span></span>';
+  }
+  const maxNegative = sensitivityRanking[0]?.negative || 1;
+  return sensitivityRanking
+    .map(
+      (row, index) => `
+            <span role="listitem">
+              <span>${index + 1} ${escapeHtml(row.name)} ${row.negative}</span>
+              <span class="ranking-bar ${RANKING_BAR_CLASSES[index] ?? 'ranking-bar--yellow'}"><span style="width: ${Math.round(
+                (row.negative / maxNegative) * 100
+              )}%"></span></span>
+            </span>
+          `
+    )
+    .join('');
+}
 
 const SERVICE_LABEL_KO = {
   robot_vacuum: '로봇청소기',
@@ -73,6 +96,36 @@ const REPORT_PERIOD_OPTIONS = ['조회 기간', '최근 3일', '최근 1주', '�
 
 let faceControllers = [];
 let reportPeriodCleanup = null;
+let reportRealtimeStop = null;
+
+// 반응 수치(긍정/부정/순위/도넛)를 재렌더 없이 제자리 갱신한다. 3D 얼굴/GPT 버튼은 유지.
+function refreshReportDom() {
+  if (!document.querySelector('.basic-report-page')) return;
+  const total = reactionSummary.positive + reactionSummary.negative;
+  const posRatio = total ? Math.round((reactionSummary.positive / total) * 100) : 0;
+  const negRatio = 100 - posRatio;
+  const setText = (sel, text) => {
+    const el = document.querySelector(sel);
+    if (el) el.textContent = text;
+  };
+  setText('[data-sum-pos]', `긍정 ${reactionSummary.positive}`);
+  setText('[data-sum-neg]', `부정 ${reactionSummary.negative}`);
+  const bar = document.querySelector('[data-split-bar]');
+  if (bar) bar.style.gridTemplateColumns = `${posRatio}fr ${negRatio}fr`;
+  const ranking = document.querySelector('[data-ranking]');
+  if (ranking) ranking.innerHTML = buildRankingHtml();
+  setText('[data-donut-pct]', `${posRatio}%`);
+  setText('[data-legend-pos]', `${posRatio}% (${reactionSummary.positive}건)`);
+  setText('[data-legend-neg]', `${negRatio}% (${reactionSummary.negative}건)`);
+  setText('[data-legend-total]', `저장된 반응 총 ${total}건 기준`);
+  // 가전별 카드 +/- (개수가 같을 때만 인덱스로 제자리 갱신)
+  if (document.querySelectorAll('.report-appliance-card').length === applianceReports.length) {
+    applianceReports.forEach((d, i) => {
+      setText(`[data-card-pos="${i}"]`, d.positive);
+      setText(`[data-card-neg="${i}"]`, d.negative);
+    });
+  }
+}
 
 function reportPeriodMenu() {
   return `
@@ -118,11 +171,11 @@ function applianceCard(device, index) {
         aria-label="${escapeHtml(device.name)} 반응 기록 열기"
       >
         <span class="report-metric-box report-metric-box--soft">
-          <strong>${escapeHtml(device.positive)}</strong>
+          <strong data-card-pos="${index}">${escapeHtml(device.positive)}</strong>
           <span>긍정</span>
         </span>
         <span class="report-metric-box">
-          <strong>${escapeHtml(device.negative)}</strong>
+          <strong data-card-neg="${index}">${escapeHtml(device.negative)}</strong>
           <span>부정</span>
         </span>
       </button>
@@ -148,22 +201,7 @@ export async function renderReportPage() {
   const totalReactions = reactionSummary.positive + reactionSummary.negative;
   const positiveRatio = totalReactions ? Math.round((reactionSummary.positive / totalReactions) * 100) : 0;
   const negativeRatio = 100 - positiveRatio;
-  const maxNegative = sensitivityRanking[0]?.negative || 1;
-  const rankingBarClasses = ['ranking-bar--danger', 'ranking-bar--orange', 'ranking-bar--yellow'];
-  const rankingHtml = sensitivityRanking.length
-    ? sensitivityRanking
-        .map(
-          (row, index) => `
-            <span role="listitem">
-              <span>${index + 1} ${escapeHtml(row.name)} ${row.negative}</span>
-              <span class="ranking-bar ${rankingBarClasses[index] ?? 'ranking-bar--yellow'}"><span style="width: ${Math.round(
-                (row.negative / maxNegative) * 100
-              )}%"></span></span>
-            </span>
-          `
-        )
-        .join('')
-    : '<span role="listitem"><span>부정 반응 데이터 없음</span></span>';
+  const rankingHtml = buildRankingHtml();
   const topNegative = sensitivityRanking[0];
 
   const applianceGrid = applianceReports.length
@@ -193,10 +231,10 @@ export async function renderReportPage() {
         <span class="report-summary-block">
           <span class="report-panel-heading">반응 요약</span>
           <span class="reaction-pill-row">
-            <span class="reaction-pill reaction-pill--positive">긍정 ${reactionSummary.positive}</span>
-            <span class="reaction-pill reaction-pill--negative">부정 ${reactionSummary.negative}</span>
+            <span class="reaction-pill reaction-pill--positive" data-sum-pos>긍정 ${reactionSummary.positive}</span>
+            <span class="reaction-pill reaction-pill--negative" data-sum-neg>부정 ${reactionSummary.negative}</span>
           </span>
-          <span class="reaction-split-bar" aria-hidden="true" style="grid-template-columns: ${positiveRatio}fr ${negativeRatio}fr">
+          <span class="reaction-split-bar" data-split-bar aria-hidden="true" style="grid-template-columns: ${positiveRatio}fr ${negativeRatio}fr">
             <span class="reaction-split-bar__positive"></span>
             <span class="reaction-split-bar__negative"></span>
           </span>
@@ -204,7 +242,7 @@ export async function renderReportPage() {
 
         <span class="report-ranking-block">
           <span class="report-panel-heading">소음 민감 순위</span>
-          <span class="sensitivity-ranking" role="list">
+          <span class="sensitivity-ranking" data-ranking role="list">
             ${rankingHtml}
           </span>
         </span>
@@ -222,13 +260,13 @@ export async function renderReportPage() {
           <h2><span class="detail-card-icon" aria-hidden="true"></span>긍정 반응 비율 상세</h2>
           <div class="low-noise-content">
             <div class="donut-chart" aria-label="긍정 반응 비율 ${positiveRatio}퍼센트">
-              <strong>${positiveRatio}%</strong>
+              <strong data-donut-pct>${positiveRatio}%</strong>
               <span>긍정 비율</span>
             </div>
             <div class="donut-legend">
-              <p><span class="legend-dot legend-dot--red"></span><strong>긍정</strong><b>${positiveRatio}% (${reactionSummary.positive}건)</b></p>
-              <p><span class="legend-dot legend-dot--gray"></span><strong>부정</strong><b>${negativeRatio}% (${reactionSummary.negative}건)</b></p>
-              <small>저장된 반응 총 ${totalReactions}건 기준</small>
+              <p><span class="legend-dot legend-dot--red"></span><strong>긍정</strong><b data-legend-pos>${positiveRatio}% (${reactionSummary.positive}건)</b></p>
+              <p><span class="legend-dot legend-dot--gray"></span><strong>부정</strong><b data-legend-neg>${negativeRatio}% (${reactionSummary.negative}건)</b></p>
+              <small data-legend-total>저장된 반응 총 ${totalReactions}건 기준</small>
             </div>
           </div>
         </article>
@@ -323,9 +361,18 @@ export function mountReportPage({ navigate } = {}) {
     popupController.openPopup();
   });
 
+  // 반응(긍정/부정)이 올라오면 페이지를 나갔다 들어오지 않아도 바로 반영되게 폴링한다.
+  reportRealtimeStop = startRealtimePoll(async () => {
+    const before = JSON.stringify({ s: reactionSummary, a: applianceReports, r: sensitivityRanking });
+    await loadReportData();
+    const after = JSON.stringify({ s: reactionSummary, a: applianceReports, r: sensitivityRanking });
+    if (before !== after) refreshReportDom();
+  }, 3000);
 }
 
 export function cleanupReportPage() {
+  reportRealtimeStop?.();
+  reportRealtimeStop = null;
   faceControllers.forEach((controller) => controller.dispose?.());
   faceControllers = [];
   reportPeriodCleanup?.();
