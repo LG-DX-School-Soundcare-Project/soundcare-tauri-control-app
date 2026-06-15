@@ -2,52 +2,8 @@ import { fetchReactions } from '../api/reactions.js';
 import { escapeHtml } from '../utils/html.js';
 import { setPopupVisible } from '../utils/popup.js';
 
-let reactionRows = [
-  {
-    time: '18:49',
-    createdAt: new Date().toISOString(),
-    reactionType: 'positive',
-    eventId: 'event-demo-001',
-    noiseClass: '로봇청소기',
-    db: '71',
-    room: '거실',
-    status: 'linked',
-    detail: {
-      reaction_id: 'reaction-demo-001',
-      event_id: 'event-demo-001',
-      model_label: '로봇청소기',
-      service_label: 'robot_vacuum',
-      relative_db: '71',
-      room_id: '-',
-      reaction: 'positive',
-      status: 'linked',
-      source: 'USER_TAP',
-      memo: 'Linked demo reaction'
-    }
-  },
-  {
-    time: '18:37',
-    createdAt: new Date().toISOString(),
-    reactionType: 'negative',
-    eventId: 'manual-event',
-    noiseClass: '상태없음',
-    db: '-',
-    room: '방1',
-    status: 'manual',
-    detail: {
-      reaction_id: 'reaction-demo-002',
-      event_id: 'manual-event',
-      model_label: '상태없음',
-      service_label: 'manual',
-      relative_db: '-',
-      room_id: 'bedroom1',
-      reaction: 'negative',
-      status: 'manual',
-      source: 'MANUAL',
-      memo: 'Manual reaction'
-    }
-  }
-];
+// 백엔드(DB) 반응 기록으로 채워진다. 하드코딩 더미는 제거되었다(없으면 빈 상태로 표시).
+let reactionRows = [];
 
 const tableColumns = ['시간', '반응', '연결 이벤트 ID', '기기', 'dB', '공간'];
 
@@ -92,13 +48,16 @@ function formatTime(value) {
 function normalizeRoom(value) {
   const map = {
     living: '거실',
+    'living room': '거실',
     laundry: '세탁실',
-    kitchen: '부엌',
+    'laundry area': '세탁실',
+    kitchen: '주방',
     bathroom: '화장실',
-    bedroom: '방1',
+    bedroom: '침실',
     bedroom1: '방1',
     bedroom2: '방2',
-    bedroom3: '방3'
+    bedroom3: '방3',
+    study: '작업실'
   };
   const normalized = String(value ?? '').toLowerCase();
   return map[normalized] ?? value ?? '-';
@@ -284,7 +243,7 @@ export async function renderReactionHistoryPage() {
             ${tableColumns.map((label) => `<span>${escapeHtml(label)}</span>`).join('')}
           </div>
           <div id="reaction-table-body" class="reaction-table-body">
-            ${reactionRows.map(rowMarkup).join('')}
+            ${reactionRows.length ? reactionRows.map(rowMarkup).join('') : '<p class="device-list-empty">기록된 반응이 없습니다.</p>'}
           </div>
         </section>
         <div class="reaction-pending-note-row">
@@ -365,7 +324,9 @@ export function mountReactionHistoryPage() {
     const filteredRows = filterRows(reactionRows, filters);
 
     if (tableBody) {
-      tableBody.innerHTML = filteredRows.map(rowMarkup).join('');
+      tableBody.innerHTML = filteredRows.length
+        ? filteredRows.map(rowMarkup).join('')
+        : '<p class="device-list-empty">기록된 반응이 없습니다.</p>';
     }
 
     if (statusMessage) {

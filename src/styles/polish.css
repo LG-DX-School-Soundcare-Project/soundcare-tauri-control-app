@@ -1475,7 +1475,11 @@ button:active,
   align-items: center;
   justify-content: center;
   margin: 0 auto 10px;
-  padding-right: 100px;
+  /* 우측에 얼굴(이모지)이 겹쳐 있어 제목 폭이 좁다. 5글자(로봇청소기/식기세척기)가
+     중간에서 잘리지 않도록 한 줄로 두고 글자 크기를 줄인다. */
+  padding-right: 88px;
+  font-size: 21px;
+  white-space: nowrap;
   text-align: left;
 }
 
