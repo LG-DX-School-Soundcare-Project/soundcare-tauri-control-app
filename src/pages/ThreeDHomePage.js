@@ -5,9 +5,14 @@ import { getDeviceIcon } from '../utils/deviceIcons.js';
 import { getCurrentHomeStatus } from '../api/eventApi.js';
 import { getApplianceMeasurements } from '../api/applianceMeasurementApi.js';
 import { getRuntimeSettings } from '../api/deviceApi.js';
+import { startRealtimePoll } from '../utils/realtimePoll.js';
 
 let sceneController = null;
 let lowConfidencePopupCleanup = null;
+let realtimeStop = null;
+// serviceLabel ↔ userRegisteredDeviceId 매핑(runtime)은 거의 안 바뀌므로 캐시해
+// 실시간 폴링마다 다시 요청하지 않는다.
+let cachedLabelByDevice = null;
 
 const LOW_CONFIDENCE_POPUP_THRESHOLD = 0.6;
 
@@ -37,7 +42,7 @@ let applianceCards = [];
 let activeDb = 0;
 let activeRoom = '방 미지정';
 
-async function loadThreeDHomeData() {
+async function loadThreeDHomeData(reuseLabels = false) {
   let home = null;
   try {
     home = await getCurrentHomeStatus();
@@ -54,15 +59,20 @@ async function loadThreeDHomeData() {
   activeRoom = roomLabel(home?.roomName);
 
   const devices = home?.registeredDevices ?? [];
-  let runtime = null;
-  try {
-    runtime = await getRuntimeSettings();
-  } catch (error) {
-    runtime = null;
+  // 실시간 폴링 시에는 캐시된 라벨 매핑을 재사용한다(runtime 재요청 생략).
+  let labelByDevice = reuseLabels ? cachedLabelByDevice : null;
+  if (!labelByDevice) {
+    let runtime = null;
+    try {
+      runtime = await getRuntimeSettings();
+    } catch (error) {
+      runtime = null;
+    }
+    labelByDevice = new Map(
+      (runtime?.sensitiveAppliances ?? []).map((s) => [s.userRegisteredDeviceId, s.serviceLabel])
+    );
+    cachedLabelByDevice = labelByDevice;
   }
-  const labelByDevice = new Map(
-    (runtime?.sensitiveAppliances ?? []).map((s) => [s.userRegisteredDeviceId, s.serviceLabel])
-  );
 
   let measurements = [];
   try {
@@ -104,7 +114,7 @@ function applianceCardsHtml() {
                   <p>${item.room}</p>
                   <div class="appliance-noise-card__body">
                     <div class="appliance-picture-slot has-device-icon" aria-label="${item.name} 이미지 자리">${getDeviceIcon(item.name)}</div>
-                    <strong>${item.decibel} dB</strong>
+                    <strong data-db-for="${item.deviceId}">${item.decibel} dB</strong>
                   </div>
                 </a>
               `
@@ -146,16 +156,32 @@ export function renderThreeDHomePage() {
   `;
 }
 
-function refreshThreeDHomeView() {
+// DOM을 최신 데이터로 갱신한다. 실시간 폴링마다 호출되므로 깜빡임을 줄이려
+// 카드 구성이 그대로면 dB 숫자만 바꾸고, 기기 구성이 바뀐 경우에만 패널을 재구성한다.
+function updateThreeDHomeDom() {
   // 데이터가 늦게 도착했을 때 이미 다른 화면으로 이동했다면 아무것도 하지 않는다.
   if (!document.querySelector('.three-view-page')) return;
   const pill = document.querySelector('[data-active-pill]');
   if (pill) pill.innerHTML = `<span></span>활성 ${activeDb} dB`;
   const source = document.querySelector('[data-source]');
   if (source) source.textContent = `소음원: ${activeRoom}`;
-  const panel = document.querySelector('[data-appliance-panel]');
-  if (panel) panel.innerHTML = applianceCardsHtml();
 
+  const panel = document.querySelector('[data-appliance-panel]');
+  if (!panel) return;
+  const canUpdateInPlace =
+    applianceCards.length > 0 &&
+    applianceCards.every((item) => panel.querySelector(`[data-db-for="${item.deviceId}"]`));
+  if (canUpdateInPlace) {
+    for (const item of applianceCards) {
+      const el = panel.querySelector(`[data-db-for="${item.deviceId}"]`);
+      if (el) el.textContent = `${item.decibel} dB`;
+    }
+  } else {
+    panel.innerHTML = applianceCardsHtml();
+  }
+}
+
+function maybeShowLowConfidencePopup() {
   if (activePrediction.confidence < LOW_CONFIDENCE_POPUP_THRESHOLD) {
     const popupController = mountLowConfidenceNoticePopup();
     lowConfidencePopupCleanup = popupController.cleanup;
@@ -173,7 +199,15 @@ export function mountThreeDHomePage() {
 
   // 백엔드 데이터는 씬을 띄운 뒤 비동기로 불러와 DOM을 갱신한다.
   loadThreeDHomeData()
-    .then(refreshThreeDHomeView)
+    .then(() => {
+      updateThreeDHomeDom();
+      maybeShowLowConfidencePopup();
+      // 이후 ESP→Agent가 올리는 최신 dB를 주기적으로 폴링해 실시간 갱신한다.
+      realtimeStop = startRealtimePoll(async () => {
+        await loadThreeDHomeData(true);
+        updateThreeDHomeDom();
+      });
+    })
     .catch((error) => console.warn('[SoundCare] 3D 홈 데이터 갱신 실패', error));
 
   const vizToggle = document.querySelector('#sound-viz-toggle');
@@ -193,6 +227,8 @@ export function mountThreeDHomePage() {
 }
 
 export function cleanupThreeDHomePage() {
+  realtimeStop?.();
+  realtimeStop = null;
   lowConfidencePopupCleanup?.();
   lowConfidencePopupCleanup = null;
   sceneController?.dispose?.();

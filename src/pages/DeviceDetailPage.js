@@ -8,8 +8,12 @@ import { getCurrentHomeStatus, getNoiseEvents } from '../api/eventApi.js';
 import { getApplianceMeasurements } from '../api/applianceMeasurementApi.js';
 import { getRuntimeSettings, deleteUserDevice } from '../api/deviceApi.js';
 import { removeCustomDevice, isCustomDevice } from '../utils/customDevicesState.js';
+import { startRealtimePoll } from '../utils/realtimePoll.js';
 
 let modelSceneController = null;
+let realtimeStop = null;
+// 현재 보고 있는 기기의 serviceLabel(측정값 폴링용). 매핑 안 되면 null.
+let currentDeviceLabel = null;
 
 const WARNING_DECIBEL_THRESHOLD = 70;
 
@@ -78,6 +82,7 @@ async function loadDeviceDetail(deviceId) {
   const label = (runtime?.sensitiveAppliances ?? []).find(
     (s) => s.userRegisteredDeviceId === deviceId
   )?.serviceLabel;
+  currentDeviceLabel = label ?? null;
 
   const title = (label && SERVICE_LABEL_KO[label]) || device?.name || '기기';
   const modelType = (label && SERVICE_LABEL_MODEL[label]) || 'washer';
@@ -180,13 +185,13 @@ export async function renderDeviceDetailPage({ params }) {
           <div class="measurement-summary">
             <div>
               <p>소음</p>
-              <strong>${escapeHtml(detail.noiseLabel)}</strong>
+              <strong data-detail-db>${escapeHtml(detail.noiseLabel)}</strong>
               <span>실시간 감지</span>
             </div>
             <dl>
               <div><dt>모델</dt><dd>${escapeHtml(detail.modelLabel)}</dd></div>
               <div><dt>서비스</dt><dd>${escapeHtml(detail.serviceLabel)}</dd></div>
-              <div class="measurement-status ${escapeHtml(statusClass)}"><dt>상태</dt><dd>${escapeHtml(status)}</dd></div>
+              <div class="measurement-status ${escapeHtml(statusClass)}" data-detail-status-box><dt>상태</dt><dd data-detail-status>${escapeHtml(status)}</dd></div>
             </dl>
           </div>
 
@@ -225,6 +230,33 @@ export async function renderDeviceDetailPage({ params }) {
   `;
 }
 
+// 현재 기기의 최신 측정값을 폴링해 '현재 측정값' dB와 상태를 실시간 갱신한다.
+async function pollDeviceDetailDb() {
+  if (!currentDeviceLabel) return;
+  if (!document.querySelector('.device-detail-page')) return;
+  let measurements = [];
+  try {
+    measurements = (await getApplianceMeasurements({ serviceLabel: currentDeviceLabel, limit: 5 })) ?? [];
+  } catch (error) {
+    return;
+  }
+  const latest = measurements[0] ?? null;
+  if (!latest) return;
+  const latestDb = Number(latest.decibelMax ?? latest.decibelAvg ?? latest.relativeDb);
+  const noiseLabel = Number.isFinite(latestDb) ? `${Math.round(latestDb)} dB` : '측정 대기';
+  const dbEl = document.querySelector('[data-detail-db]');
+  if (dbEl) dbEl.textContent = noiseLabel;
+
+  const status = getDeviceStatus(noiseLabel);
+  const statusEl = document.querySelector('[data-detail-status]');
+  if (statusEl) statusEl.textContent = status;
+  const statusBox = document.querySelector('[data-detail-status-box]');
+  if (statusBox) {
+    statusBox.classList.remove('measurement-status--warning', 'measurement-status--connection', 'measurement-status--stable');
+    statusBox.classList.add(getDeviceStatusClass(status));
+  }
+}
+
 export function mountDeviceDetailPage({ navigate } = {}) {
   cleanupDeviceDetailPage();
   const viewer = document.querySelector('#device-detail-model-viewer');
@@ -233,6 +265,9 @@ export function mountDeviceDetailPage({ navigate } = {}) {
       modelType: viewer.dataset.modelType || 'washer'
     });
   }
+
+  // ESP→Agent가 올리는 최신 dB를 주기적으로 폴링해 측정값을 실시간 갱신.
+  realtimeStop = startRealtimePoll(pollDeviceDetailDb);
 
   const toggle = document.querySelector('[data-sensitive-toggle]');
   toggle?.addEventListener('click', () => {
@@ -265,6 +300,8 @@ export function mountDeviceDetailPage({ navigate } = {}) {
 }
 
 export function cleanupDeviceDetailPage() {
+  realtimeStop?.();
+  realtimeStop = null;
   modelSceneController?.dispose?.();
   modelSceneController = null;
 }

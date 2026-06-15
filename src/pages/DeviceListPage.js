@@ -8,6 +8,7 @@ import {
 import { getCurrentHomeStatus } from '../api/eventApi.js';
 import { getApplianceMeasurements } from '../api/applianceMeasurementApi.js';
 import { getRuntimeSettings, deleteUserDevice } from '../api/deviceApi.js';
+import { startRealtimePoll } from '../utils/realtimePoll.js';
 import {
   getDeviceFailurePayload,
   isDeviceConnectionFailed,
@@ -17,6 +18,8 @@ import { mountDeviceAddPopup } from './DeviceAddPopup.js';
 
 // 백엔드(DB)에서 채워지는 기기 목록. 하드코딩 더미는 제거되었다.
 let deviceRows = [];
+// serviceLabel ↔ userRegisteredDeviceId 매핑(runtime). 실시간 폴링에서 재사용.
+let lastLabelByDevice = new Map();
 
 function getAllDeviceRows() {
   return [...deviceRows, ...getCustomDevices()];
@@ -76,6 +79,7 @@ async function loadDeviceRows() {
   const labelByDevice = new Map(
     (runtime?.sensitiveAppliances ?? []).map((s) => [s.userRegisteredDeviceId, s.serviceLabel])
   );
+  lastLabelByDevice = labelByDevice;
 
   let measurements = [];
   try {
@@ -157,7 +161,7 @@ function deviceCard(device) {
       </div>
       <div class="device-list-meta">
         <p class="device-list-title-row"><span>${escapeHtml(device.deviceName)}</span><span class="device-status-badge ${statusClass}">${escapeHtml(status)}</span></p>
-        <p>${escapeHtml(String(device.decibel))} dB</p>
+        <p data-db-for="${escapeHtml(device.id)}">${escapeHtml(String(device.decibel))} dB</p>
         <p>${escapeHtml(device.time)}</p>
       </div>
       ${sensitiveManaged ? '<span class="device-sensitive-pill"><span></span>민감 관리 중</span>' : ''}
@@ -220,6 +224,32 @@ export async function renderDeviceListPage() {
 let popupCleanup = null;
 let filterCleanup = null;
 let addPopupCleanup = null;
+let realtimeStop = null;
+
+// 최신 측정값을 폴링해 카드의 dB 숫자를 실시간 갱신한다(목록 재렌더 없이 텍스트만).
+async function pollDeviceDecibels() {
+  let measurements = [];
+  try {
+    measurements = (await getApplianceMeasurements({ limit: 100 })) ?? [];
+  } catch (error) {
+    return;
+  }
+  const latestByLabel = new Map();
+  for (const m of measurements) {
+    const label = m.serviceLabel ?? m.applianceType;
+    if (label && !latestByLabel.has(label)) latestByLabel.set(label, m);
+  }
+  for (const row of deviceRows) {
+    const label = lastLabelByDevice.get(row.id);
+    const measurement = label ? latestByLabel.get(label) : null;
+    if (!measurement) continue;
+    const db = Math.round(Number(measurement.decibelMax ?? measurement.decibelAvg ?? measurement.relativeDb));
+    if (!Number.isFinite(db)) continue;
+    row.decibel = db;
+    const el = document.querySelector(`[data-db-for="${row.id}"]`);
+    if (el) el.textContent = `${db} dB`;
+  }
+}
 
 export function mountDeviceListPage({ navigate } = {}) {
   cleanupDeviceListPage();
@@ -375,9 +405,14 @@ export function mountDeviceListPage({ navigate } = {}) {
   bindDeviceFailureLinks();
   bindDeleteButtons();
   refreshDeviceState();
+
+  // ESP→Agent가 올리는 최신 dB를 주기적으로 폴링해 카드 숫자를 실시간 갱신.
+  realtimeStop = startRealtimePoll(pollDeviceDecibels);
 }
 
 export function cleanupDeviceListPage() {
+  realtimeStop?.();
+  realtimeStop = null;
   popupCleanup?.();
   popupCleanup = null;
   addPopupCleanup?.();

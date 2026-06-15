@@ -3,10 +3,12 @@ import { mountServerConnectionFailurePopup } from './ServerConnectionFailurePopu
 import { createDashboardHomeScene } from '../three/dashboardHomeScene.js';
 import { householdHeader } from '../components/householdHeader.js';
 import { escapeHtml } from '../utils/html.js';
+import { startRealtimePoll } from '../utils/realtimePoll.js';
 
 let dashboardSceneController = null;
 let dashboardSceneMediaCleanup = null;
 let serverFailurePopupCleanup = null;
+let realtimeStop = null;
 
 const SERVICE_LABEL_KO = {
   robot_vacuum: '로봇청소기',
@@ -44,6 +46,39 @@ function getSyncTime(status) {
   }).format(date);
 }
 
+// home-status에서 화면에 쓰는 파생 값들을 한 곳에서 계산한다(렌더/실시간 갱신 공용).
+function deriveDashboard(status) {
+  const roomClimate = status.roomClimate ?? {};
+  const dbValue = Number(status.decibelMax ?? status.decibelAvg);
+  return {
+    temperature: formatMetric(status.temperature ?? status.dashboardTemperature ?? roomClimate.temperature),
+    humidity: formatMetric(status.humidity ?? status.dashboardHumidity ?? roomClimate.humidity),
+    syncTime: getSyncTime(status),
+    soundSource: SERVICE_LABEL_KO[status.currentServiceLabel] ?? '--',
+    relativeDb: formatMetric(status.decibelMax ?? status.decibelAvg),
+    noiseState: NOISE_STATE_KO[status.currentNoiseState] ?? { title: '--', sub: '상태 정보 없음' },
+    noiseProgress: Number.isFinite(dbValue) ? Math.max(0, Math.min(100, Math.round(dbValue))) : 0
+  };
+}
+
+// 실시간 폴링 시 씬을 재생성하지 않고 해당 DOM 노드의 숫자/텍스트만 갱신한다.
+function updateDashboardDom(status) {
+  if (!document.querySelector('.thinq-dashboard-page')) return;
+  const d = deriveDashboard(status);
+  const set = (sel, text) => {
+    const el = document.querySelector(sel);
+    if (el) el.textContent = text;
+  };
+  set('[data-climate-temp]', `${d.temperature} °C`);
+  set('[data-climate-humidity]', `${d.humidity}%`);
+  set('[data-noise-title]', d.noiseState.title);
+  set('[data-noise-sub]', d.noiseState.sub);
+  const bar = document.querySelector('[data-noise-progress]');
+  if (bar) bar.style.width = `${d.noiseProgress}%`;
+  set('[data-detection-source]', d.soundSource);
+  set('[data-detection-db]', `${d.relativeDb} dB`);
+}
+
 export async function renderHomeDashboardPage() {
   let serverUnavailable = false;
   // 서버 연동 실패 시 더미(mock)를 보여주지 않고 빈 상태(→ 전부 '--')로 둔다.
@@ -52,17 +87,8 @@ export async function renderHomeDashboardPage() {
     return {};
   });
 
-  const roomClimate = status.roomClimate ?? {};
-  const temperature = formatMetric(status.temperature ?? status.dashboardTemperature ?? roomClimate.temperature);
-  const humidity = formatMetric(status.humidity ?? status.dashboardHumidity ?? roomClimate.humidity);
-  const syncTime = getSyncTime(status);
-
-  // 감지된 소리 / 소음 상태: 모두 home-status에서 가져오고, 없으면 '--'.
-  const soundSource = SERVICE_LABEL_KO[status.currentServiceLabel] ?? '--';
-  const relativeDb = formatMetric(status.decibelMax ?? status.decibelAvg);
-  const noiseState = NOISE_STATE_KO[status.currentNoiseState] ?? { title: '--', sub: '상태 정보 없음' };
-  const dbValue = Number(status.decibelMax ?? status.decibelAvg);
-  const noiseProgress = Number.isFinite(dbValue) ? Math.max(0, Math.min(100, Math.round(dbValue))) : 0;
+  const { temperature, humidity, syncTime, soundSource, relativeDb, noiseState, noiseProgress } =
+    deriveDashboard(status);
 
   return `
     <section class="page thinq-dashboard-page" aria-label="메인 대시보드">
@@ -87,16 +113,16 @@ export async function renderHomeDashboardPage() {
         <aside class="dashboard-summary-column" aria-label="홈 요약">
           <section class="dashboard-info-card dashboard-climate-card">
             <h2>실내 환경</h2>
-            <strong>${temperature} &deg;C</strong>
-            <strong>${humidity}%</strong>
+            <strong data-climate-temp>${temperature} &deg;C</strong>
+            <strong data-climate-humidity>${humidity}%</strong>
           </section>
 
           <section class="dashboard-info-card dashboard-noise-card">
             <h2>소음 상태</h2>
-            <strong>${escapeHtml(noiseState.title)}</strong>
-            <p>${escapeHtml(noiseState.sub)}</p>
+            <strong data-noise-title>${escapeHtml(noiseState.title)}</strong>
+            <p data-noise-sub>${escapeHtml(noiseState.sub)}</p>
             <div class="dashboard-progress" aria-hidden="true">
-              <span style="width: ${noiseProgress}%"></span>
+              <span data-noise-progress style="width: ${noiseProgress}%"></span>
             </div>
           </section>
 
@@ -125,8 +151,8 @@ export async function renderHomeDashboardPage() {
           <section class="dashboard-info-card dashboard-detection-card">
             <h2>감지된 소리</h2>
             <p>소음원</p>
-            <strong>${escapeHtml(soundSource)}</strong>
-            <p>상대 소음 <b>${relativeDb} dB</b></p>
+            <strong data-detection-source>${escapeHtml(soundSource)}</strong>
+            <p>상대 소음 <b data-detection-db>${relativeDb} dB</b></p>
           </section>
         </aside>
       </div>
@@ -145,6 +171,12 @@ export function mountHomeDashboardPage({ navigate } = {}) {
       lastSuccessfulSync: serverState.dataset.lastSync
     });
   }
+
+  // ESP→Agent가 올리는 최신 home-status를 주기적으로 폴링해 소음/감지/환경 값을 실시간 갱신.
+  realtimeStop = startRealtimePoll(async () => {
+    const status = await getCurrentHomeStatus().catch(() => null);
+    if (status) updateDashboardDom(status);
+  });
 
   const container = document.querySelector('#dashboard-home-scene');
   if (!container) return;
@@ -185,6 +217,8 @@ export function mountHomeDashboardPage({ navigate } = {}) {
 }
 
 export function cleanupHomeDashboardPage() {
+  realtimeStop?.();
+  realtimeStop = null;
   serverFailurePopupCleanup?.();
   serverFailurePopupCleanup = null;
   dashboardSceneMediaCleanup?.();
