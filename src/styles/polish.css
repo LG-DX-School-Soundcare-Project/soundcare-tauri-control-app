@@ -4919,3 +4919,9 @@ body,
     box-shadow: var(--neu-outset) !important;
   }
 }
+
+/* 기기 카드: 상태 점을 그림 좌상단으로 이동해 우상단 화살표(→)와 겹침 방지 */
+.device-list-card .device-conn-dot {
+  left: 9px;
+  right: auto;
+}

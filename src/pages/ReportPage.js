@@ -1,5 +1,6 @@
 import { requestDetailedReport, grantGptReportConsent } from '../api/reportApi.js';
 import { fetchReactions } from '../api/reactions.js';
+import { getRuntimeSettings } from '../api/deviceApi.js';
 import { mountGptDetailReportPopUp, renderGptDetailReportPopUp } from './gptDetailReportPopUp.js';
 import { createReportFaceScene } from '../three/reportFaceScene.js';
 import { escapeHtml } from '../utils/html.js';
@@ -29,6 +30,17 @@ async function loadReportData() {
   }
 
   const byLabel = new Map();
+  // 등록된 민감가전을 먼저 시드 → 반응 0건 기기(예: 냉장고)도 카드에 표시
+  try {
+    const runtime = await getRuntimeSettings();
+    for (const s of runtime?.sensitiveAppliances ?? []) {
+      if (s.serviceLabel && !byLabel.has(s.serviceLabel)) {
+        byLabel.set(s.serviceLabel, { positive: 0, negative: 0 });
+      }
+    }
+  } catch (error) {
+    /* 런타임 설정 없으면 반응 기반으로만 표시 */
+  }
   let positive = 0;
   let negative = 0;
   for (const r of items) {
@@ -184,9 +196,9 @@ export async function renderReportPage() {
             <span class="reaction-pill reaction-pill--positive">긍정 ${reactionSummary.positive}</span>
             <span class="reaction-pill reaction-pill--negative">부정 ${reactionSummary.negative}</span>
           </span>
-          <span class="reaction-split-bar" aria-hidden="true">
-            <span class="reaction-split-bar__positive" style="width: ${positiveRatio}%"></span>
-            <span class="reaction-split-bar__negative" style="width: ${negativeRatio}%"></span>
+          <span class="reaction-split-bar" aria-hidden="true" style="grid-template-columns: ${positiveRatio}fr ${negativeRatio}fr">
+            <span class="reaction-split-bar__positive"></span>
+            <span class="reaction-split-bar__negative"></span>
           </span>
         </span>
 
