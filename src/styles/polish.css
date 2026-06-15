@@ -5202,6 +5202,19 @@ body,
   display: none;
 }
 
+/* 허브 상세: 3D 모델 대신 기기 아이콘을 크게 중앙에 표시 */
+.device-detail-hub-icon {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 220px;
+  color: #2f8f7f;
+}
+.device-detail-hub-icon svg {
+  width: 104px;
+  height: 104px;
+}
+
 /* 데스크톱 세로 반응형: 사이드바 고정 + 본문만 세로 스크롤 (작은 높이에서도 내용 잘림 없이 스크롤) */
 @media (min-width: 768px) {
   .app-shell--desktop {

@@ -7,7 +7,8 @@ import {
 import { getCurrentHomeStatus, getNoiseEvents } from '../api/eventApi.js';
 import { getApplianceMeasurements } from '../api/applianceMeasurementApi.js';
 import { getRuntimeSettings, deleteUserDevice } from '../api/deviceApi.js';
-import { removeCustomDevice, isCustomDevice } from '../utils/customDevicesState.js';
+import { removeCustomDevice, isCustomDevice, getCustomDevices } from '../utils/customDevicesState.js';
+import { getDeviceIcon } from '../utils/deviceIcons.js';
 import { startRealtimePoll, isFreshTimestamp } from '../utils/realtimePoll.js';
 
 let modelSceneController = null;
@@ -67,8 +68,32 @@ function getDeviceStatusClass(status) {
   return 'measurement-status--stable';
 }
 
+// 커스텀(로컬 추가) 기기는 백엔드에 없으므로 로컬 데이터로 상세를 구성한다.
+// 특히 LG AI 허브는 소음 측정 대상이 아니라 제어 허브이므로 세탁기 모델로 떨어지지 않게 한다.
+function loadCustomDeviceDetail(deviceId) {
+  const c = getCustomDevices().find((d) => d.id === deviceId);
+  if (!c) return null;
+  currentDeviceLabel = null;
+  const isHub = c.deviceType === 'hub';
+  return {
+    title: c.deviceName || '기기',
+    modelType: c.modelType || 'washer',
+    isHub,
+    modelLabel: c.deviceName || '기기',
+    serviceLabel: c.serviceLabel || '미지정',
+    noiseLabel: isHub ? '해당 없음' : '측정 대기',
+    roomName: ROOM_LABEL_KO[c.room] ?? c.room ?? '방 미지정',
+    events: Array.isArray(c.events) && c.events.length ? c.events : ['기기가 연결되었습니다.'],
+    recommendation: c.recommendation || '기기 연결 상태를 확인한 뒤 소음 관리 설정을 진행하세요.'
+  };
+}
+
 // 백엔드(DB)에서 기기 상세 데이터를 조립한다. 하드코딩 더미는 제거되었다.
 async function loadDeviceDetail(deviceId) {
+  if (isCustomDevice(deviceId)) {
+    const custom = loadCustomDeviceDetail(deviceId);
+    if (custom) return custom;
+  }
   const home = await getCurrentHomeStatus();
   const devices = home?.registeredDevices ?? [];
   const device = devices.find((d) => (d.registeredDeviceId ?? d.id) === deviceId) ?? null;
@@ -154,7 +179,8 @@ export async function renderDeviceDetailPage({ params }) {
     `;
   }
 
-  const status = getDeviceStatus(detail.noiseLabel);
+  // 허브는 소음 측정 대상이 아니라 제어 허브이므로 dB 기반 '연결 필요' 대신 '연결됨'.
+  const status = detail.isHub ? '연결됨' : getDeviceStatus(detail.noiseLabel);
   const statusClass = getDeviceStatusClass(status);
   const sensitiveManaged = getSensitiveApplianceEnabled(deviceId);
 
@@ -174,12 +200,14 @@ export async function renderDeviceDetailPage({ params }) {
       <div class="device-detail-layout">
         <section class="device-detail-card device-detail-model-card">
           <h2>기기</h2>
-          <div
+          ${detail.isHub
+            ? `<div class="device-detail-hub-icon has-device-icon" aria-label="${escapeHtml(detail.title)}">${getDeviceIcon(detail.title)}</div>`
+            : `<div
             id="device-detail-model-viewer"
             class="device-detail-model-viewer"
             data-model-type="${escapeHtml(detail.modelType)}"
             aria-label="${escapeHtml(detail.title)} 3D 모델"
-          ></div>
+          ></div>`}
         </section>
 
         <section class="device-detail-card device-measurement-card">
