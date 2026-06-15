@@ -7,6 +7,18 @@
 
 const DEFAULT_INTERVAL_MS = 2000;
 
+// 측정값이 이 시간보다 오래되면 "ESP 비활성"으로 보고 dB를 -- 로 표시한다.
+// 에이전트는 재생 중 0.5초마다 업로드하므로, 재생/ESP가 멈추면 이 시간 내에 --로 바뀐다.
+export const MEASUREMENT_FRESH_MS = 10000;
+
+// 측정 시각(ISO 문자열)이 최근(threshold 이내)인지. 없거나 오래되면 false → -- 표시.
+export function isFreshTimestamp(timestamp, freshMs = MEASUREMENT_FRESH_MS) {
+  if (!timestamp) return false;
+  const t = Date.parse(timestamp);
+  if (Number.isNaN(t)) return false;
+  return Date.now() - t <= freshMs;
+}
+
 export function getMeasurementPollIntervalMs() {
   const raw = import.meta.env?.VITE_APPLIANCE_MEASUREMENT_POLL_INTERVAL_MS;
   const value = Number(raw);

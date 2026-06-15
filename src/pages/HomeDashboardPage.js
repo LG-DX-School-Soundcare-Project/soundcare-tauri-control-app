@@ -3,7 +3,7 @@ import { mountServerConnectionFailurePopup } from './ServerConnectionFailurePopu
 import { createDashboardHomeScene } from '../three/dashboardHomeScene.js';
 import { householdHeader } from '../components/householdHeader.js';
 import { escapeHtml } from '../utils/html.js';
-import { startRealtimePoll } from '../utils/realtimePoll.js';
+import { startRealtimePoll, isFreshTimestamp } from '../utils/realtimePoll.js';
 import { createReactionSnapshot } from '../api/reactions.js';
 
 let dashboardSceneController = null;
@@ -51,14 +51,18 @@ function getSyncTime(status) {
 function deriveDashboard(status) {
   const roomClimate = status.roomClimate ?? {};
   const dbValue = Number(status.decibelMax ?? status.decibelAvg);
+  // ESP가 비활성(최신 소음/측정값이 오래됨)이면 감지/소음 값을 --로.
+  const noiseFresh = isFreshTimestamp(status.createdAt);
   return {
     temperature: formatMetric(status.temperature ?? status.dashboardTemperature ?? roomClimate.temperature),
     humidity: formatMetric(status.humidity ?? status.dashboardHumidity ?? roomClimate.humidity),
     syncTime: getSyncTime(status),
-    soundSource: SERVICE_LABEL_KO[status.currentServiceLabel] ?? '--',
-    relativeDb: formatMetric(status.decibelMax ?? status.decibelAvg),
-    noiseState: NOISE_STATE_KO[status.currentNoiseState] ?? { title: '--', sub: '상태 정보 없음' },
-    noiseProgress: Number.isFinite(dbValue) ? Math.max(0, Math.min(100, Math.round(dbValue))) : 0
+    soundSource: noiseFresh ? (SERVICE_LABEL_KO[status.currentServiceLabel] ?? '--') : '--',
+    relativeDb: noiseFresh ? formatMetric(status.decibelMax ?? status.decibelAvg) : '--',
+    noiseState: noiseFresh
+      ? (NOISE_STATE_KO[status.currentNoiseState] ?? { title: '--', sub: '상태 정보 없음' })
+      : { title: '안정', sub: '최근 소음 없음' },
+    noiseProgress: noiseFresh && Number.isFinite(dbValue) ? Math.max(0, Math.min(100, Math.round(dbValue))) : 0
   };
 }
 

@@ -8,7 +8,7 @@ import {
 import { getCurrentHomeStatus } from '../api/eventApi.js';
 import { getApplianceMeasurements } from '../api/applianceMeasurementApi.js';
 import { getRuntimeSettings, deleteUserDevice } from '../api/deviceApi.js';
-import { startRealtimePoll } from '../utils/realtimePoll.js';
+import { startRealtimePoll, isFreshTimestamp } from '../utils/realtimePoll.js';
 import {
   getDeviceFailurePayload,
   isDeviceConnectionFailed,
@@ -97,7 +97,9 @@ async function loadDeviceRows() {
     const id = device.registeredDeviceId ?? device.id;
     const label = labelByDevice.get(id);
     const measurement = label ? latestByLabel.get(label) : null;
-    const db = measurement
+    // 측정값이 오래되면(ESP 비활성) --로 표시.
+    const fresh = measurement && isFreshTimestamp(measurement.measuredAt ?? measurement.createdAt);
+    const db = fresh
       ? Math.round(Number(measurement.decibelMax ?? measurement.decibelAvg ?? measurement.relativeDb))
       : null;
     return {
@@ -242,12 +244,15 @@ async function pollDeviceDecibels() {
   for (const row of deviceRows) {
     const label = lastLabelByDevice.get(row.id);
     const measurement = label ? latestByLabel.get(label) : null;
-    if (!measurement) continue;
-    const db = Math.round(Number(measurement.decibelMax ?? measurement.decibelAvg ?? measurement.relativeDb));
-    if (!Number.isFinite(db)) continue;
-    row.decibel = db;
+    // 측정값이 오래되면(ESP 비활성) --로 갱신.
+    const fresh = measurement && isFreshTimestamp(measurement.measuredAt ?? measurement.createdAt);
+    const db = fresh
+      ? Math.round(Number(measurement.decibelMax ?? measurement.decibelAvg ?? measurement.relativeDb))
+      : null;
+    const display = db != null && Number.isFinite(db) ? `${db} dB` : '-- dB';
+    row.decibel = db != null && Number.isFinite(db) ? db : '--';
     const el = document.querySelector(`[data-db-for="${row.id}"]`);
-    if (el) el.textContent = `${db} dB`;
+    if (el) el.textContent = display;
   }
 }
 

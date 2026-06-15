@@ -24,7 +24,16 @@ function causeRow(row) {
   `;
 }
 
+const TIME_BUCKETS = [
+  { label: '새벽 (0–6시)', start: 0, end: 6 },
+  { label: '오전 (6–12시)', start: 6, end: 12 },
+  { label: '오후 (12–18시)', start: 12, end: 18 },
+  { label: '저녁/밤 (18–24시)', start: 18, end: 24 }
+];
+
 // 백엔드(DB) 반응 + 상세 리포트(GPT)에서 데이터를 조립한다. 하드코딩 더미는 제거되었다.
+// 반응 스냅샷 덕분에 각 반응에 가전별 serviceLabel + decibelAvg가 담겨 있어, 가전별 평균
+// 소음/반응, 시간대 분포 등 더 구체적인 정보를 만들 수 있다.
 async function loadDetailedReportData() {
   let items = [];
   try {
@@ -37,13 +46,39 @@ async function loadDetailedReportData() {
   let positive = 0;
   let negative = 0;
   const negByLabel = new Map();
+  // 가전별 집계: 긍정/부정 건수 + 반응 시점 소음(dB) 누적
+  const perAppliance = new Map();
+  let negDbSum = 0;
+  let negDbCount = 0;
+  let posDbSum = 0;
+  let posDbCount = 0;
+  const negByHour = [0, 0, 0, 0];
+
   for (const r of items) {
-    if (r.reactionType === 'POSITIVE') positive += 1;
-    else if (r.reactionType === 'NEGATIVE') {
-      negative += 1;
-      const label = r.serviceLabel || 'manual';
-      negByLabel.set(label, (negByLabel.get(label) ?? 0) + 1);
+    const label = r.serviceLabel || 'manual';
+    const bucket = perAppliance.get(label) ?? { pos: 0, neg: 0, dbSum: 0, dbCount: 0 };
+    const db = Number(r.decibelAvg);
+    const hasDb = Number.isFinite(db);
+    if (hasDb) {
+      bucket.dbSum += db;
+      bucket.dbCount += 1;
     }
+    if (r.reactionType === 'POSITIVE') {
+      positive += 1;
+      bucket.pos += 1;
+      if (hasDb) { posDbSum += db; posDbCount += 1; }
+    } else if (r.reactionType === 'NEGATIVE') {
+      negative += 1;
+      bucket.neg += 1;
+      negByLabel.set(label, (negByLabel.get(label) ?? 0) + 1);
+      if (hasDb) { negDbSum += db; negDbCount += 1; }
+      const hour = new Date(r.createdAt).getHours();
+      if (!Number.isNaN(hour)) {
+        const idx = TIME_BUCKETS.findIndex((b) => hour >= b.start && hour < b.end);
+        if (idx >= 0) negByHour[idx] += 1;
+      }
+    }
+    perAppliance.set(label, bucket);
   }
   const total = positive + negative;
   const negativeRatio = total ? Math.round((negative / total) * 100) : 0;
@@ -59,6 +94,28 @@ async function loadDetailedReportData() {
       tone: CAUSE_TONES[index] ?? 'green'
     }));
 
+  // 가전별 상세 (부정 많은 순)
+  const applianceDetail = [...perAppliance.entries()]
+    .map(([label, b]) => ({
+      name: SERVICE_LABEL_KO[label] || label,
+      positive: b.pos,
+      negative: b.neg,
+      avgDb: b.dbCount ? Math.round(b.dbSum / b.dbCount) : null,
+      negRatio: b.pos + b.neg ? Math.round((b.neg / (b.pos + b.neg)) * 100) : 0
+    }))
+    .sort((a, b) => b.negative - a.negative);
+
+  const avgNegativeDb = negDbCount ? Math.round(negDbSum / negDbCount) : null;
+  const avgPositiveDb = posDbCount ? Math.round(posDbSum / posDbCount) : null;
+  const maxHour = Math.max(...negByHour, 0);
+  const peakBucketIdx = maxHour > 0 ? negByHour.indexOf(maxHour) : -1;
+  const timeRows = TIME_BUCKETS.map((b, i) => ({
+    label: b.label,
+    count: negByHour[i],
+    ratio: maxHour ? Math.round((negByHour[i] / maxHour) * 100) : 0,
+    peak: i === peakBucketIdx
+  }));
+
   // GPT 상세 리포트 텍스트 (리포트 화면에서 생성 시 localStorage에 reportId 저장)
   let reportText = '';
   try {
@@ -71,7 +128,33 @@ async function loadDetailedReportData() {
     reportText = '';
   }
 
-  return { positive, negative, total, positiveRatio, negativeRatio, causeRows, reportText };
+  return {
+    positive, negative, total, positiveRatio, negativeRatio, causeRows, reportText,
+    applianceDetail, avgNegativeDb, avgPositiveDb, timeRows
+  };
+}
+
+function applianceDetailRow(row) {
+  const avg = row.avgDb != null ? `${row.avgDb} dB` : '--';
+  return `
+    <tr>
+      <td>${escapeHtml(row.name)}</td>
+      <td class="num">${row.positive}</td>
+      <td class="num">${row.negative}</td>
+      <td class="num">${escapeHtml(avg)}</td>
+      <td class="num">${row.negRatio}%</td>
+    </tr>
+  `;
+}
+
+function timeRow(row) {
+  return `
+    <li class="gpt-time-row${row.peak ? ' is-peak' : ''}">
+      <span class="gpt-time-label">${escapeHtml(row.label)}</span>
+      <span class="gpt-time-track" aria-hidden="true"><i style="width:${row.ratio}%"></i></span>
+      <b>${row.count}건</b>
+    </li>
+  `;
 }
 
 export async function renderGPTDetailedReportPage() {
@@ -84,6 +167,22 @@ export async function renderGPTDetailedReportPage() {
   const analysisHtml = data.reportText
     ? `<p class="gpt-analysis-text">${escapeHtml(data.reportText)}</p>`
     : '<p class="gpt-analysis-text">아직 생성된 GPT 상세 리포트가 없습니다. 리포트 화면에서 "GPT 리포트 생성하기"를 눌러 주세요.</p>';
+
+  const applianceRowsHtml = data.applianceDetail.length
+    ? data.applianceDetail.map(applianceDetailRow).join('')
+    : '<tr><td colspan="5">아직 수집된 가전별 반응이 없습니다.</td></tr>';
+
+  const timeRowsHtml = data.timeRows.some((r) => r.count > 0)
+    ? data.timeRows.map(timeRow).join('')
+    : '<li class="gpt-time-row"><span class="gpt-time-label">부정 반응 데이터 없음</span></li>';
+
+  // 긍정/부정 반응 시점의 평균 소음 비교 인사이트
+  const dbInsight =
+    data.avgNegativeDb != null && data.avgPositiveDb != null
+      ? `불편 반응 시 평균 ${data.avgNegativeDb} dB · 만족 반응 시 평균 ${data.avgPositiveDb} dB`
+      : data.avgNegativeDb != null
+        ? `불편 반응 시 평균 소음 ${data.avgNegativeDb} dB`
+        : '아직 소음과 반응을 연결할 데이터가 부족합니다.';
 
   return `
     <section class="page gpt-detailed-page" aria-label="GPT Detailed Report Screen">
@@ -114,8 +213,26 @@ export async function renderGPTDetailedReportPage() {
           </ol>
         </section>
 
+        <section class="gpt-detail-card gpt-appliance-detail-card">
+          <h2>4. 가전별 소음·반응 상세</h2>
+          <table class="gpt-appliance-table">
+            <thead>
+              <tr><th>가전</th><th class="num">만족</th><th class="num">불편</th><th class="num">평균 소음</th><th class="num">불편 비율</th></tr>
+            </thead>
+            <tbody>${applianceRowsHtml}</tbody>
+          </table>
+          <p class="gpt-db-insight">${escapeHtml(dbInsight)}</p>
+        </section>
+
+        <section class="gpt-detail-card gpt-time-card">
+          <h2>5. 불편 반응 시간대 분포</h2>
+          <ul class="gpt-time-list">
+            ${timeRowsHtml}
+          </ul>
+        </section>
+
         <section class="gpt-detail-card gpt-recommendation-card">
-          <h2>4. AI 분석 요약</h2>
+          <h2>6. AI 분석 요약</h2>
           ${analysisHtml}
         </section>
 

@@ -5,7 +5,7 @@ import { getDeviceIcon } from '../utils/deviceIcons.js';
 import { getCurrentHomeStatus } from '../api/eventApi.js';
 import { getApplianceMeasurements } from '../api/applianceMeasurementApi.js';
 import { getRuntimeSettings } from '../api/deviceApi.js';
-import { startRealtimePoll } from '../utils/realtimePoll.js';
+import { startRealtimePoll, isFreshTimestamp } from '../utils/realtimePoll.js';
 
 let sceneController = null;
 let lowConfidencePopupCleanup = null;
@@ -55,7 +55,10 @@ async function loadThreeDHomeData(reuseLabels = false) {
     confidence: Number(home?.confidence ?? 1),
     thresholdValue: 0.7
   };
-  activeDb = Math.round(Number(home?.decibelMax ?? home?.decibelAvg ?? 0)) || 0;
+  // ESP가 비활성(최신 소음/측정값이 오래됨)이면 활성 dB를 --로 표시.
+  const activeFresh = isFreshTimestamp(home?.createdAt);
+  const activeDbNum = Math.round(Number(home?.decibelMax ?? home?.decibelAvg ?? 0));
+  activeDb = activeFresh && Number.isFinite(activeDbNum) ? activeDbNum : '--';
   activeRoom = roomLabel(home?.roomName);
 
   const devices = home?.registeredDevices ?? [];
@@ -90,7 +93,9 @@ async function loadThreeDHomeData(reuseLabels = false) {
     const id = device.registeredDeviceId ?? device.id;
     const label = labelByDevice.get(id);
     const measurement = label ? latestByLabel.get(label) : null;
-    const db = measurement
+    // 측정값이 오래되면(ESP 비활성) --로 표시.
+    const fresh = measurement && isFreshTimestamp(measurement.measuredAt ?? measurement.createdAt);
+    const db = fresh
       ? Math.round(Number(measurement.decibelMax ?? measurement.decibelAvg ?? measurement.relativeDb))
       : null;
     return {

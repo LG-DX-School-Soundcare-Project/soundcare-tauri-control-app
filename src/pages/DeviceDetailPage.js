@@ -8,7 +8,7 @@ import { getCurrentHomeStatus, getNoiseEvents } from '../api/eventApi.js';
 import { getApplianceMeasurements } from '../api/applianceMeasurementApi.js';
 import { getRuntimeSettings, deleteUserDevice } from '../api/deviceApi.js';
 import { removeCustomDevice, isCustomDevice } from '../utils/customDevicesState.js';
-import { startRealtimePoll } from '../utils/realtimePoll.js';
+import { startRealtimePoll, isFreshTimestamp } from '../utils/realtimePoll.js';
 
 let modelSceneController = null;
 let realtimeStop = null;
@@ -104,7 +104,9 @@ async function loadDeviceDetail(deviceId) {
   }
 
   const latest = measurements[0] ?? null;
-  const latestDb = latest ? Number(latest.decibelMax ?? latest.decibelAvg ?? latest.relativeDb) : null;
+  // 측정값이 오래되면(ESP 비활성) 측정 대기로 표시.
+  const latestFresh = latest && isFreshTimestamp(latest.measuredAt ?? latest.createdAt);
+  const latestDb = latestFresh ? Number(latest.decibelMax ?? latest.decibelAvg ?? latest.relativeDb) : null;
   const noiseLabel = latestDb != null && Number.isFinite(latestDb) ? `${Math.round(latestDb)} dB` : '측정 대기';
 
   const events = [];
@@ -241,8 +243,9 @@ async function pollDeviceDetailDb() {
     return;
   }
   const latest = measurements[0] ?? null;
-  if (!latest) return;
-  const latestDb = Number(latest.decibelMax ?? latest.decibelAvg ?? latest.relativeDb);
+  // 측정값이 오래되면(ESP 비활성) 측정 대기로 표시.
+  const fresh = latest && isFreshTimestamp(latest.measuredAt ?? latest.createdAt);
+  const latestDb = fresh ? Number(latest.decibelMax ?? latest.decibelAvg ?? latest.relativeDb) : NaN;
   const noiseLabel = Number.isFinite(latestDb) ? `${Math.round(latestDb)} dB` : '측정 대기';
   const dbEl = document.querySelector('[data-detail-db]');
   if (dbEl) dbEl.textContent = noiseLabel;
