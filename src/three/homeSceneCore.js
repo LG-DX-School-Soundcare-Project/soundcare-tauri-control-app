@@ -204,6 +204,10 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
   // 가전별 실시간 측정 dB (emitter 크기/표시 제어). 값이 없으면(--) emitter를 숨긴다.
   let applianceDbByKey = {};
 
+  // 클릭 시 문이 열리는 가전(냉장고/식기세척기). animate에서 mixer를 업데이트한다.
+  const doorMixers = [];
+  const openables = []; // { group, actions:[], open:false }
+
   function applyActiveAppliances() {
     if (activeApplianceKeys) {
       const active = new Set(activeApplianceKeys);
@@ -247,10 +251,10 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
       if (disposed) return;
 
       const anchors = setupApartment(apartment.scene);
-      setupRefrigerator(refrigerator.scene, particle, anchors);
+      setupRefrigerator(refrigerator, particle, anchors);
       setupWasher(washer, particle, anchors);
       setupRobot(robot, particle, anchors);
-      setupDishwasher(dishwasher.scene, particle, anchors);
+      setupDishwasher(dishwasher, particle, anchors);
       if (hubEnabled && hub) {
         setupHub(hub.scene);
       }
@@ -364,7 +368,8 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
     root.updateWorldMatrix(true, true);
   }
 
-  function setupRefrigerator(model, particleGltf, anchors) {
+  function setupRefrigerator(gltf, particleGltf, anchors) {
+    const model = gltf.scene;
     const group = createApplianceGroup('RefrigeratorGroup');
     model.name = 'RefrigeratorModel';
     prepareModel(model);
@@ -377,13 +382,16 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
     rememberBaseTransform(group);
     homeRoot.add(group);
     registerApplianceObstacle(group);
+    // 냉장고 클릭 시 문이 열리도록 도어 클립을 등록한다(Door/Freezer 관련 클립).
+    setupOpenable(group, model, gltf.animations ?? [], (c) => /door|freezer/i.test(c.name));
 
     const emitter = createEmitter('refrigerator', particleGltf, new THREE.Vector3(0, 0, 0));
     group.add(emitter.root);
     centerEmitterOnModel(emitter, group, model);
   }
 
-  function setupDishwasher(model, particleGltf, anchors) {
+  function setupDishwasher(gltf, particleGltf, anchors) {
+    const model = gltf.scene;
     const group = createApplianceGroup('DishwasherGroup');
     model.name = 'DishwasherModel';
     prepareModel(model);
@@ -395,10 +403,55 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
     rememberBaseTransform(group);
     homeRoot.add(group);
     registerApplianceObstacle(group);
+    // 식기세척기 클릭 시 문 열림/식기 슬라이드 클립을 재생한다.
+    setupOpenable(group, model, gltf.animations ?? [], (c) => /open|door|slide|dish/i.test(c.name));
 
     const emitter = createEmitter('dishwasher', particleGltf, new THREE.Vector3(0, 0, 0));
     group.add(emitter.root);
     centerEmitterOnModel(emitter, group, model);
+  }
+
+  // 클릭 시 문이 열리는 가전을 등록한다. 기본 자세(frame 0)를 "닫힘"으로 잡아 두고,
+  // 클릭하면 timeScale을 토글해 열림↔닫힘을 한 번씩 재생한다(LoopOnce, clampWhenFinished).
+  function setupOpenable(group, model, animations, clipFilter) {
+    if (!animations || !animations.length) return;
+    let clips = animations.filter((c) => clipFilter(c));
+    if (!clips.length) clips = animations;
+    const mixer = new THREE.AnimationMixer(model);
+    const actions = clips.map((clip) => {
+      const action = mixer.clipAction(clip);
+      action.setLoop(THREE.LoopOnce, 1);
+      action.clampWhenFinished = true;
+      action.enabled = true;
+      action.play();
+      action.paused = true;
+      action.time = 0;
+      return action;
+    });
+    mixer.update(0);
+    doorMixers.push(mixer);
+    openables.push({ group, actions, open: false });
+  }
+
+  // 냉장고/식기세척기 그룹을 클릭하면 문을 열거나 닫는다.
+  function toggleOpenable(group) {
+    const target = openables.find((o) => o.group === group);
+    if (!target) return;
+    target.open = !target.open;
+    target.actions.forEach((action) => {
+      const duration = action.getClip().duration;
+      action.enabled = true;
+      action.paused = false;
+      action.setLoop(THREE.LoopOnce, 1);
+      action.clampWhenFinished = true;
+      action.timeScale = target.open ? 1 : -1;
+      if (target.open) {
+        if (action.time >= duration) action.time = 0;
+      } else if (action.time <= 0) {
+        action.time = duration;
+      }
+      action.play();
+    });
   }
 
   // LG AI 허브(soundcare.glb)를 거실 커피테이블 위에 올린다. 테이블 경계를 homeRoot
@@ -554,9 +607,9 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
     pointerDownY = event.clientY;
   }
 
-  // Tap (not drag) on the living-room TV toggles its screen picture on/off.
+  // Tap (not drag): TV screen toggles its picture; 냉장고/식기세척기 그룹은 문 애니메이션 토글.
   function handleTvTap(event) {
-    if (disposed || !tvScreen) return;
+    if (disposed) return;
     if (Math.hypot(event.clientX - pointerDownX, event.clientY - pointerDownY) > 6) return;
 
     const rect = renderer.domElement.getBoundingClientRect();
@@ -569,9 +622,11 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
       let node = hit.object;
       let isEmitter = false;
       let isTv = false;
+      let openableGroup = null;
       while (node) {
         if (node.name === 'RuntimeSoundEmitter') isEmitter = true;
         if (/living_room_tv/i.test(node.name)) isTv = true;
+        if (node.name === 'RefrigeratorGroup' || node.name === 'DishwasherGroup') openableGroup = node;
         node = node.parent;
       }
       if (isEmitter) continue; // ignore the translucent sound-wave particles
@@ -579,7 +634,11 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
         toggleTV();
         return;
       }
-      // First solid (non-particle) hit isn't the TV → it's occluding; ignore.
+      if (openableGroup) {
+        toggleOpenable(openableGroup);
+        return;
+      }
+      // First solid (non-particle) hit isn't tappable → it's occluding; ignore.
       return;
     }
   }
@@ -796,6 +855,7 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
     controls?.update();
     updateRobot(dt);
     updateApplianceMotion(dt, elapsed);
+    for (const mixer of doorMixers) mixer.update(dt);
     Object.values(emitters).forEach((emitter) => emitter.update(dt));
     renderer.render(scene, camera);
     animationId = window.requestAnimationFrame(animate);
