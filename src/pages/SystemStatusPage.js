@@ -2,37 +2,9 @@ import { fetchSystemStatus } from '../api/systemStatus.js';
 import { bindSettingsTabs, renderSettingsTabs } from '../components/settingsTabs.js';
 import { escapeHtml } from '../utils/html.js';
 
-let statusCards = [
-  {
-    title: 'Spring Boot 서버',
-    state: 'Connected',
-    tone: 'ok',
-    meta: 'API 지연 시간 124 ms'
-  },
-  {
-    title: '가전 제어 에이전트',
-    state: 'Intermittent',
-    tone: 'warn',
-    meta: '마지막 하트비트 03:12'
-  },
-  {
-    title: '로컬 분류 모델',
-    state: 'OK',
-    tone: 'ok',
-    meta: '최근 분류 28건'
-  },
-  {
-    title: '컴팩트 하드웨어 센서',
-    state: 'Offline',
-    tone: 'warn',
-    meta: 'Arduino 수집 데이터 지연'
-  }
-];
-
-let errorRows = [
-  { time: '14:32', source: 'IoT Hub', error: '업로드 시간 초과', state: '재시도 중', action: '보기' },
-  { time: '14:28', source: 'Sensor', error: '온도 데이터 지연', state: '경고', action: '보기' }
-];
+// 렌더 시 fetchSystemStatus() 결과로 항상 재구성된다. 하드코딩 더미는 제거되었다.
+let statusCards = [];
+let errorRows = [];
 
 function statusPill(label, tone) {
   return `
