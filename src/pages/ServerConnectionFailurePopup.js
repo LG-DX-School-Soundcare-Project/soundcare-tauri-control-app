@@ -17,7 +17,7 @@ export function renderServerConnectionFailurePopup() {
         </div>
 
         <div class="server-failure-card">
-          <p id="server-failure-queue">${renderServerFailureLine('로컬 재시도 대기열: ', '서명된 payload 5건 대기 중')}</p>
+          <p id="server-failure-queue">${renderServerFailureLine('로컬 재시도 대기열: ', '-')}</p>
         </div>
 
         <div class="server-failure-actions">
@@ -47,13 +47,16 @@ export function mountServerConnectionFailurePopup({ navigate } = {}) {
     if (retryButton) retryButton.textContent = '지금 다시 시도';
   };
 
-  const openPopup = ({ lastSuccessfulSync, retryQueueCount = 5 } = {}) => {
+  const openPopup = ({ lastSuccessfulSync, retryQueueCount } = {}) => {
     if (lastSync) {
       lastSync.innerHTML = renderServerFailureLine('마지막 정상 동기화: ', lastSuccessfulSync ?? '-');
     }
 
     if (queue) {
-      queue.innerHTML = renderServerFailureLine('로컬 재시도 대기열: ', `서명된 payload ${retryQueueCount}건 대기 중`);
+      const queueText = Number.isFinite(Number(retryQueueCount))
+        ? `서명된 payload ${retryQueueCount}건 대기 중`
+        : '-';
+      queue.innerHTML = renderServerFailureLine('로컬 재시도 대기열: ', queueText);
     }
 
     setPopupVisible(popup, true);

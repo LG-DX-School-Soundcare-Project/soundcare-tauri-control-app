@@ -4986,6 +4986,44 @@ body,
   cursor: default;
 }
 
+/* 모바일(≤640px): 카드 우하단에 디자인된 "Detail" 칩이 있어 쓰레기통과 겹친다.
+   중복인 → 화살표는 숨기고, 쓰레기통은 비어 있는 우상단 모서리로 옮긴다. */
+@media (max-width: 640px) {
+  .device-list-card .device-detail-icon {
+    display: none;
+  }
+  .device-card-delete {
+    top: 12px;
+    right: 12px;
+    bottom: auto;
+  }
+
+  /* 기기 상세: 위쪽의 !important 3열 그리드가 모바일에서도 적용돼 카드가 가로로
+     넘쳐 잘렸다. 모바일에서는 1열로 쌓고, 카드 배치(grid-column/row)도 해제한다. */
+  .device-detail-page .device-detail-layout {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto !important;
+    align-items: start !important;
+  }
+  .device-detail-page .device-detail-model-card,
+  .device-detail-page .device-measurement-card,
+  .device-detail-page .device-recommendation-card,
+  .device-detail-page .device-sensitive-card {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    height: auto !important;
+  }
+
+  /* 쓰레기통 아이콘을 상단 우측(제목 줄과 같은 행)으로 정렬한다. */
+  .device-detail-page .device-detail-topbar {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: start !important;
+  }
+  .device-detail-page .device-delete-icon {
+    justify-self: end;
+  }
+}
+
 /* 데스크톱 세로 반응형: 사이드바 고정 + 본문만 세로 스크롤 (작은 높이에서도 내용 잘림 없이 스크롤) */
 @media (min-width: 768px) {
   .app-shell--desktop {

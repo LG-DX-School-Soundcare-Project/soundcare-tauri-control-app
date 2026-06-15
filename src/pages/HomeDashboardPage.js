@@ -1,4 +1,3 @@
-import mockHomeStatus from '../data/mockHomeStatus.json';
 import { getCurrentHomeStatus } from '../api/eventApi.js';
 import { mountServerConnectionFailurePopup } from './ServerConnectionFailurePopup.js';
 import { createDashboardHomeScene } from '../three/dashboardHomeScene.js';
@@ -9,17 +8,34 @@ let dashboardSceneController = null;
 let dashboardSceneMediaCleanup = null;
 let serverFailurePopupCleanup = null;
 
-function formatMetric(value, fallback) {
+const SERVICE_LABEL_KO = {
+  robot_vacuum: '로봇청소기',
+  washing_machine: '세탁기',
+  dishwasher: '식기세척기',
+  refrigerator: '냉장고',
+  background: '배경음'
+};
+
+// currentNoiseState(백엔드) → 화면 표기. 알 수 없으면 '--'.
+const NOISE_STATE_KO = {
+  QUIET: { title: '안정', sub: '중요 이벤트 없음' },
+  STABLE: { title: '안정', sub: '중요 이벤트 없음' },
+  RECENT_NOISE_EVENT: { title: '최근 소음', sub: '최근 소음 이벤트 감지' },
+  ONGOING_NOISE_EVENT: { title: '주의', sub: '소음 진행 중' }
+};
+
+// 숫자 지표: API 값이 없으면 하드코딩 대신 '--'.
+function formatMetric(value) {
   const number = Number(value);
-  return Number.isFinite(number) ? Math.round(number) : fallback;
+  return Number.isFinite(number) ? Math.round(number) : '--';
 }
 
 function getSyncTime(status) {
-  const source = status.lastSyncedAt ?? status.lastSyncAt;
-  if (!source) return '12:30';
+  const source = status.lastSyncedAt ?? status.lastSyncAt ?? status.createdAt;
+  if (!source) return '--:--';
 
   const date = new Date(source);
-  if (Number.isNaN(date.getTime())) return '12:30';
+  if (Number.isNaN(date.getTime())) return '--:--';
 
   return new Intl.DateTimeFormat('en-US', {
     hour: '2-digit',
@@ -30,15 +46,23 @@ function getSyncTime(status) {
 
 export async function renderHomeDashboardPage() {
   let serverUnavailable = false;
+  // 서버 연동 실패 시 더미(mock)를 보여주지 않고 빈 상태(→ 전부 '--')로 둔다.
   const status = await getCurrentHomeStatus().catch(() => {
     serverUnavailable = true;
-    return mockHomeStatus;
+    return {};
   });
 
   const roomClimate = status.roomClimate ?? {};
-  const temperature = formatMetric(status.dashboardTemperature ?? roomClimate.temperature, 23);
-  const humidity = formatMetric(status.dashboardHumidity ?? roomClimate.humidity, 48);
+  const temperature = formatMetric(status.temperature ?? status.dashboardTemperature ?? roomClimate.temperature);
+  const humidity = formatMetric(status.humidity ?? status.dashboardHumidity ?? roomClimate.humidity);
   const syncTime = getSyncTime(status);
+
+  // 감지된 소리 / 소음 상태: 모두 home-status에서 가져오고, 없으면 '--'.
+  const soundSource = SERVICE_LABEL_KO[status.currentServiceLabel] ?? '--';
+  const relativeDb = formatMetric(status.decibelMax ?? status.decibelAvg);
+  const noiseState = NOISE_STATE_KO[status.currentNoiseState] ?? { title: '--', sub: '상태 정보 없음' };
+  const dbValue = Number(status.decibelMax ?? status.decibelAvg);
+  const noiseProgress = Number.isFinite(dbValue) ? Math.max(0, Math.min(100, Math.round(dbValue))) : 0;
 
   return `
     <section class="page thinq-dashboard-page" aria-label="메인 대시보드">
@@ -69,10 +93,10 @@ export async function renderHomeDashboardPage() {
 
           <section class="dashboard-info-card dashboard-noise-card">
             <h2>소음 상태</h2>
-            <strong>안정</strong>
-            <p>중요 이벤트 없음</p>
+            <strong>${escapeHtml(noiseState.title)}</strong>
+            <p>${escapeHtml(noiseState.sub)}</p>
             <div class="dashboard-progress" aria-hidden="true">
-              <span style="width: 76%"></span>
+              <span style="width: ${noiseProgress}%"></span>
             </div>
           </section>
 
@@ -101,8 +125,8 @@ export async function renderHomeDashboardPage() {
           <section class="dashboard-info-card dashboard-detection-card">
             <h2>감지된 소리</h2>
             <p>소음원</p>
-            <strong>로봇청소기</strong>
-            <p>상대 소음 <b>62 dB</b></p>
+            <strong>${escapeHtml(soundSource)}</strong>
+            <p>상대 소음 <b>${relativeDb} dB</b></p>
           </section>
         </aside>
       </div>
@@ -118,8 +142,7 @@ export function mountHomeDashboardPage({ navigate } = {}) {
     const popupController = mountServerConnectionFailurePopup({ navigate });
     serverFailurePopupCleanup = popupController.cleanup;
     popupController.openPopup({
-      lastSuccessfulSync: serverState.dataset.lastSync,
-      retryQueueCount: 5
+      lastSuccessfulSync: serverState.dataset.lastSync
     });
   }
 
