@@ -5015,10 +5015,29 @@ body,
   .device-list-card .device-detail-icon {
     display: none;
   }
+  /* 쓰레기통은 카드 좌하단(빈 공간, Detail 칩 반대쪽)으로. */
   .device-card-delete {
-    top: 12px;
-    right: 12px;
-    bottom: auto;
+    left: 16px;
+    bottom: 16px;
+    top: auto;
+    right: auto;
+  }
+
+  /* 기기명이 배지(연결 필요 등)와 한 줄에서 잘리던 문제: 제목 줄을 줄바꿈 허용하고
+     이름은 말줄임 없이 전부 표시(필요하면 배지가 아래로 내려간다). */
+  .device-list-card .device-list-meta p.device-list-title-row {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+  }
+  .device-list-card .device-list-meta p.device-list-title-row > span:first-child {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
   }
 
   /* 기기 상세: 위쪽의 !important 3열 그리드가 모바일에서도 적용돼 카드가 가로로
