@@ -8,7 +8,6 @@ import { getCurrentHomeStatus, getNoiseEvents } from '../api/eventApi.js';
 import { getApplianceMeasurements } from '../api/applianceMeasurementApi.js';
 import { getRuntimeSettings, deleteUserDevice } from '../api/deviceApi.js';
 import { removeCustomDevice, isCustomDevice, getCustomDevices } from '../utils/customDevicesState.js';
-import { getDeviceIcon } from '../utils/deviceIcons.js';
 import { startRealtimePoll, isFreshTimestamp } from '../utils/realtimePoll.js';
 
 let modelSceneController = null;
@@ -77,7 +76,8 @@ function loadCustomDeviceDetail(deviceId) {
   const isHub = c.deviceType === 'hub';
   return {
     title: c.deviceName || '기기',
-    modelType: c.modelType || 'washer',
+    // 허브는 soundcare.glb(LG AI 허브) 모델을 사용한다.
+    modelType: isHub ? 'hub' : (c.modelType || 'washer'),
     isHub,
     modelLabel: c.deviceName || '기기',
     serviceLabel: c.serviceLabel || '미지정',
@@ -200,14 +200,12 @@ export async function renderDeviceDetailPage({ params }) {
       <div class="device-detail-layout">
         <section class="device-detail-card device-detail-model-card">
           <h2>기기</h2>
-          ${detail.isHub
-            ? `<div class="device-detail-hub-icon has-device-icon" aria-label="${escapeHtml(detail.title)}">${getDeviceIcon(detail.title)}</div>`
-            : `<div
+          <div
             id="device-detail-model-viewer"
             class="device-detail-model-viewer"
             data-model-type="${escapeHtml(detail.modelType)}"
             aria-label="${escapeHtml(detail.title)} 3D 모델"
-          ></div>`}
+          ></div>
         </section>
 
         <section class="device-detail-card device-measurement-card">

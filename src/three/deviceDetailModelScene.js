@@ -7,7 +7,9 @@ const MODEL_PATHS = {
   washer: 'assets/models/wash/washing_machine_lg_drumspin_optimized.glb',
   robot: 'assets/models/robot_vaccum/robot_vacuum_lg_optimized.glb',
   refrigerator: 'assets/models/refrigerator/refrigerator_lg_optimized.glb',
-  dishwasher: 'assets/models/dishwasher/dishwasher.glb'
+  dishwasher: 'assets/models/dishwasher/dishwasher.glb',
+  // LG AI 허브 = soundcare.glb
+  hub: 'assets/models/soundcare/soundcare.glb'
 };
 
 // Refrigerator door pivots → their open-animation clip. Clicking a door part
