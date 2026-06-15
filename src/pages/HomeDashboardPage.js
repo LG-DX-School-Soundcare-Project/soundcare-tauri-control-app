@@ -4,6 +4,7 @@ import { createDashboardHomeScene } from '../three/dashboardHomeScene.js';
 import { householdHeader } from '../components/householdHeader.js';
 import { escapeHtml } from '../utils/html.js';
 import { startRealtimePoll } from '../utils/realtimePoll.js';
+import { createReactionSnapshot } from '../api/reactions.js';
 
 let dashboardSceneController = null;
 let dashboardSceneMediaCleanup = null;
@@ -132,20 +133,20 @@ export async function renderHomeDashboardPage() {
             <a class="dashboard-report-button" href="#/reports">열기</a>
           </section>
 
-          <button class="dashboard-info-card dashboard-reaction-card dashboard-reaction-card--positive" type="button">
+          <button class="dashboard-info-card dashboard-reaction-card dashboard-reaction-card--positive" type="button" data-reaction="POSITIVE">
             <strong aria-hidden="true">
               <svg class="reaction-thumb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21V9.8l4.4-6.6c1.2 0 2.1.9 1.9 2.1L12.5 9H18a2 2 0 0 1 2 2.3l-1.1 6.4A2.2 2.2 0 0 1 16.7 21z"/><path d="M7 9.8H4V21h3z"/></svg>
             </strong>
             <h2>좋아요</h2>
-            <p>피드백 저장</p>
+            <p data-reaction-status>피드백 저장</p>
           </button>
 
-          <button class="dashboard-info-card dashboard-reaction-card dashboard-reaction-card--negative" type="button">
+          <button class="dashboard-info-card dashboard-reaction-card dashboard-reaction-card--negative" type="button" data-reaction="NEGATIVE">
             <strong aria-hidden="true">
               <svg class="reaction-thumb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3v11.2l-4.4 6.6c-1.2 0-2.1-.9-1.9-2.1l.8-3.7H6a2 2 0 0 1-2-2.3l1.1-6.4A2.2 2.2 0 0 1 7.3 3z"/><path d="M17 14.2h3V3h-3z"/></svg>
             </strong>
             <h2>불편해요</h2>
-            <p>피드백 저장</p>
+            <p data-reaction-status>피드백 저장</p>
           </button>
 
           <section class="dashboard-info-card dashboard-detection-card">
@@ -213,6 +214,29 @@ export function mountHomeDashboardPage({ navigate } = {}) {
   const homeLink = document.querySelector('[data-dashboard-home-link]');
   homeLink?.addEventListener('click', () => {
     navigate('#/three-home');
+  });
+
+  // 좋아요/불편해요: 누른 순간 측정 중인 모든 가전별 소음을 한 번에 기록(스냅샷).
+  document.querySelectorAll('[data-reaction]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const reactionType = btn.dataset.reaction;
+      const statusEl = btn.querySelector('[data-reaction-status]');
+      const prev = statusEl?.textContent;
+      btn.disabled = true;
+      if (statusEl) statusEl.textContent = '기록 중...';
+      try {
+        const res = await createReactionSnapshot({ reactionType });
+        const count = res?.count ?? 0;
+        if (statusEl) statusEl.textContent = count > 0 ? `기록됨 (${count}건)` : '측정값 없음';
+      } catch (error) {
+        if (statusEl) statusEl.textContent = '기록 실패';
+      } finally {
+        window.setTimeout(() => {
+          if (statusEl) statusEl.textContent = prev ?? '피드백 저장';
+          btn.disabled = false;
+        }, 2000);
+      }
+    });
   });
 }
 

@@ -5028,6 +5028,16 @@ body,
   }
 }
 
+/* 데스크톱/태블릿(>640px): mobile-apk.css가 좋아요/불편해요·감지된 소리 카드를 전역에서
+   숨기고 모바일에서만 다시 보여준다. 타우리(데스크톱)에서도 반응 버튼을 쓸 수 있도록
+   이 카드들을 다시 노출한다. (.dashboard-info-card 는 flex column) */
+@media (min-width: 641px) {
+  .dashboard-reaction-card,
+  .dashboard-detection-card {
+    display: flex;
+  }
+}
+
 /* 데스크톱 세로 반응형: 사이드바 고정 + 본문만 세로 스크롤 (작은 높이에서도 내용 잘림 없이 스크롤) */
 @media (min-width: 768px) {
   .app-shell--desktop {

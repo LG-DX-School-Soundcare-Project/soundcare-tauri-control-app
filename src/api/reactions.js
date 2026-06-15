@@ -65,6 +65,15 @@ export async function fetchReactionDetail(reactionId) {
     .catch((error) => withApiFallback(error, () => null, 'reaction detail'));
 }
 
+// 버튼을 누른 그 순간, 측정 중인 모든 가전별로 반응을 한 번에 기록한다.
+// 서버가 가전별 최신 측정값을 스냅샷하므로 본문에는 반응 종류/강도/메모만 보낸다.
+export async function createReactionSnapshot({ reactionType, intensity, memo } = {}) {
+  return request('/api/events/reactions/snapshot', {
+    method: 'POST',
+    body: { reactionType, intensity, memo, source: 'USER_TAP' }
+  });
+}
+
 export async function createManualReaction(body) {
   if (isMockApiEnabled()) {
     return {
