@@ -56,7 +56,6 @@ export async function renderHomeDashboardPage() {
 
       <div class="dashboard-main-grid">
         <button class="dashboard-home-card" data-dashboard-home-link type="button" aria-label="3D 홈 보기 열기">
-          <h2>Home</h2>
           <div id="dashboard-home-scene" class="dashboard-home-scene" aria-label="집 내부 고정 상단 보기"></div>
           <p class="dashboard-sync">마지막 동기화: ${escapeHtml(syncTime)}</p>
         </button>

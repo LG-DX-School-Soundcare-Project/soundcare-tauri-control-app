@@ -101,19 +101,11 @@ export async function renderThreeDHomePage() {
 
   return `
     <section class="page three-view-page" aria-label="3D 홈 보기">
-      ${householdHeader({
-        headerClass: 'three-view-household-header',
-        status: `활성 · ${activeDb} dB`
-      })}
       <p class="three-view-active-pill"><span></span>활성 ${activeDb} dB</p>
 
       <div class="three-view-content">
         <section class="three-view-stage" aria-label="3D 홈 캔버스">
           <div class="three-view-stage-header">
-            <h2>
-              <span class="three-title-desktop">3D View</span>
-              <span class="three-title-mobile">공간 지도</span>
-            </h2>
             <button
               type="button"
               id="sound-viz-toggle"
