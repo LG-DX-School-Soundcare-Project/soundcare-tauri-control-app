@@ -4489,11 +4489,25 @@ body,
 }
 
 .device-add-primary {
-  background: linear-gradient(145deg, #45c1b9, #36a9a1);
+  background: linear-gradient(155deg, #45e2cc 0%, var(--neu-accent) 52%, #15b09b 100%);
   color: #ffffff;
   box-shadow:
-    8px 8px 16px rgba(108, 121, 126, 0.34),
-    -7px -7px 15px rgba(255, 255, 255, 0.92);
+    5px 5px 12px #cfcfcf,
+    -5px -5px 12px #ffffff,
+    inset 0 1px 1px rgba(255, 255, 255, 0.5),
+    0 7px 16px rgba(15, 160, 140, 0.26);
+}
+
+.device-add-primary:hover,
+.device-add-primary:focus-visible,
+.device-add-primary:active {
+  background: linear-gradient(155deg, #4ee9d3 0%, #2bccb6 52%, #19bba4 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    5px 5px 12px #cfcfcf,
+    -5px -5px 12px #ffffff,
+    inset 0 1px 1px rgba(255, 255, 255, 0.55),
+    0 9px 20px rgba(15, 160, 140, 0.32) !important;
 }
 
 .device-add-secondary {
