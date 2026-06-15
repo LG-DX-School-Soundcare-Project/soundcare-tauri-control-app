@@ -1,5 +1,27 @@
+@font-face {
+  font-family: 'KoddiUDOnGothic';
+  src: url('/fonts/KoddiUDOnGothic-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'KoddiUDOnGothic';
+  src: url('/fonts/KoddiUDOnGothic-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'KoddiUDOnGothic';
+  src: url('/fonts/KoddiUDOnGothic-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  font-family: Inter, Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: 'KoddiUDOnGothic', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: #0f172a;
   background: #e2e8f0;
   --bg: #f8fafc;
@@ -2569,7 +2591,7 @@ input[type="checkbox"] { width: auto; }
   color: #ffffff;
   font-size: 22px;
   font-weight: 900;
-  font-family: Georgia, serif;
+  font-family: 'KoddiUDOnGothic', sans-serif;
 }
 
 .gpt-analysis-note p {
