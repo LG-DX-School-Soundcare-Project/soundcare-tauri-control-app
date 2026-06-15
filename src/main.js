@@ -322,6 +322,20 @@ function waitForOrb() {
   });
 }
 
+// 앱 시작 스플래시 동안 3D 모델(GLB)을 미리 받아 캐시에 채운다. 이후 3D/홈 화면을
+// 열 때는 캐시에서 즉시 불러오므로 화면마다 따로 로딩이 뜨지 않는다. 다운로드가
+// 늦어도 상한(SPLASH_SCENES_MAX_WAIT_MS) 이후엔 스플래시를 진행한다.
+function warmHomeScenes() {
+  return import('./three/homeSceneCore.js')
+    .then((mod) =>
+      Promise.race([
+        mod.warmHomeAssets().catch(() => {}),
+        new Promise((resolve) => setTimeout(resolve, SPLASH_SCENES_MAX_WAIT_MS))
+      ])
+    )
+    .catch(() => {});
+}
+
 // 첫 화면의 3D 씬(.is-loading 컨테이너)이 전부 로딩될 때까지 대기
 function waitForScenes() {
   return new Promise((resolve) => {
@@ -352,7 +366,7 @@ function dismissSplash() {
     setTimeout(resolve, Math.max(0, SPLASH_MIN_MS - (Date.now() - splashShownAt)))
   );
 
-  Promise.all([minWait, waitForOrb(), waitForScenes()]).then(() => {
+  Promise.all([minWait, waitForOrb(), waitForScenes(), warmHomeScenes()]).then(() => {
     setTimeout(() => {
       splash.classList.add('is-hidden');
       setTimeout(() => splash.remove(), 500);

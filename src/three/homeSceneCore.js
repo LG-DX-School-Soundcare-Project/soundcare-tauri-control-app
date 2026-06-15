@@ -17,7 +17,11 @@ const MODEL_PATHS = {
 
 // LG AI 허브(soundcare.glb)를 거실 커피테이블 위에 올릴 때 테이블 가로폭 대비 허브 폭 비율.
 // 시각적으로 조정이 필요하면 이 값만 바꾸면 된다.
-const HUB_TABLE_WIDTH_RATIO = 0.5;
+const HUB_TABLE_WIDTH_RATIO = 0.36;
+
+// 허브를 테이블 윗면 중앙에서 화면 기준 오른쪽으로 살짝 이동시키는 양(테이블 폭 대비 비율).
+// 아이소메트릭 카메라(+x,+z에서 바라봄)에서 화면 오른쪽은 +x / -z 방향이다.
+const HUB_SHIFT_RIGHT_RATIO = 0.22;
 
 // The furnished apartment GLB is authored in its own (large) units. Scale the
 // whole shell so its widest horizontal span maps to this many world units (≈ metres),
@@ -38,6 +42,36 @@ const ROBOT_SCALE = 0.85;
 // nudge forward out of the recess.
 const FRIDGE_SCALE = 0.52;
 const FRIDGE_FORWARD = 0.06;
+
+// 앱 시작 스플래시에서 3D 모델을 미리 받아두면 true. 이후 3D 화면을 열 때는
+// 캐시(THREE.Cache)에서 즉시 불러오므로 화면별 로딩 orb를 띄우지 않는다.
+let homeAssetsWarmed = false;
+
+export function areHomeAssetsWarmed() {
+  return homeAssetsWarmed;
+}
+
+// 스플래시 동안 거실/가전 GLB를 한 번에 받아 캐시에 채운다. 허브(55MB)는
+// LG AI 허브 기기가 추가된 경우에만 포함한다.
+export async function warmHomeAssets() {
+  const { loader, dracoLoader } = createDracoGltfLoader();
+  const includeHub = getCustomDevices().some((device) => device.deviceType === 'hub');
+  const paths = [
+    MODEL_PATHS.apartment,
+    MODEL_PATHS.refrigerator,
+    MODEL_PATHS.washer,
+    MODEL_PATHS.robot,
+    MODEL_PATHS.dishwasher,
+    MODEL_PATHS.particle
+  ];
+  if (includeHub) paths.push(MODEL_PATHS.hub);
+  try {
+    await Promise.all(paths.map((path) => loader.loadAsync(assetUrl(path)).catch(() => null)));
+  } finally {
+    dracoLoader.dispose?.();
+    homeAssetsWarmed = true;
+  }
+}
 
 const applianceState = {
   refrigerator: { decibel: 38, running: true, color: 0x009dff },
@@ -138,7 +172,11 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
   container.innerHTML = '';
   container.classList.add('is-loading');
   container.appendChild(renderer.domElement);
-  attachModelLoadingOrb(container);
+  // 모델이 이미 캐시에 준비된 경우(앱 시작 스플래시에서 warm-up 완료) 화면별 로딩
+  // orb는 띄우지 않는다. 첫 로딩(스플래시 진행 중)에만 orb가 보인다.
+  if (!homeAssetsWarmed) {
+    attachModelLoadingOrb(container);
+  }
 
   buildLighting();
   resizeRenderer();
@@ -349,7 +387,10 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
     alignToFloor(model);
 
     group.add(model);
-    group.position.set(tableCenter.x, localBox.max.y, tableCenter.z);
+    // 테이블 윗면 중앙에 얹은 뒤 화면 기준 오른쪽(+x / -z)으로 살짝 이동.
+    const shift = Math.min(tableSize.x, tableSize.z) * HUB_SHIFT_RIGHT_RATIO;
+    const shiftDir = shift / Math.SQRT2;
+    group.position.set(tableCenter.x + shiftDir, localBox.max.y, tableCenter.z - shiftDir);
     homeRoot.add(group);
   }
 

@@ -2,6 +2,10 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
+// GLB 파일(특히 55MB 허브)을 URL 기준으로 캐시해, 앱 시작 스플래시에서 한 번
+// 받아두면 이후 3D 화면을 열 때 재다운로드 없이 즉시 재사용한다.
+THREE.Cache.enabled = true;
+
 export function assetUrl(path) {
   const base = import.meta.env.BASE_URL ?? '/';
   const normalizedBase = base.endsWith('/') ? base : `${base}/`;
