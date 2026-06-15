@@ -551,6 +551,74 @@ input[type="checkbox"] { width: auto; }
   min-height: 506px;
 }
 
+.settings-page .settings-category-panel,
+.profile-page .settings-category-panel.profile-category-panel,
+.system-status-page .settings-category-panel.system-category-panel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  max-width: 100%;
+  min-height: auto;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: #edf1f4;
+  box-shadow:
+    inset 5px 5px 10px rgba(203, 210, 217, 0.8),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.92);
+}
+
+.settings-page .settings-category-panel .settings-tab,
+.profile-page .settings-category-panel.profile-category-panel .settings-tab,
+.system-status-page .settings-category-panel.system-category-panel .settings-tab {
+  position: relative;
+  flex: 0 1 auto;
+  min-width: 0;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  color: #66727d;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.settings-page .settings-category-panel .settings-tab:hover,
+.profile-page .settings-category-panel.profile-category-panel .settings-tab:hover,
+.system-status-page .settings-category-panel.system-category-panel .settings-tab:hover {
+  transform: translateY(-1px);
+  color: #34404a;
+  background: rgba(255, 255, 255, 0.34);
+}
+
+.settings-page .settings-category-panel .settings-tab:active,
+.profile-page .settings-category-panel.profile-category-panel .settings-tab:active,
+.system-status-page .settings-category-panel.system-category-panel .settings-tab:active {
+  transform: translateX(2px) scale(0.985);
+}
+
+
+.settings-page .settings-category-panel .settings-tab.is-active,
+.profile-page .settings-category-panel.profile-category-panel .settings-tab.is-active,
+.system-status-page .settings-category-panel.system-category-panel .settings-tab.is-active {
+  background: linear-gradient(145deg, #30d6c4 0%, #1fc7bd 100%);
+  box-shadow:
+    -5px -5px 10px rgba(255, 255, 255, 0.92),
+    7px 8px 16px rgba(152, 166, 178, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
 .system-status-layout {
   display: grid;
   grid-template-columns: repeat(3, minmax(190px, 1fr));

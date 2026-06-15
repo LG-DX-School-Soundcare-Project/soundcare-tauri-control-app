@@ -104,6 +104,7 @@ body,
   transition: background 0.18s ease, transform 0.3s ease;
 }
 
+
 .sidebar-footer-link {
   border-radius: 14px;
   transition: background 0.18s ease;
@@ -407,6 +408,73 @@ body,
   background:#ffffff;
   box-shadow:
     0 24px 60px rgba(75, 22, 76, 0.32) !important;
+}
+
+.settings-page .settings-category-panel,
+.profile-page .settings-category-panel.profile-category-panel,
+.system-status-page .settings-category-panel.system-category-panel {
+  gap: 8px !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  min-height: auto !important;
+  padding: 8px 10px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: #edf1f4 !important;
+  box-shadow:
+    inset 5px 5px 10px rgba(203, 210, 217, 0.8),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.92) !important;
+}
+
+.settings-page .settings-category-panel .settings-tab,
+.profile-page .settings-category-panel.profile-category-panel .settings-tab,
+.system-status-page .settings-category-panel.system-category-panel .settings-tab {
+  position: relative;
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
+  min-height: 48px !important;
+  height: 48px !important;
+  padding: 0 24px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #66727d !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  white-space: nowrap;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease !important;
+}
+
+.settings-page .settings-category-panel .settings-tab:hover,
+.profile-page .settings-category-panel.profile-category-panel .settings-tab:hover,
+.system-status-page .settings-category-panel.system-category-panel .settings-tab:hover {
+  transform: translateY(-1px);
+  color: #34404a !important;
+  background: rgba(255, 255, 255, 0.34) !important;
+}
+
+.settings-page .settings-category-panel .settings-tab:active,
+.profile-page .settings-category-panel.profile-category-panel .settings-tab:active,
+.system-status-page .settings-category-panel.system-category-panel .settings-tab:active {
+  transform: translateX(2px) scale(0.985);
+}
+
+
+.settings-page .settings-category-panel .settings-tab.is-active,
+.profile-page .settings-category-panel.profile-category-panel .settings-tab.is-active,
+.system-status-page .settings-category-panel.system-category-panel .settings-tab.is-active {
+  background: linear-gradient(145deg, #30d6c4 0%, #1fc7bd 100%) !important;
+  box-shadow:
+    -5px -5px 10px rgba(255, 255, 255, 0.92),
+    7px 8px 16px rgba(152, 166, 178, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
 }
 
 /* --- Dashboard hierarchy --- */
