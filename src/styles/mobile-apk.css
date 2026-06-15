@@ -149,7 +149,9 @@
     width: calc(100% + (var(--apk-page-x) * 2));
     min-height: 146px;
     margin: 0 calc(var(--apk-page-x) * -1) 20px;
-    padding: 38px calc(var(--apk-page-x) + 20px) 26px;
+    /* left padding pulled in so the back button lines up with the cards/content
+       edge instead of sitting ~48px in */
+    padding: 38px calc(var(--apk-page-x) + 20px) 26px 0;
     border-bottom: 2px solid var(--apk-border);
     background: var(--apk-surface);
   }
@@ -230,6 +232,13 @@
     color: var(--apk-copy);
     font-size: 14px;
     font-weight: 700;
+  }
+
+  /* The 3D home header is short and centers its title; the absolute sync
+     line overlaps it and duplicates the .three-view-active-pill below.
+     Drop it here. */
+  .three-view-page .dashboard-mobile-sync {
+    display: none;
   }
 
   .dashboard-main-grid {
@@ -583,6 +592,56 @@
     text-align: center;
   }
 
+  /* The period dropdown wrapper is the actual grid child here (it wraps the
+     button). The desktop dropdown/menu styles live inside a min-width:641px
+     block, so re-create the absolute-overlay menu for phones — otherwise the
+     open menu sits in normal flow and crushes the header. */
+  .report-period-dropdown {
+    position: relative;
+    grid-column: 2;
+    grid-row: 1 / 3;
+    width: 132px;
+    justify-self: end;
+  }
+
+  .report-period-dropdown .report-period-button {
+    grid-column: auto;
+    grid-row: auto;
+    width: 100%;
+  }
+
+  .report-period-menu {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 8px);
+    right: 0;
+    display: grid;
+    width: 180px;
+    gap: 6px;
+    padding: 8px;
+    border: 2px solid var(--apk-border);
+    border-radius: 16px;
+    background: var(--apk-surface);
+  }
+
+  .report-period-menu[hidden] {
+    display: none;
+  }
+
+  .report-period-menu button {
+    width: 100%;
+    min-height: 42px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 10px;
+    background: var(--apk-control);
+    color: var(--apk-copy);
+    text-align: left;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: none;
+  }
+
   .report-appliance-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -594,7 +653,7 @@
   }
 
   .report-appliance-grid::before {
-    content: "Main summary";
+    content: "주요 요약";
     grid-column: 1 / -1;
     margin-bottom: 10px;
     color: var(--apk-ink);
@@ -693,13 +752,20 @@
   .report-overview-panel {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 22px;
     width: 100%;
     min-height: 0;
     margin: 16px 0 18px;
-    padding: 20px 18px 12px;
+    padding: 22px 22px 18px;
     border: 2px solid var(--apk-border);
     border-radius: var(--apk-card-radius);
+  }
+
+  /* 헤딩 / 알약줄 / 분할바(또는 순위 목록)가 서로 붙지 않도록 간격을 준다 */
+  .report-summary-block,
+  .report-ranking-block {
+    display: grid;
+    gap: 14px;
   }
 
   .report-panel-heading {
@@ -709,6 +775,13 @@
   .reaction-pill-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+  }
+
+  /* 순위 막대가 카드 우측 가장자리에 바짝 붙지 않도록 살짝 안쪽으로 */
+  .sensitivity-ranking {
+    display: grid;
+    gap: 12px;
+    padding-right: 4px;
   }
 
   .reaction-pill {
@@ -811,14 +884,11 @@
     font-size: 11px;
   }
 
-  .gpt-report-card {
-    background: var(--apk-ink);
-    color: var(--apk-surface);
-  }
-
+  /* 카드 배경은 neumorphism.css(마지막 로드)가 밝은 surface로 덮어쓰므로
+     예전 다크 배경 가정의 흰색 텍스트를 ink 색으로 맞춰 가독성 확보 */
   .gpt-report-card h2,
   .gpt-report-card p {
-    color: var(--apk-surface);
+    color: var(--apk-ink);
   }
 
   /* 어두운 카드 위에서 버튼임을 알 수 있도록 테두리 필 형태로 표시 */

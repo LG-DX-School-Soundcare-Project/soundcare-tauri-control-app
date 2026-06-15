@@ -551,6 +551,74 @@ input[type="checkbox"] { width: auto; }
   min-height: 506px;
 }
 
+.settings-page .settings-category-panel,
+.profile-page .settings-category-panel.profile-category-panel,
+.system-status-page .settings-category-panel.system-category-panel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  max-width: 100%;
+  min-height: auto;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: #edf1f4;
+  box-shadow:
+    inset 5px 5px 10px rgba(203, 210, 217, 0.8),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.92);
+}
+
+.settings-page .settings-category-panel .settings-tab,
+.profile-page .settings-category-panel.profile-category-panel .settings-tab,
+.system-status-page .settings-category-panel.system-category-panel .settings-tab {
+  position: relative;
+  flex: 0 1 auto;
+  min-width: 0;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  color: #66727d;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.settings-page .settings-category-panel .settings-tab:hover,
+.profile-page .settings-category-panel.profile-category-panel .settings-tab:hover,
+.system-status-page .settings-category-panel.system-category-panel .settings-tab:hover {
+  transform: translateY(-1px);
+  color: #34404a;
+  background: rgba(255, 255, 255, 0.34);
+}
+
+.settings-page .settings-category-panel .settings-tab:active,
+.profile-page .settings-category-panel.profile-category-panel .settings-tab:active,
+.system-status-page .settings-category-panel.system-category-panel .settings-tab:active {
+  transform: translateX(2px) scale(0.985);
+}
+
+
+.settings-page .settings-category-panel .settings-tab.is-active,
+.profile-page .settings-category-panel.profile-category-panel .settings-tab.is-active,
+.system-status-page .settings-category-panel.system-category-panel .settings-tab.is-active {
+  background: linear-gradient(145deg, #30d6c4 0%, #1fc7bd 100%);
+  box-shadow:
+    -5px -5px 10px rgba(255, 255, 255, 0.92),
+    7px 8px 16px rgba(152, 166, 178, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
 .system-status-layout {
   display: grid;
   grid-template-columns: repeat(3, minmax(190px, 1fr));
@@ -804,9 +872,10 @@ input[type="checkbox"] { width: auto; }
 
 .dashboard-household-header {
   display: flex;
+  justify-content: flex-start;
   align-items: center;
   min-height: 109px;
-  padding: 0 37px;
+  padding: 0 12px;
   border-bottom: 0.1px solid var(--control-bg);
   background: var(--surface-muted);
 }
@@ -817,6 +886,7 @@ input[type="checkbox"] { width: auto; }
   font-size: 26px;
   line-height: 1.15;
   letter-spacing: 0;
+  text-align: left;
 }
 
 .dashboard-main-grid {
@@ -1033,6 +1103,52 @@ input[type="checkbox"] { width: auto; }
   min-width: 0;
 }
 
+.three-view-stage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sound-viz-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid #d6dee8;
+  border-radius: 999px;
+  background: #f4f7fb;
+  color: #6b7685;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.sound-viz-toggle:hover {
+  border-color: #b9c4d2;
+}
+
+.sound-viz-toggle__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #b3bcc8;
+  transition: background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.sound-viz-toggle.is-on {
+  background: #e8f6f1;
+  border-color: #9fe0cd;
+  color: #128067;
+}
+
+.sound-viz-toggle.is-on .sound-viz-toggle__dot {
+  background: #16b08a;
+  box-shadow: 0 0 0 4px rgba(22, 176, 138, 0.18);
+}
+
 .three-view-copy {
   margin-bottom: 43px;
 }
@@ -1079,11 +1195,22 @@ input[type="checkbox"] { width: auto; }
 }
 
 .appliance-noise-card {
+  display: block;
   min-height: 165px;
   padding: 18px 32px;
   border: 2px solid #737c8c;
   border-radius: 12px;
   background: #ffffff;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.appliance-noise-card:hover {
+  border-color: #16b08a;
+  box-shadow: 0 6px 18px rgba(22, 176, 138, 0.16);
+  transform: translateY(-2px);
 }
 
 .appliance-noise-card h2 {
@@ -1128,7 +1255,7 @@ input[type="checkbox"] { width: auto; }
 .device-list-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 24px;
   margin-bottom: 28px;
 }
@@ -1156,6 +1283,8 @@ input[type="checkbox"] { width: auto; }
 }
 
 .device-add-button {
+  margin-left: auto;
+  flex: 0 0 auto;
   min-width: 201px;
   height: 62px;
   border: 0;
@@ -1559,6 +1688,12 @@ input[type="checkbox"] { width: auto; }
   margin-bottom: 28px;
 }
 
+.basic-report-heading {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+
 .basic-report-header h1 {
   margin: 0;
   color: #111827;
@@ -1570,6 +1705,7 @@ input[type="checkbox"] { width: auto; }
 .basic-report-header p {
   max-width: 615px;
   margin: 4px 0 0;
+  padding-bottom: 6px;
   color: #4b5563;
   font-size: 25px;
   line-height: 1.5;
@@ -4662,12 +4798,15 @@ input[type="checkbox"] { width: auto; }
 }
 
 .reaction-filter-field::after {
-  content: 'ⅴ';
+  content: '';
   position: absolute;
-  right: 1rem;
-  bottom: 0.9rem;
-  color: var(--ink);
-  font-size: 0.95rem;
+  right: 1.15rem;
+  bottom: 1.15rem;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  transform: rotate(45deg);
   pointer-events: none;
 }
 
@@ -4976,14 +5115,33 @@ input[type="checkbox"] { width: auto; }
 .basic-report-header,
 .reaction-history-header,
 .gpt-detail-header,
-.settings-page-header,
-.profile-page-header,
-.system-page-header,
 .three-view-header,
 .device-detail-topbar {
   width: min(100%, var(--ui-content-max));
+  margin-left: 0;
   margin-right: auto;
   margin-bottom: clamp(20px, 2.4vw, 34px);
+}
+
+.settings-page-header {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 20px;
+}
+
+.profile-page-header {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 20px;
+}
+
+.system-page-header {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 20px;
 }
 
 .device-list-header h1,

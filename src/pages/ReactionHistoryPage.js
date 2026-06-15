@@ -51,12 +51,25 @@ let reactionRows = [
 
 const tableColumns = ['시간', '반응', '연결 이벤트 ID', '기기', 'dB', '공간'];
 
+// `field` decides which row property a filter option matches against:
+// positive/negative live on reactionType, pending/manual on status.
+const REACTION_MAP = [
+  { value: 'positive', label: '긍정', field: 'reactionType' },
+  { value: 'negative', label: '부정', field: 'reactionType' },
+  { value: 'pending', label: '대기', field: 'status' },
+  { value: 'manual', label: '수동', field: 'status' }
+];
+
+function reactionLabel(value) {
+  return REACTION_MAP.find((r) => r.value === String(value).toLowerCase())?.label ?? value;
+}
+
 const filterFields = [
   { id: 'reaction-filter-range', label: '기간', options: ['7일', '2주', '한달'] },
   { id: 'reaction-filter-noise', label: '소음', options: ['모두', '60dB 이상', '60dB 이하'] },
   { id: 'reaction-filter-room', label: '공간', options: ['모두', '거실', '세탁실', '부엌', '화장실', '방1', '방2', '방3'] },
   { id: 'reaction-filter-device', label: '기기', options: ['모두', '세탁기', '로봇청소기', '냉장고', '식기세척기', '상태없음'] },
-  { id: 'reaction-filter-reaction', label: '반응', options: ['모두', 'Positive', 'Negative', 'Pending', 'Manual'] }
+  { id: 'reaction-filter-reaction', label: '반응', options: ['모두', ...REACTION_MAP.map((r) => r.label)] }
 ];
 
 function filterFieldMarkup({ id, label, options }) {
@@ -140,8 +153,11 @@ function rowCells(row) {
 function rowMarkup(row, index) {
   const cells = rowCells(row)
     .map((value, columnIndex) => {
-      const tag = columnIndex === 1 ? 'strong' : 'span';
-      return `<${tag} class="reaction-cell" data-label="${escapeHtml(tableColumns[columnIndex])}">${escapeHtml(value)}</${tag}>`;
+      const isReaction = columnIndex === 1;
+      const tag = isReaction ? 'strong' : 'span';
+      const display = isReaction ? reactionLabel(value) : value;
+      const modifier = isReaction ? ` reaction-cell--${escapeHtml(String(value).toLowerCase())}` : '';
+      return `<${tag} class="reaction-cell${modifier}" data-label="${escapeHtml(tableColumns[columnIndex])}">${escapeHtml(display)}</${tag}>`;
     })
     .join('');
 
@@ -212,7 +228,9 @@ function matchesDevice(row, selectedDevice) {
 
 function matchesReaction(row, selectedReaction) {
   if (selectedReaction === '모두') return true;
-  return row.reactionType === selectedReaction.toLowerCase();
+  const entry = REACTION_MAP.find((r) => r.label === selectedReaction);
+  if (!entry) return true;
+  return String(row[entry.field] ?? '').toLowerCase() === entry.value;
 }
 
 function matchesSearch(row, keyword) {
@@ -271,7 +289,7 @@ export async function renderReactionHistoryPage() {
         </section>
         <div class="reaction-pending-note-row">
           <p class="reaction-table-note">
-            Pending 반응은 이벤트 매칭을 기다립니다. 매칭이 없으면 수동 반응 이벤트를 생성하세요.
+            대기 중인 반응은 이벤트 매칭을 기다립니다. 매칭이 없으면 수동 반응 이벤트를 생성하세요.
           </p>
         </div>
       </div>

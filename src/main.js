@@ -7,6 +7,12 @@ import './styles/polish.css';
 import './styles/neumorphism.css';
 import './components/liquidGlassLoader.js';
 import { escapeHtml } from './utils/html.js';
+import { brandMark } from './components/brandMark.js';
+
+// APK(WebView)는 상태바/제스처바 아래까지 그려지므로 safe-area 패딩 대상으로 표시한다.
+if (/Android/i.test(navigator.userAgent)) {
+  document.documentElement.classList.add('is-apk');
+}
 
 // APK(WebView)는 상태바/제스처바 아래까지 그려지므로 safe-area 패딩 대상으로 표시한다.
 if (/Android/i.test(navigator.userAgent)) {
@@ -195,7 +201,9 @@ function mobileBottomNav(currentHash) {
 
 function shell(content, routeTitle) {
   const currentHash = window.location.hash || '#/login';
-  const hideNav = currentHash === '#/login' || currentHash === '#/create-account';
+  // 해시가 #/ 처럼 미매칭이어도 login 라우트로 떨어지므로, 매칭된 라우트 기준으로 네비를 숨긴다.
+  const { route: matchedRoute } = matchRoute(currentHash);
+  const hideNav = matchedRoute.title === 'Login' || matchedRoute.title === 'Create Account';
   const settingsActive = isNavActive(currentHash, settingsNavItem);
 
   if (hideNav) {
@@ -222,7 +230,7 @@ function shell(content, routeTitle) {
     <div class="app-shell app-shell--desktop">
       <div class="app-workspace">
         <aside class="sidebar">
-          <h1>SoundCare</h1>
+          <h1 class="sidebar-brand">${brandMark('side')}<span>SoundCare</span></h1>
           <nav>${nav}</nav>
           <div class="sidebar-footer">
             <a class="sidebar-footer-link ${settingsActive ? 'is-active' : ''}" href="#/settings" aria-label="Settings">
