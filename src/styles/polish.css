@@ -409,6 +409,63 @@ body,
   color: #6b7280;
 }
 
+/* 상세 리포트 전체 보기 모달 */
+.gpt-report-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.gpt-report-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.45);
+  backdrop-filter: blur(2px);
+}
+.gpt-report-modal__panel {
+  position: relative;
+  width: min(720px, 100%);
+  max-height: min(86vh, 900px);
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(17, 24, 39, 0.28);
+  overflow: hidden;
+}
+.gpt-report-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  border-bottom: 1px solid #eef0f4;
+}
+.gpt-report-modal__head h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+}
+.gpt-report-modal__close {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 8px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.gpt-report-modal__close:hover { background: #e5e7eb; }
+.gpt-report-modal__body {
+  padding: 20px 24px 26px;
+  overflow-y: auto;
+}
+
 /* With only an h1 + p in these headers, the :last-child -> actions rule
    sends the subtitle to the side column and collapses the title at phone
    widths; stack the header instead. */

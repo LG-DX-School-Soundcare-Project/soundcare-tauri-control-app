@@ -106,7 +106,7 @@ const routes = [
     pattern: /^#\/reports\/gpt-detailed$/,
     title: 'GPT Detailed Report',
     load: () => import('./pages/GPTDetailedReportPage.js'),
-    exports: { render: 'renderGPTDetailedReportPage', mount: 'mountGPTDetailedReportPage' }
+    exports: { render: 'renderGPTDetailedReportPage', mount: 'mountGPTDetailedReportPage', cleanup: 'cleanupGPTDetailedReportPage' }
   },
   {
     pattern: /^#\/reports\/system-status$/,
