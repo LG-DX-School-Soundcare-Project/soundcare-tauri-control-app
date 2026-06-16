@@ -262,9 +262,18 @@ async function pollDeviceDecibels() {
       : null;
     const display = db != null && Number.isFinite(db) ? `${db} dB` : '-- dB';
     row.decibel = db != null && Number.isFinite(db) ? db : '--';
+    if (measurement) row.time = formatTime(measurement.measuredAt ?? measurement.createdAt);
     const el = document.querySelector(`[data-db-for="${row.id}"]`);
     if (el) el.textContent = display;
   }
+}
+
+// 연결(실패) 상태가 바뀌었는지 비교하기 위한 시그니처. dB가 --면 연결 필요로 본다.
+function connectionStateSignature() {
+  return getAllDeviceRows()
+    .filter((d) => !isHubDevice(d))
+    .map((d) => `${d.id}:${isDeviceConnectionFailed(d) ? 'F' : 'C'}`)
+    .join(',');
 }
 
 export function mountDeviceListPage({ navigate } = {}) {
@@ -422,8 +431,14 @@ export function mountDeviceListPage({ navigate } = {}) {
   bindDeleteButtons();
   refreshDeviceState();
 
-  // ESP→Agent가 올리는 최신 dB를 주기적으로 폴링해 카드 숫자를 실시간 갱신.
-  realtimeStop = startRealtimePoll(pollDeviceDecibels);
+  // ESP→Agent가 올리는 최신 dB를 주기적으로 폴링해 카드 숫자를 실시간 갱신한다.
+  // 연결(실패) 상태가 바뀌면(가전이 다시 측정값을 올리기 시작/중단) 카드를 다시 그려
+  // "연결 필요" 배지·실패 팝업 가로채기·상태 배지를 최신 상태로 맞춘다.
+  realtimeStop = startRealtimePoll(async () => {
+    const before = connectionStateSignature();
+    await pollDeviceDecibels();
+    if (connectionStateSignature() !== before) renderFilteredDevices();
+  });
 }
 
 export function cleanupDeviceListPage() {
