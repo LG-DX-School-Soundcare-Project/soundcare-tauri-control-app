@@ -409,6 +409,17 @@ body,
   color: #6b7280;
 }
 
+/* 시간대 카드는 옆 카드(가전별 상세) 높이에 맞춰 늘어나는데, 막대가 위로 쏠리지
+   않도록 제목은 위에 두고 막대 목록을 남는 공간에서 세로 중앙 정렬한다. */
+.gpt-detailed-page .gpt-time-card {
+  display: flex;
+  flex-direction: column;
+}
+.gpt-detailed-page .gpt-time-card .gpt-time-list {
+  flex: 1 1 auto;
+  align-content: center;
+}
+
 /* 상세 리포트 전체 보기 모달 */
 .gpt-report-modal {
   position: fixed;
