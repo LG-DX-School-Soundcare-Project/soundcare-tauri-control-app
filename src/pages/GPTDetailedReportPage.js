@@ -2,6 +2,9 @@ import { escapeHtml } from '../utils/html.js';
 import { fetchReactions } from '../api/reactions.js';
 import { fetchReport } from '../api/reports.js';
 
+// 화면(요약)과 PDF(상세)에서 공통으로 쓰는 마지막 GPT 리포트 본문.
+let currentReportText = '';
+
 const SERVICE_LABEL_KO = {
   robot_vacuum: '로봇청소기',
   washing_machine: '세탁기',
@@ -213,15 +216,33 @@ function renderReportMarkdown(markdown) {
   return html;
 }
 
+// "## 1. 한눈에 보기" 등 첫 번째 섹션 본문만 뽑아 화면 요약으로 쓴다. 전체 6개 섹션은
+// PDF(상세 리포트)로만 내려받게 한다.
+function extractSummaryMarkdown(markdown) {
+  const lines = String(markdown || '').split(/\r?\n/);
+  const headingIdx = [];
+  lines.forEach((line, i) => {
+    if (/^##\s+/.test(line.trim())) headingIdx.push(i);
+  });
+  if (headingIdx.length === 0) return String(markdown || '').trim();
+  const start = headingIdx[0] + 1;
+  const end = headingIdx.length > 1 ? headingIdx[1] : lines.length;
+  return lines.slice(start, end).join('\n').trim();
+}
+
 export async function renderGPTDetailedReportPage() {
   const data = await loadDetailedReportData();
+  currentReportText = data.reportText || '';
 
   const causeHtml = data.causeRows.length
     ? data.causeRows.map(causeRow).join('')
     : '<li class="gpt-cause-row">부정 반응 데이터가 아직 없습니다.</li>';
 
+  // 화면에는 진짜 요약(첫 섹션)만 보여주고, 전체 분석은 PDF로 내려받게 한다.
+  const summaryMd = data.reportText ? extractSummaryMarkdown(data.reportText) : '';
   const analysisHtml = data.reportText
-    ? `<div class="gpt-report-md">${renderReportMarkdown(data.reportText)}</div>`
+    ? `<div class="gpt-report-md gpt-report-summary">${renderReportMarkdown(summaryMd || data.reportText)}</div>
+       <p class="gpt-summary-hint">전체 분석은 상단의 <strong>상세 리포트 PDF 저장</strong>으로 확인하세요.</p>`
     : '<p class="gpt-analysis-text">아직 생성된 GPT 상세 리포트가 없습니다. 리포트 화면에서 "GPT 리포트 생성하기"를 눌러 주세요.</p>';
 
   const applianceRowsHtml = data.applianceDetail.length
@@ -245,6 +266,7 @@ export async function renderGPTDetailedReportPage() {
       <header class="gpt-detail-header">
         <a class="gpt-detail-back" href="#/reports" aria-label="리포트로 돌아가기"><svg class="back-arrow-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a>
         <h1>GPT 상세 리포트</h1>
+        <button type="button" class="gpt-detail-pdf" data-download-pdf ${data.reportText ? '' : 'disabled'}>상세 리포트 PDF 저장</button>
       </header>
 
       <div class="gpt-detail-grid">
@@ -302,4 +324,48 @@ export async function renderGPTDetailedReportPage() {
       </div>
     </section>
   `;
+}
+
+// 전체 GPT 리포트(6개 섹션)를 인쇄용 새 창으로 열고 인쇄 대화상자(=PDF로 저장)를 띄운다.
+// 별도 PDF 라이브러리 없이 브라우저의 "PDF로 저장" 기능을 사용한다.
+function downloadReportPdf() {
+  if (!currentReportText) return;
+  const bodyHtml = renderReportMarkdown(currentReportText);
+  const printWindow = window.open('', '_blank', 'noopener,width=900,height=1000');
+  if (!printWindow) {
+    window.alert('팝업이 차단되어 PDF를 열 수 없습니다. 팝업을 허용해 주세요.');
+    return;
+  }
+  const styles = `
+    * { box-sizing: border-box; }
+    body { font-family: 'Pretendard','Segoe UI',sans-serif; color:#1f2937; line-height:1.6; margin:40px; }
+    h1.doc-title { font-size:24px; margin:0 0 4px; }
+    .doc-sub { color:#6b7280; font-size:13px; margin:0 0 24px; }
+    h3 { font-size:18px; margin:22px 0 8px; border-bottom:2px solid #e5e7eb; padding-bottom:6px; }
+    h4 { font-size:15px; margin:16px 0 6px; color:#111827; }
+    h5 { font-size:13px; margin:12px 0 4px; color:#374151; }
+    ul { margin:6px 0 6px 18px; padding:0; }
+    li { margin:3px 0; }
+    p { margin:6px 0; }
+    hr { border:none; border-top:1px solid #e5e7eb; margin:18px 0; }
+    @page { margin:18mm; }
+  `;
+  printWindow.document.write(
+    `<!doctype html><html lang="ko"><head><meta charset="utf-8">` +
+    `<title>SoundCare GPT 상세 리포트</title><style>${styles}</style></head>` +
+    `<body><h1 class="doc-title">SoundCare GPT 상세 리포트</h1>` +
+    `<p class="doc-sub">생성일 ${new Date().toLocaleString('ko-KR')}</p>` +
+    `<div class="gpt-report-md">${bodyHtml}</div></body></html>`
+  );
+  printWindow.document.close();
+  printWindow.focus();
+  // 콘텐츠 렌더 후 인쇄 대화상자 표시
+  setTimeout(() => printWindow.print(), 350);
+}
+
+export function mountGPTDetailedReportPage() {
+  const pdfButton = document.querySelector('[data-download-pdf]');
+  if (pdfButton && !pdfButton.disabled) {
+    pdfButton.addEventListener('click', downloadReportPdf);
+  }
 }
