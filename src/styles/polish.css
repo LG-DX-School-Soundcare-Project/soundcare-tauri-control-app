@@ -4224,7 +4224,8 @@ body,
 
 .device-list-page .device-sensitive-pill {
   position: absolute;
-  right: 22px;
+  /* 삭제(휴지통) 버튼(우측 16px + 폭 30px)과 겹치지 않게 왼쪽으로 띄운다. */
+  right: 56px;
   bottom: 18px;
   display: inline-flex;
   min-height: 28px;
