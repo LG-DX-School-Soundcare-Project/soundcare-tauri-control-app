@@ -1950,15 +1950,18 @@ button:active,
 .device-list-title-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 6px 10px;
   min-width: 0;
 }
 
 .device-list-title-row > span:first-child {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* 가전 이름(한글)은 잘리지 않고 전부 보이게 한다. 칸이 좁으면 배지가 다음 줄로 내려간다. */
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  word-break: keep-all;
 }
 
 .device-status-badge {
