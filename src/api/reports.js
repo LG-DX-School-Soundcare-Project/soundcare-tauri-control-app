@@ -1,8 +1,12 @@
-import { isMockApiEnabled, request } from './client.js';
+import { isMockApiEnabled, isDemoMode, request, requestLive } from './client.js';
 import { withApiFallback } from './fallbacks.js';
 import { requestDetailedReport } from './reportApi.js';
 
 export async function fetchReport(reportId) {
+  // 데모 모드: GPT 상세 리포트 본문은 실제 백엔드에서 가져온다(유지 대상).
+  if (isDemoMode()) {
+    return requestLive(`/api/reports/${encodeURIComponent(reportId)}`).catch(() => null);
+  }
   if (isMockApiEnabled()) {
     return {
       reportId,

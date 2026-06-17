@@ -1,6 +1,6 @@
-import mockTelemetry from '../data/mockApplianceModuleTelemetry.json';
 import { request, isMockApiEnabled, buildQuery } from './client.js';
 import { defaultLatestTelemetry, withApiFallback } from './fallbacks.js';
+import { demoMeasurements, demoLatestMeasurement } from '../demo/demoData.js';
 
 // Appliance Controller Agent PC가 ESP32-S3에서 받은 INMP441 상대 dB 측정값과
 // 재생 상태를 Spring Boot에 업로드한다. Tauri/Web은 그 최신값을 조회한다.
@@ -42,11 +42,8 @@ function matchesMeasurementFilters(measurement, params = {}) {
 
 export async function getLatestApplianceMeasurement(params = {}) {
   if (isMockApiEnabled()) {
-    const latest = mockTelemetry.latestTelemetry;
-    if (!matchesMeasurementFilters(latest, params)) {
-      return null;
-    }
-    return normalizeMeasurement(latest);
+    // 데모: 항상 "방금" 측정한 것처럼 신선한 값을 반환(가전 필터만 적용).
+    return normalizeMeasurement(demoLatestMeasurement(params));
   }
   const latest = await request(`/api/events/appliance-measurements/latest${buildQuery(params)}`)
     .catch((error) => withApiFallback(error, () => {
@@ -58,8 +55,8 @@ export async function getLatestApplianceMeasurement(params = {}) {
 
 export async function getApplianceMeasurements(params = {}) {
   if (isMockApiEnabled()) {
-    const latest = mockTelemetry.latestTelemetry;
-    return matchesMeasurementFilters(latest, params) ? [normalizeMeasurement(latest)] : [];
+    // 데모: 재생 중인 가전들의 신선한 측정값 목록.
+    return demoMeasurements(params).map(normalizeMeasurement);
   }
   const measurements = await request(`/api/events/appliance-measurements${buildQuery(params)}`)
     .catch((error) => withApiFallback(error, () => {

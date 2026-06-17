@@ -1,5 +1,5 @@
 import mockHomeStatus from '../data/mockHomeStatus.json';
-import { request, isMockApiEnabled } from './client.js';
+import { request, requestLive, isMockApiEnabled, isDemoMode } from './client.js';
 import { defaultBasicReport, withApiFallback } from './fallbacks.js';
 
 function reportWindow() {
@@ -39,6 +39,14 @@ export async function getBasicReport() {
 
 // MVP 기준: GPT 동의는 users.ai_data_use_consent로 관리한다 (ai_consents API 삭제).
 export async function grantGptReportConsent(consentPayload = {}) {
+  // 데모 모드: GPT 리포트는 "유지" 대상이므로 동의도 실제 백엔드에 반영한다.
+  if (isDemoMode()) {
+    return requestLive('/api/users/me', {
+      method: 'PATCH',
+      body: { aiDataUseConsent: consentPayload.granted ?? true }
+    }).then((profile) => ({ granted: profile?.aiDataUseConsent ?? true }))
+      .catch(() => ({ granted: true, ...consentPayload }));
+  }
   if (isMockApiEnabled()) {
     return { granted: true, ...consentPayload };
   }
@@ -50,6 +58,24 @@ export async function grantGptReportConsent(consentPayload = {}) {
 }
 
 export async function requestDetailedReport(reportPayload) {
+  const body = reportPayload?.periodStart && reportPayload?.periodEnd ? reportPayload : reportWindow();
+  // 데모 모드: GPT 상세 리포트는 유일하게 실제 백엔드(OpenAI)를 호출하는 기능이다.
+  // 목 차단을 우회해 진짜 리포트를 받아오고, 오프라인/실패 시에만 로컬 폴백 텍스트를 보여준다.
+  if (isDemoMode()) {
+    const detailed = await requestLive('/api/reports/detailed', {
+      method: 'POST',
+      body
+    }).catch(() => ({
+      reportId: 'report-detailed-local-001',
+      reportText: '백엔드에 연결할 수 없어 로컬 데모 요약본을 표시합니다. (요약 데이터 기준, 원본 오디오 미전송)',
+      metadata: { source: 'demo-local-fallback', originalAudioSent: false }
+    }));
+    return {
+      ...detailed,
+      text: detailed.text ?? detailed.reportText,
+      metadata: detailed.metadata ?? detailed.raw?.metadata
+    };
+  }
   if (isMockApiEnabled()) {
     return {
       reportId: 'report-detailed-demo-001',
@@ -60,7 +86,6 @@ export async function requestDetailedReport(reportPayload) {
       }
     };
   }
-  const body = reportPayload?.periodStart && reportPayload?.periodEnd ? reportPayload : reportWindow();
   const detailed = await request('/api/reports/detailed', {
     method: 'POST',
     body

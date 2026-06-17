@@ -8,6 +8,7 @@ import './styles/neumorphism.css';
 import './components/liquidGlassLoader.js';
 import { escapeHtml } from './utils/html.js';
 import { brandMark } from './components/brandMark.js';
+import { isDemoMode, ensureDemoSession, redirectAuthHashToHome } from './demo/demoSession.js';
 
 // APK(WebView)는 상태바/제스처바 아래까지 그려지므로 safe-area 패딩 대상으로 표시한다.
 if (/Android/i.test(navigator.userAgent)) {
@@ -257,6 +258,11 @@ function matchRoute(hash) {
 }
 
 async function renderRoute() {
+  // 데모 모드: 로그인/회원가입 화면은 건너뛰고 홈으로 보낸다. (hashchange가 다시 렌더한다)
+  if (redirectAuthHashToHome()) {
+    await ensureDemoSession();
+    return;
+  }
   const hash = window.location.hash || '#/login';
   const { route, params } = matchRoute(hash);
   currentCleanup?.();
@@ -377,11 +383,22 @@ function dismissSplash() {
 
 window.addEventListener('hashchange', renderRoute);
 
-if (!window.location.hash) {
-  window.location.hash = '#/login';
+// 데모 모드: 시작 시 자동 로그인(실제 백엔드로 토큰 확보, GPT 리포트용) 후 홈으로 진입.
+// 일반 모드: 해시가 없으면 로그인 화면으로.
+async function startApp() {
+  if (isDemoMode()) {
+    await ensureDemoSession();
+    const hash = window.location.hash || '';
+    if (hash === '' || hash === '#' || hash === '#/' || hash === '#/login' || hash === '#/create-account') {
+      window.location.hash = '#/home';
+    }
+  } else if (!window.location.hash) {
+    window.location.hash = '#/login';
+  }
+  return renderRoute();
 }
 
-renderRoute().finally(dismissSplash);
+startApp().finally(dismissSplash);
 window.addEventListener('beforeunload', () => {
   currentCleanup?.();
 });

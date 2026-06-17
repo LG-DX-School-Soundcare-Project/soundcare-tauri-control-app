@@ -1,6 +1,7 @@
 import mockHomeStatus from '../data/mockHomeStatus.json';
 import { request, isMockApiEnabled, buildQuery } from './client.js';
 import { defaultDevices, defaultSensitiveAppliances, withApiFallback } from './fallbacks.js';
+import { demoRuntimeSettings } from '../demo/demoData.js';
 
 function normalizeDevice(device) {
   if (!device) return null;
@@ -51,11 +52,8 @@ export async function deleteUserDevice(registeredDeviceId) {
 
 export async function getRuntimeSettings(deviceId) {
   if (isMockApiEnabled()) {
-    return {
-      deviceId,
-      settingsVersion: 'demo-settings-v1',
-      sensitiveAppliances: mockHomeStatus.sensitiveAppliances
-    };
+    // 데모: 기기 id ↔ serviceLabel 매핑을 제공해 기기 카드에 한글 이름/측정 dB가 붙는다.
+    return demoRuntimeSettings(deviceId);
   }
   return request(`/api/settings/runtime${buildQuery({ deviceId })}`)
     .catch((error) => withApiFallback(error, () => ({

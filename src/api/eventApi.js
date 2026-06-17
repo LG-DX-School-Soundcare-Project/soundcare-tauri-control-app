@@ -1,10 +1,11 @@
-import mockHomeStatus from '../data/mockHomeStatus.json';
 import { request, isMockApiEnabled, buildQuery } from './client.js';
 import { defaultHomeStatus, defaultNoiseEvents, defaultRobotAvoidanceEvents, withApiFallback } from './fallbacks.js';
+import { demoHomeStatus } from '../demo/demoData.js';
 
 export async function getCurrentHomeStatus() {
   if (isMockApiEnabled()) {
-    return mockHomeStatus;
+    // 데모: 신선한 타임스탬프 + registeredDevices로 보강해 대시보드/3D 홈이 살아있게 보인다.
+    return demoHomeStatus();
   }
   return request('/api/home/current-status')
     .catch((error) => withApiFallback(error, defaultHomeStatus, 'current home status'));

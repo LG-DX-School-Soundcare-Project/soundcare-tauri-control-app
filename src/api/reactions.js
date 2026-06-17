@@ -68,6 +68,19 @@ export async function fetchReactionDetail(reactionId) {
 // 버튼을 누른 그 순간, 측정 중인 모든 가전별로 반응을 한 번에 기록한다.
 // 서버가 가전별 최신 측정값을 스냅샷하므로 본문에는 반응 종류/강도/메모만 보낸다.
 export async function createReactionSnapshot({ reactionType, intensity, memo } = {}) {
+  if (isMockApiEnabled()) {
+    // 데모: 버튼을 누르면 측정 중인 가전 3건이 기록된 것처럼 보여준다.
+    return {
+      reactionId: `snapshot-${Date.now()}`,
+      status: 'LINKED',
+      source: 'USER_TAP',
+      createdAt: new Date().toISOString(),
+      reactionType,
+      intensity,
+      memo,
+      count: 3
+    };
+  }
   return request('/api/events/reactions/snapshot', {
     method: 'POST',
     body: { reactionType, intensity, memo, source: 'USER_TAP' }

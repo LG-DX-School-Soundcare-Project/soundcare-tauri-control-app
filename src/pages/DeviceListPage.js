@@ -104,6 +104,7 @@ async function loadDeviceRows() {
       : null;
     return {
       id,
+      deviceType: device.deviceType,
       deviceName: (label && SERVICE_LABEL_KO[label]) || device.name || '기기',
       room: device.roomName ?? '방 미지정',
       decibel: db != null && Number.isFinite(db) ? db : '--',
