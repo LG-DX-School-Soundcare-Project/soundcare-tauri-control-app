@@ -19,10 +19,8 @@ export async function loginWithGoogle(idToken, profile = {}) {
     if (result?.accessToken) {
       tokenStorage.set(result.accessToken);
     }
-    const demoNickname = result?.nickname ?? result?.user?.nickname;
-    if (demoNickname && typeof window !== 'undefined') {
-      window.localStorage.setItem('soundcare.nickname', demoNickname);
-    }
+    // 데모에서는 화면 표시 이름을 고정(demoSession.pinDemoNickname)하므로
+    // 백엔드 응답 닉네임으로 localStorage를 덮어쓰지 않는다.
     return result;
   }
 

@@ -72,20 +72,28 @@ export function demoRuntimeSettings(deviceId) {
 }
 
 // 가전별 최신 측정값(전부 "방금" 측정한 것처럼 신선하게).
+// dB는 시간에 따라 출렁이게 해서, 폴링마다 값이 바뀌고 소리 GLB(emitter) 크기가
+// 실시간으로 커졌다 작아지는 것을 시연에서 눈으로 확인할 수 있게 한다.
 export function demoMeasurements(params = {}) {
-  const now = nowIso();
-  let rows = DEMO_APPLIANCES.filter((a) => a.playing).map((a) => ({
-    serviceLabel: a.label,
-    applianceType: a.label,
-    decibelAvg: a.db,
-    decibelMax: a.db + 5,
-    relativeDb: a.db,
-    measuredAt: now,
-    createdAt: now,
-    receivedAt: now,
-    uploadedAt: now,
-    playbackState: 'PLAYING'
-  }));
+  const ms = Date.now();
+  const now = new Date(ms).toISOString();
+  let rows = DEMO_APPLIANCES.filter((a) => a.playing).map((a, i) => {
+    // 가전마다 위상/주기를 다르게 줘서 서로 독립적으로 맥동한다.
+    const osc = Math.sin(ms / 1400 + i * 1.7);
+    const db = Math.round(a.db + osc * 7);
+    return {
+      serviceLabel: a.label,
+      applianceType: a.label,
+      decibelAvg: db,
+      decibelMax: db + 4,
+      relativeDb: db,
+      measuredAt: now,
+      createdAt: now,
+      receivedAt: now,
+      uploadedAt: now,
+      playbackState: 'PLAYING'
+    };
+  });
   if (params.serviceLabel) {
     rows = rows.filter((r) => r.serviceLabel === params.serviceLabel);
   }
