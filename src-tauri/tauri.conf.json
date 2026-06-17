@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "SoundCare Control",
+  "productName": "HEARO Control",
   "version": "0.1.0",
   "identifier": "care.soundcare.control",
   "build": {
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "SoundCare Control",
+        "title": "HEAR:O Control",
         "width": 1280,
         "height": 820,
         "minWidth": 960,

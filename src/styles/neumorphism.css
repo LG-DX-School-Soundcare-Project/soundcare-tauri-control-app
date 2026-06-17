@@ -1923,12 +1923,20 @@ body,
   color: #d2566a !important;
 }
 
-/* ===== 브랜드 마크 (로그인 / 사이드바) ===== */
+/* ===== 브랜드 로고 (로그인 / 사이드바) — 확정 HEAR:O 이미지 ===== */
 .brand-mark {
-  width: 40px;
-  height: 40px;
+  height: 42px;
+  width: auto;
   flex: 0 0 auto;
-  filter: drop-shadow(0 4px 9px rgba(15, 160, 140, 0.26));
+  display: block;
+}
+
+/* HEAR:O 워드마크 이미지 (PNG에 자체 음영/베벨 포함). */
+.brand-wordmark {
+  height: 28px;
+  width: auto;
+  flex: 0 0 auto;
+  display: block;
 }
 
 .login-brand {
@@ -1938,23 +1946,18 @@ body,
   margin: 0 0 16px;
 }
 
-.login-brand span {
-  color: var(--neu-accent-strong);
-  font-weight: 800;
-  font-size: 16px;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
-
 .sidebar-brand {
   display: flex !important;
   align-items: center;
-  gap: 11px;
+  gap: 9px;
 }
 
 .sidebar-brand .brand-mark {
-  width: 30px;
-  height: 30px;
+  height: 32px;
+}
+
+.sidebar-brand .brand-wordmark {
+  height: 21px;
 }
 
 /* 기기 추가 / GPT 생성 버튼도 다른 주요 CTA와 동일한 민트 그라데이션으로 통일.

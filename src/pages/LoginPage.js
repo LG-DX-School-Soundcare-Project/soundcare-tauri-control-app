@@ -47,7 +47,7 @@ export function renderLoginPage() {
       <div class="login-window">
         <div class="login-stage">
           <div class="login-card">
-            <div class="login-brand">${brandMark('login')}<span>SoundCare</span></div>
+            <div class="login-brand">${brandMark('login')}<img class="brand-wordmark" src="/assets/brand/hearo-wordmark.png" alt="HEAR:O" decoding="async" /></div>
             <h1>Smart noise dashboard</h1>
             <p>Sign in to monitor home noise, devices, and daily reports.</p>
 

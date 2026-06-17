@@ -230,7 +230,7 @@ function shell(content, routeTitle) {
     <div class="app-shell app-shell--desktop">
       <div class="app-workspace">
         <aside class="sidebar">
-          <h1 class="sidebar-brand">${brandMark('side')}<span>SoundCare</span></h1>
+          <h1 class="sidebar-brand">${brandMark('side')}<img class="brand-wordmark" src="/assets/brand/hearo-wordmark.png" alt="HEAR:O" decoding="async" /></h1>
           <nav>${nav}</nav>
           <div class="sidebar-footer">
             <a class="sidebar-footer-link ${settingsActive ? 'is-active' : ''}" href="#/settings" aria-label="Settings">
