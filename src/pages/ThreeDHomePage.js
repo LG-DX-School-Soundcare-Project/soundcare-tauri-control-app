@@ -6,6 +6,7 @@ import { getCurrentHomeStatus } from '../api/eventApi.js';
 import { getApplianceMeasurements } from '../api/applianceMeasurementApi.js';
 import { getRuntimeSettings } from '../api/deviceApi.js';
 import { startRealtimePoll, isFreshTimestamp } from '../utils/realtimePoll.js';
+import { mountNotificationBell } from '../components/notificationBell.js';
 
 let sceneController = null;
 let lowConfidencePopupCleanup = null;
@@ -223,6 +224,8 @@ function maybeShowLowConfidencePopup() {
 
 export function mountThreeDHomePage() {
   cleanupThreeDHomePage();
+
+  mountNotificationBell();
 
   const container = document.querySelector('#three-home-container');
   if (container) {

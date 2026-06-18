@@ -5,6 +5,7 @@ import { householdHeader } from '../components/householdHeader.js';
 import { escapeHtml } from '../utils/html.js';
 import { startRealtimePoll, isFreshTimestamp } from '../utils/realtimePoll.js';
 import { createReactionSnapshot } from '../api/reactions.js';
+import { mountNotificationBell } from '../components/notificationBell.js';
 
 let dashboardSceneController = null;
 let dashboardSceneMediaCleanup = null;
@@ -227,6 +228,8 @@ export function mountHomeDashboardPage({ navigate } = {}) {
   } else {
     syncDashboardScene(false);
   }
+
+  mountNotificationBell();
 
   const homeLink = document.querySelector('[data-dashboard-home-link]');
   homeLink?.addEventListener('click', () => {

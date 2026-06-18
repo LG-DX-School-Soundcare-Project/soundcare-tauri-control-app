@@ -5,6 +5,7 @@ import './styles/accessibility.css';
 import './styles/mobile-apk.css';
 import './styles/polish.css';
 import './styles/neumorphism.css';
+import './styles/notifications.css';
 import './components/liquidGlassLoader.js';
 import { escapeHtml } from './utils/html.js';
 import { brandMark } from './components/brandMark.js';
