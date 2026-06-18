@@ -347,6 +347,12 @@ export function mountReportPage({ navigate } = {}) {
         if (report?.reportId) {
           window.localStorage.setItem('soundcare.lastDetailedReportId', report.reportId);
         }
+        // 생성 응답에 담겨온 본문을 저장해 둔다. 상세 페이지가 GET 재조회 없이도
+        // 방금 받은 실제 GPT 텍스트를 바로 보여줄 수 있다(백엔드 GET이 비어도 견고).
+        const generatedText = report?.text ?? report?.reportText ?? '';
+        if (generatedText) {
+          window.localStorage.setItem('soundcare.lastDetailedReportText', generatedText);
+        }
         if (status) status.textContent = '상세 리포트가 생성되었습니다.';
         navigate('#/reports/gpt-detailed');
       } catch (error) {

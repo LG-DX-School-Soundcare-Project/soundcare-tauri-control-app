@@ -2,6 +2,24 @@ import mockHomeStatus from '../data/mockHomeStatus.json';
 import { request, requestLive, isMockApiEnabled, isDemoMode } from './client.js';
 import { defaultBasicReport, withApiFallback } from './fallbacks.js';
 
+// 데모 모드에서 실제 GPT 호출이 불가할 때 보여줄 리포트 본문(시연용 하드코딩).
+// 스토리보드 내용(세탁기 불편 비율 상승, 로봇청소기 개선, 민감가전 권장)에 맞춘다.
+const DEMO_REPORT_MARKDOWN = [
+  '## 핵심 요약',
+  '최근 3일간 **세탁기**에 대한 불편 반응이 빠르게 늘어 불편 비율이 **약 70%**까지 상승했습니다. 반면 저소음 모드를 적용한 **로봇청소기**는 불편 비율이 **약 40%**로 낮아지며 개선 흐름을 보였습니다.',
+  '',
+  '## 시간대 분석',
+  '불편 반응의 대부분은 **저녁(18~24시)** 시간대에 집중되었습니다. 자녀의 귀가 시간과 세탁기 가동 시간이 겹치는 구간입니다.',
+  '',
+  '## 권장 조치',
+  '- 세탁기를 **민감 가전**으로 설정해 자녀가 집에 있는 동안 저소음 모드로 운영하세요.',
+  '- 세탁 예약은 자녀가 학교에 있는 낮 시간대로 옮기는 것을 추천합니다.',
+  '- 로봇청소기의 저소음 모드는 효과가 확인되어 그대로 유지하는 것이 좋습니다.',
+  '',
+  '## 종합 의견',
+  '소리 환경이 점차 개선되고 있습니다. 세탁기 운영 시간만 조정하면 저녁 시간대의 불편을 크게 줄일 수 있습니다.'
+].join('\n');
+
 function reportWindow() {
   const end = new Date();
   const start = new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -67,7 +85,7 @@ export async function requestDetailedReport(reportPayload) {
       body
     }).catch(() => ({
       reportId: 'report-detailed-local-001',
-      reportText: '백엔드에 연결할 수 없어 로컬 데모 요약본을 표시합니다. (요약 데이터 기준, 원본 오디오 미전송)',
+      reportText: DEMO_REPORT_MARKDOWN,
       metadata: { source: 'demo-local-fallback', originalAudioSent: false }
     }));
     return {

@@ -122,10 +122,14 @@ async function loadDetailedReportData() {
   // GPT 상세 리포트 텍스트 (리포트 화면에서 생성 시 localStorage에 reportId 저장)
   let reportText = '';
   try {
-    const reportId = window.localStorage.getItem('soundcare.lastDetailedReportId');
-    if (reportId) {
-      const report = await fetchReport(reportId);
-      reportText = report?.reportText ?? report?.text ?? '';
+    // 생성 직후 저장해 둔 본문을 우선 사용(백엔드 GET이 본문을 안 줘도 표시됨).
+    reportText = window.localStorage.getItem('soundcare.lastDetailedReportText') ?? '';
+    if (!reportText) {
+      const reportId = window.localStorage.getItem('soundcare.lastDetailedReportId');
+      if (reportId) {
+        const report = await fetchReport(reportId);
+        reportText = report?.reportText ?? report?.text ?? '';
+      }
     }
   } catch (error) {
     reportText = '';
