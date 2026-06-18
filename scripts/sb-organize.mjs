@@ -70,4 +70,9 @@ function organize(srcDir, scenes, label) {
 
 organize(DRAMA, dramaScenes, 'drama');
 organize(AD, adScenes, 'ad');
+// 웹(데스크톱) 캡쳐 폴더가 있으면 동일 매핑으로 정리
+const DRAMA_WEB = `${BASE}/drama_web`;
+const AD_WEB = `${BASE}/ad_web`;
+if (fs.existsSync(DRAMA_WEB)) organize(DRAMA_WEB, dramaScenes, 'drama_web');
+if (fs.existsSync(AD_WEB)) organize(AD_WEB, adScenes, 'ad_web');
 console.log('DONE');
