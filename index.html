@@ -21,8 +21,14 @@
         opacity: 0;
         pointer-events: none;
       }
-      /* 중앙 정렬이 보장되는 순수 CSS 8점 스피너 (3D 오브는 모바일 웹뷰에서
-         캔버스 안에서 치우치는 문제가 있어 교체) */
+      /* 웹(데스크톱/브라우저): 기존 3D 글래스 오브 유지 */
+      #app-splash liquid-glass-loader {
+        display: block;
+        width: 58vmin;
+        height: 58vmin;
+      }
+      /* 앱(APK/Tauri 웹뷰)만: 3D 오브가 캔버스 안에서 치우쳐 렌더되므로
+         중앙 정렬이 보장되는 순수 CSS 8점 스피너로 대체 */
       #app-splash .splash-spinner {
         position: relative;
         width: 72px;
@@ -101,17 +107,31 @@
   </head>
   <body>
     <div id="app-splash" aria-label="앱 로딩 중" role="status">
-      <div class="splash-spinner" aria-hidden="true">
-        <span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span>
-      </div>
       <div class="splash-waves" aria-hidden="true"><span></span><span></span><span></span></div>
     </div>
     <script>
-      // 스피너는 즉시 표시되므로 파동도 바로 시작
       (function () {
         var splash = document.getElementById('app-splash');
-        if (splash) splash.classList.add('is-ready');
+        if (!splash) return;
+        // 네이티브 앱(Tauri/APK)에서만 CSS 스피너 사용(3D 오브가 웹뷰에서 치우침).
+        // 그 외(웹/브라우저)는 기존 3D 글래스 오브 유지.
+        var isApp = !!(window.__TAURI_INTERNALS__ || window.__TAURI__ || window.isTauri);
+        if (isApp) {
+          var spinner = document.createElement('div');
+          spinner.className = 'splash-spinner';
+          spinner.setAttribute('aria-hidden', 'true');
+          spinner.innerHTML = '<span></span><span></span><span></span><span></span>'
+            + '<span></span><span></span><span></span><span></span>';
+          splash.insertBefore(spinner, splash.firstChild);
+          splash.classList.add('is-ready'); // 스피너는 즉시 표시 → 파동 바로 시작
+        } else {
+          var orb = document.createElement('liquid-glass-loader');
+          splash.insertBefore(orb, splash.firstChild);
+          // orb 모델이 화면에 나타나는 순간부터 파동 시작
+          splash.addEventListener('loader-ready', function () {
+            splash.classList.add('is-ready');
+          });
+        }
       })();
     </script>
     <div id="root"></div>
