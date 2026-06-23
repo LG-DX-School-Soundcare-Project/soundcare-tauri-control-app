@@ -127,6 +127,10 @@ class LiquidGlassLoader extends HTMLElement {
 
     this.loadModel();
     this.renderer.setAnimationLoop(() => this.animate());
+    // 모바일 웹뷰는 첫 프레임이 레이아웃 전(rect 0/오류)에 그려져 오브가 치우칠 수
+    // 있다. 레이아웃이 잡힌 다음 프레임들에서 카메라를 다시 프레이밍한다.
+    requestAnimationFrame(() => this.frameCamera());
+    requestAnimationFrame(() => requestAnimationFrame(() => this.frameCamera()));
   }
 
   applyBackground() {
@@ -251,6 +255,8 @@ class LiquidGlassLoader extends HTMLElement {
     if (!this.camera || !this.renderer) return;
 
     const rect = this.getBoundingClientRect();
+    // 레이아웃 전(0 크기)에 프레이밍하면 오브가 치우친다 → 유효 크기일 때만 갱신.
+    if (rect.width < 2 || rect.height < 2) return;
     const width = Math.max(1, rect.width);
     const height = Math.max(1, rect.height);
     const pixelRatio = Math.min(window.devicePixelRatio, 2);
