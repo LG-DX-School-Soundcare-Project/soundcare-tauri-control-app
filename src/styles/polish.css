@@ -5390,3 +5390,72 @@ body,
   overflow: hidden;
   box-shadow: none !important;
 }
+
+/* 대시보드 라이브 알림 토스트 (가전 소음 임계값 초과 등) */
+.dashboard-alert-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1200;
+  display: block;
+  width: min(360px, calc(100vw - 48px));
+  text-align: left;
+  padding: 14px 16px;
+  border: 1px solid var(--danger);
+  border-left: 5px solid var(--danger);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.22);
+  cursor: pointer;
+  transform: translateY(16px);
+  opacity: 0;
+  transition: transform 0.28s ease, opacity 0.28s ease;
+}
+.dashboard-alert-toast.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+.dashboard-alert-toast__badge {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.dashboard-alert-toast strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+.dashboard-alert-toast p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* 로그인 화면 시연용 계정(사용자1/2/3) */
+.demo-login-section { margin-top: 18px; }
+.demo-login-divider {
+  display: flex; align-items: center; text-align: center;
+  color: var(--muted); font-size: 11px; margin-bottom: 10px;
+}
+.demo-login-divider::before, .demo-login-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--line);
+}
+.demo-login-divider span { padding: 0 10px; white-space: nowrap; }
+.demo-login-buttons { display: flex; gap: 8px; justify-content: center; }
+.demo-login-button {
+  flex: 1; padding: 9px 8px; border: 1px solid var(--ui-soft-border);
+  border-radius: 10px; background: var(--panel); color: var(--ink);
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.demo-login-button:hover { background: var(--surface-muted); border-color: var(--primary); }
+.demo-login-button:disabled { opacity: .5; cursor: default; }

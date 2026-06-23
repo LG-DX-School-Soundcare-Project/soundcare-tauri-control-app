@@ -118,13 +118,58 @@ function refreshReportDom() {
   setText('[data-legend-pos]', `${posRatio}% (${reactionSummary.positive}건)`);
   setText('[data-legend-neg]', `${negRatio}% (${reactionSummary.negative}건)`);
   setText('[data-legend-total]', `저장된 반응 총 ${total}건 기준`);
-  // 가전별 카드 +/- (개수가 같을 때만 인덱스로 제자리 갱신)
+  // 가전별 카드: 개수가 같으면 제자리 갱신, 바뀌면(새 가전 반응 등) 카드 전체를 다시
+  // 그린다. 예전엔 개수가 달라지면 건너뛰어 "반응이 실시간으로 안 뜨는" 경우가 있었다.
   if (document.querySelectorAll('.report-appliance-card').length === applianceReports.length) {
     applianceReports.forEach((d, i) => {
       setText(`[data-card-pos="${i}"]`, d.positive);
       setText(`[data-card-neg="${i}"]`, d.negative);
     });
+    refreshReportFaces();
+  } else {
+    rebuildApplianceCards();
   }
+}
+
+// 가전 카드 집합이 바뀌면 그리드를 다시 그리고 3D 얼굴/링크를 재생성·재바인딩한다.
+function rebuildApplianceCards() {
+  const grid = document.querySelector('.report-appliance-grid');
+  if (!grid) return;
+  faceControllers.forEach((controller) => controller.dispose?.());
+  faceControllers = [];
+  grid.innerHTML = applianceReports.length
+    ? applianceReports.map(applianceCard).join('')
+    : '<p class="device-list-empty">아직 수집된 반응 데이터가 없습니다.</p>';
+  faceControllers = Array.from(grid.querySelectorAll('.report-face-viewer')).map((viewer) =>
+    createReportFaceScene(viewer, { mood: viewer.dataset.faceMood })
+  );
+  grid.querySelectorAll('[data-reaction-history-link]').forEach((link) => {
+    link.addEventListener('click', () => {
+      window.location.hash = '#/reports/reaction-history';
+    });
+  });
+  grid.querySelectorAll('.report-face-trigger').forEach((button) => {
+    button.addEventListener('click', () => {
+      const index = Number(button.dataset.faceTrigger);
+      const canvas = grid.querySelectorAll('.report-face-viewer canvas')[index];
+      canvas?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+    });
+  });
+}
+
+// 반응 수치가 폴링으로 바뀌면 3D 얼굴 표정(mood)도 실시간으로 따라가게 한다.
+// mood(긍정/중립/부정)가 실제로 바뀐 얼굴만 재생성한다(매 폴링마다 X).
+function refreshReportFaces() {
+  const viewers = document.querySelectorAll('.report-face-viewer');
+  if (viewers.length !== applianceReports.length) return;
+  applianceReports.forEach((d, i) => {
+    const viewer = viewers[i];
+    const newMood = getReactionMood(d);
+    if (viewer.dataset.faceMood === newMood) return;
+    viewer.dataset.faceMood = newMood;
+    faceControllers[i]?.dispose?.();
+    faceControllers[i] = createReportFaceScene(viewer, { mood: newMood });
+  });
 }
 
 function reportPeriodMenu() {

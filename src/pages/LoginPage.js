@@ -5,6 +5,14 @@ import { brandMark } from '../components/brandMark.js';
 
 let gisInitialized = false;
 
+// 시연용 데모 사용자. 각 idToken 은 백엔드 dev-auth 에서 서로 다른 사용자로 매핑된다.
+// (더미 데이터는 백엔드에 연동돼 들어가 있고, 각 사용자별로 독립적인 대시보드/리포트를 본다)
+const DEMO_USERS = [
+  { idToken: 'soundcare-demo-user-1', nickname: '사용자1', email: 'demo1@soundcare.local' },
+  { idToken: 'soundcare-demo-user-2', nickname: '사용자2', email: 'demo2@soundcare.local' },
+  { idToken: 'soundcare-demo-user-3', nickname: '사용자3', email: 'demo3@soundcare.local' }
+];
+
 function loadGoogleIdentityScript() {
   return new Promise((resolve, reject) => {
     if (window.google?.accounts?.id) {
@@ -64,6 +72,16 @@ export function renderLoginPage() {
                   <span>로그인</span>
                 </button>`}
             <p id="login-status" aria-live="polite"></p>
+
+            <div class="demo-login-section">
+              <div class="demo-login-divider"><span>시연용 계정</span></div>
+              <div class="demo-login-buttons">
+                ${DEMO_USERS.map(
+                  (u, i) =>
+                    `<button type="button" class="demo-login-button" data-demo-index="${i}">${u.nickname}</button>`
+                ).join('')}
+              </div>
+            </div>
           </div>
         </div>
         <div class="login-footer">
@@ -113,6 +131,25 @@ export function mountLoginPage({ navigate }) {
         if (s) s.textContent = 'Google 로그인 스크립트를 불러오지 못했습니다. 개발용 로그인을 사용하세요.';
       });
   }
+
+  // 시연용 사용자1/2/3 — 각각 다른 백엔드 사용자로 로그인(더미 데이터 연동됨).
+  document.querySelectorAll('.demo-login-button').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const demo = DEMO_USERS[Number(button.dataset.demoIndex)];
+      if (!demo) return;
+      const s = status();
+      document.querySelectorAll('.demo-login-button').forEach((b) => (b.disabled = true));
+      if (s) s.textContent = `${demo.nickname}(으)로 로그인 중...`;
+      try {
+        await loginWithGoogle(demo.idToken, { email: demo.email, nickname: demo.nickname });
+        if (s) s.textContent = '로그인 완료.';
+        await routeAfterAuth(navigate);
+      } catch (error) {
+        if (s) s.textContent = `로그인 실패: ${error.message}`;
+        document.querySelectorAll('.demo-login-button').forEach((b) => (b.disabled = false));
+      }
+    });
+  });
 
   // 개발용(placeholder) 로그인 — 마지막에 제거 예정
   document.querySelector('#local-login-button')?.addEventListener('click', async () => {

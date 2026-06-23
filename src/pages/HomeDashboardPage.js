@@ -5,11 +5,16 @@ import { householdHeader } from '../components/householdHeader.js';
 import { escapeHtml } from '../utils/html.js';
 import { startRealtimePoll, isFreshTimestamp } from '../utils/realtimePoll.js';
 import { createReactionSnapshot } from '../api/reactions.js';
+import { getRecentNotifications } from '../api/notificationApi.js';
 
 let dashboardSceneController = null;
 let dashboardSceneMediaCleanup = null;
 let serverFailurePopupCleanup = null;
 let realtimeStop = null;
+// 라이브 알림 토스트 상태. 마운트 시점에 이미 존재하던 알림은 baseline 으로 묶어
+// 다시 띄우지 않고, 이후 새로 들어온 가전 소음 알림만 토스트로 노출한다.
+let seenNotificationIds = null;
+let notificationToastTimer = null;
 
 // serviceLabel/기기명 → 3D GLB 키. 등록된 가전만 3D 홈에 노출한다.
 const GLB_KEY_BY_LABEL = {
@@ -54,6 +59,65 @@ function getSyncTime(status) {
     minute: '2-digit',
     hour12: false
   }).format(date);
+}
+
+// 알림 DTO 필드명 호환(notificationId/notificationType = 백엔드, id/type = mock/fallback).
+function notificationId(n) {
+  return n?.notificationId ?? n?.id ?? null;
+}
+function notificationType(n) {
+  return n?.notificationType ?? n?.type ?? '';
+}
+// 가전 소음 임계값 초과(로봇청소기/세탁기 등) 위주로 토스트를 띄운다.
+function isAlertNotification(n) {
+  return notificationType(n) === 'APPLIANCE_NOISE_ALERT' || n?.severity === 'WARNING';
+}
+
+// 마운트 시점에 이미 있던 알림을 baseline 으로 기록(과거 알림 토스트 방지).
+async function primeNotificationBaseline() {
+  const list = await getRecentNotifications(10).catch(() => []);
+  seenNotificationIds = new Set((list ?? []).map(notificationId).filter(Boolean));
+}
+
+// 폴링마다 새 알림을 확인하고, 가전 소음 알림이면 토스트로 노출한다.
+async function pollNotifications() {
+  if (seenNotificationIds == null) return; // baseline 준비 전
+  const list = await getRecentNotifications(10).catch(() => null);
+  if (!Array.isArray(list)) return;
+  const fresh = list.filter((n) => notificationId(n) && !seenNotificationIds.has(notificationId(n)));
+  fresh.forEach((n) => seenNotificationIds.add(notificationId(n)));
+  const alert = fresh.find(isAlertNotification);
+  if (alert) showNotificationToast(alert);
+}
+
+function showNotificationToast(notification) {
+  if (typeof document === 'undefined') return;
+  document.querySelector('.dashboard-alert-toast')?.remove();
+  if (notificationToastTimer) {
+    window.clearTimeout(notificationToastTimer);
+    notificationToastTimer = null;
+  }
+  const toast = document.createElement('button');
+  toast.type = 'button';
+  toast.className = 'dashboard-alert-toast';
+  toast.setAttribute('role', 'alert');
+  toast.innerHTML = `
+    <span class="dashboard-alert-toast__badge" aria-hidden="true">소음 알림</span>
+    <strong>${escapeHtml(notification.title ?? '가전 소음 임계값 초과')}</strong>
+    <p>${escapeHtml(notification.message ?? '')}</p>
+  `;
+  toast.addEventListener('click', () => {
+    toast.remove();
+    window.location.hash = '#/notifications';
+  });
+  document.body.appendChild(toast);
+  // 강제 reflow 후 표시 클래스로 슬라이드 인.
+  window.requestAnimationFrame(() => toast.classList.add('is-visible'));
+  notificationToastTimer = window.setTimeout(() => {
+    toast.classList.remove('is-visible');
+    window.setTimeout(() => toast.remove(), 320);
+    notificationToastTimer = null;
+  }, 8000);
 }
 
 // home-status에서 화면에 쓰는 파생 값들을 한 곳에서 계산한다(렌더/실시간 갱신 공용).
@@ -188,10 +252,16 @@ export function mountHomeDashboardPage({ navigate } = {}) {
     });
   }
 
+  // 마운트 시점의 기존 알림을 baseline 으로 기록(이후 새 알림만 토스트).
+  seenNotificationIds = null;
+  primeNotificationBaseline();
+
   // ESP→Agent가 올리는 최신 home-status를 주기적으로 폴링해 소음/감지/환경 값을 실시간 갱신.
+  // 같은 주기로 새 가전 소음 알림(로봇청소기/세탁기 80dB 초과)도 확인해 토스트로 노출한다.
   realtimeStop = startRealtimePoll(async () => {
     const status = await getCurrentHomeStatus().catch(() => null);
     if (status) updateDashboardDom(status);
+    await pollNotifications();
   });
 
   const container = document.querySelector('#dashboard-home-scene');
@@ -260,6 +330,12 @@ export function mountHomeDashboardPage({ navigate } = {}) {
 export function cleanupHomeDashboardPage() {
   realtimeStop?.();
   realtimeStop = null;
+  if (notificationToastTimer) {
+    window.clearTimeout(notificationToastTimer);
+    notificationToastTimer = null;
+  }
+  document.querySelector('.dashboard-alert-toast')?.remove();
+  seenNotificationIds = null;
   serverFailurePopupCleanup?.();
   serverFailurePopupCleanup = null;
   dashboardSceneMediaCleanup?.();
