@@ -240,18 +240,8 @@
     display: none;
   }
 
-  /* 모바일/APK: 하단 내비바에 가리지 않게 소음 알림 토스트를 상단 중앙으로 */
-  .dashboard-alert-toast {
-    top: calc(max(env(safe-area-inset-top), 12px) + 8px);
-    bottom: auto;
-    left: 50%;
-    right: auto;
-    width: min(420px, calc(100vw - 24px));
-    transform: translate(-50%, -16px);
-  }
-  .dashboard-alert-toast.is-visible {
-    transform: translate(-50%, 0);
-  }
+  /* (소음 알림 토스트 모바일 배치는 polish.css 로 이동 — 로드 순서상 base 를
+     확실히 덮기 위함) */
 
   .dashboard-main-grid {
     display: block;

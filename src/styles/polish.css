@@ -5459,6 +5459,39 @@ body,
   line-height: 1.4;
 }
 
+/* 모바일/APK: 소음 알림 토스트를 상단 중앙에 "작게". polish.css가 마지막 로드라
+   base(우하단) 규칙을 모든 속성에서 확실히 덮는다(예전 mobile-apk.css 규칙은
+   base보다 먼저 로드돼 bottom/right가 되살아나 우측 절반·전체높이로 늘어났음). */
+@media (max-width: 640px) {
+  .dashboard-alert-toast {
+    top: calc(env(safe-area-inset-top, 0px) + 10px);
+    bottom: auto;
+    left: 50%;
+    right: auto;
+    width: min(330px, calc(100vw - 28px));
+    padding: 9px 12px;
+    border-radius: 12px;
+    border-left-width: 4px;
+    transform: translate(-50%, -14px);
+  }
+  .dashboard-alert-toast.is-visible {
+    transform: translate(-50%, 0);
+  }
+  .dashboard-alert-toast__badge {
+    margin-bottom: 3px;
+    padding: 1px 7px;
+    font-size: 10px;
+  }
+  .dashboard-alert-toast strong {
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+  .dashboard-alert-toast p {
+    font-size: 11px;
+    line-height: 1.35;
+  }
+}
+
 /* 로그인 화면 시연용 계정(사용자1/2/3) */
 .demo-login-section { margin-top: 18px; }
 .demo-login-divider {
