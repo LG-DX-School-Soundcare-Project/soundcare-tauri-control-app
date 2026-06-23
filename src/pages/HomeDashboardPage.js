@@ -6,6 +6,7 @@ import { escapeHtml } from '../utils/html.js';
 import { startRealtimePoll, isFreshTimestamp } from '../utils/realtimePoll.js';
 import { createReactionSnapshot } from '../api/reactions.js';
 import { getRecentNotifications } from '../api/notificationApi.js';
+import { getSensitiveAppliances } from '../api/settingsApi.js';
 
 let dashboardSceneController = null;
 let dashboardSceneMediaCleanup = null;
@@ -24,6 +25,16 @@ const GLB_KEY_BY_LABEL = {
   refrigerator: 'refrigerator'
 };
 let activeApplianceKeys = [];
+// 트리거(가전 소음 알림) 발동 시 소음 상태를 "위험"으로 표시할 기한(ms). 새 알림이 들어올
+// 때마다 연장되고, 소음이 멈춰 새 알림이 끊기면 만료되어 다시 "안정"으로 돌아간다.
+let dangerUntil = 0;
+let dangerSub = '소음 트리거가 발동했습니다';
+let lastStatus = null;
+const DANGER_HOLD_MS = 30000;
+
+function isDangerActive() {
+  return Date.now() < dangerUntil;
+}
 
 const SERVICE_LABEL_KO = {
   robot_vacuum: '로봇청소기',
@@ -87,7 +98,13 @@ async function pollNotifications() {
   const fresh = list.filter((n) => notificationId(n) && !seenNotificationIds.has(notificationId(n)));
   fresh.forEach((n) => seenNotificationIds.add(notificationId(n)));
   const alert = fresh.find(isAlertNotification);
-  if (alert) showNotificationToast(alert);
+  if (alert) {
+    showNotificationToast(alert);
+    // 트리거 발동 → 소음 상태를 "위험"으로 전환하고 기한을 연장한다.
+    dangerUntil = Date.now() + DANGER_HOLD_MS;
+    dangerSub = alert.message || alert.title || '소음 트리거가 발동했습니다';
+    updateDashboardDom(lastStatus ?? {});
+  }
 }
 
 function showNotificationToast(notification) {
@@ -139,10 +156,15 @@ function deriveDashboard(status) {
     syncTime: getSyncTime(status),
     soundSource: noiseFresh ? (SERVICE_LABEL_KO[status.currentServiceLabel] ?? '--') : '--',
     relativeDb: noiseFresh ? formatMetric(status.decibelMax ?? status.decibelAvg) : '--',
-    noiseState: noiseFresh
-      ? (NOISE_STATE_KO[status.currentNoiseState] ?? { title: '--', sub: '상태 정보 없음' })
-      : { title: '안정', sub: '최근 소음 없음' },
-    noiseProgress: noiseFresh && Number.isFinite(dbValue) ? Math.max(0, Math.min(100, Math.round(dbValue))) : 0
+    // 트리거 발동 기한 내면 무조건 "위험"으로 덮어쓴다(가전 소음 알림 = 트리거 발동).
+    noiseState: isDangerActive()
+      ? { title: '위험', sub: dangerSub }
+      : (noiseFresh
+          ? (NOISE_STATE_KO[status.currentNoiseState] ?? { title: '--', sub: '상태 정보 없음' })
+          : { title: '안정', sub: '최근 소음 없음' }),
+    noiseProgress: isDangerActive()
+      ? 100
+      : (noiseFresh && Number.isFinite(dbValue) ? Math.max(0, Math.min(100, Math.round(dbValue))) : 0)
   };
 }
 
@@ -160,6 +182,8 @@ function updateDashboardDom(status) {
   set('[data-noise-sub]', d.noiseState.sub);
   const bar = document.querySelector('[data-noise-progress]');
   if (bar) bar.style.width = `${d.noiseProgress}%`;
+  // 트리거 발동(위험) 시 소음 카드를 빨간 강조로 전환한다.
+  document.querySelector('.dashboard-noise-card')?.classList.toggle('is-danger', isDangerActive());
 }
 
 export async function renderHomeDashboardPage() {
@@ -171,10 +195,14 @@ export async function renderHomeDashboardPage() {
   });
 
   const { temperature, humidity, syncTime, noiseState, noiseProgress } = deriveDashboard(status);
-  // 등록된 가전의 GLB 키(3D 홈 표시 대상)
-  activeApplianceKeys = (status.registeredDevices ?? [])
-    .map((d) => GLB_KEY_BY_LABEL[d.name])
-    .filter(Boolean);
+  // 3D 홈에 표시할 가전 = 사용자의 민감가전(serviceLabel 보유). home-status.registeredDevices 는
+  // 최근 측정값이 없으면 비어 있어, 항상 등록 가전 목록을 갖는 민감가전 설정을 소스로 쓴다.
+  const sensitiveAppliances = await getSensitiveAppliances().catch(() => []);
+  activeApplianceKeys = [...new Set(
+    (sensitiveAppliances ?? [])
+      .map((a) => GLB_KEY_BY_LABEL[a.serviceLabel] ?? GLB_KEY_BY_LABEL[a.name])
+      .filter(Boolean)
+  )];
 
   return `
     <section class="page thinq-dashboard-page" aria-label="메인 대시보드">
@@ -260,7 +288,8 @@ export function mountHomeDashboardPage({ navigate } = {}) {
   // 같은 주기로 새 가전 소음 알림(로봇청소기/세탁기 80dB 초과)도 확인해 토스트로 노출한다.
   realtimeStop = startRealtimePoll(async () => {
     const status = await getCurrentHomeStatus().catch(() => null);
-    if (status) updateDashboardDom(status);
+    if (status) lastStatus = status;
+    updateDashboardDom(lastStatus ?? {});
     await pollNotifications();
   });
 
@@ -336,6 +365,8 @@ export function cleanupHomeDashboardPage() {
   }
   document.querySelector('.dashboard-alert-toast')?.remove();
   seenNotificationIds = null;
+  dangerUntil = 0;
+  lastStatus = null;
   serverFailurePopupCleanup?.();
   serverFailurePopupCleanup = null;
   dashboardSceneMediaCleanup?.();

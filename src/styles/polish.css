@@ -715,6 +715,25 @@ body,
   font-size: 13px;
 }
 
+/* 트리거 발동 시 소음 상태 카드를 빨간 "위험" 강조로 전환 */
+.dashboard-noise-card.is-danger {
+  border: 1px solid rgba(229, 57, 53, 0.55);
+  background: linear-gradient(180deg, rgba(255, 235, 234, 0.95), rgba(255, 245, 245, 0.9));
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.12);
+  animation: noiseDangerPulse 1.4s ease-in-out infinite;
+}
+.dashboard-noise-card.is-danger strong,
+.dashboard-noise-card.is-danger p {
+  color: #d32f2f;
+}
+.dashboard-noise-card.is-danger [data-noise-progress] {
+  background: #e53935;
+}
+@keyframes noiseDangerPulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.12); }
+  50% { box-shadow: 0 0 0 6px rgba(229, 57, 53, 0.22); }
+}
+
 .dashboard-progress {
   height: 8px;
   border-radius: 999px;
