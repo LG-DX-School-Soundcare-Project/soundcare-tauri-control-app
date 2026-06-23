@@ -79,9 +79,11 @@ function notificationId(n) {
 function notificationType(n) {
   return n?.notificationType ?? n?.type ?? '';
 }
-// 가전 소음 임계값 초과(로봇청소기/세탁기 등) 위주로 토스트를 띄운다.
+// 가전별 동작 트리거 알림만 토스트로 띄운다(세탁기 저소음 전환 등). 일반 "큰 소음 감지"
+// (BIG_NOISE)는 가전별 알림과 쌍으로 생성되므로, 가전별 메시지가 가려지지 않게 제외한다.
+const APPLIANCE_ALERT_TYPES = ['APPLIANCE_NOISE_ALERT', 'SENSITIVE_APPLIANCE'];
 function isAlertNotification(n) {
-  return notificationType(n) === 'APPLIANCE_NOISE_ALERT' || n?.severity === 'WARNING';
+  return APPLIANCE_ALERT_TYPES.includes(notificationType(n));
 }
 
 // 마운트 시점에 이미 있던 알림을 baseline 으로 기록(과거 알림 토스트 방지).
