@@ -224,11 +224,10 @@
   }
 
   .dashboard-mobile-sync {
-    position: absolute;
-    right: calc(var(--apk-page-x) + 20px);
-    bottom: 14px;
+    /* absolute(bottom-right)면 큰 제목과 겹친다 → 제목 아래 흐름 배치 */
+    position: static;
     display: block;
-    margin: 0;
+    margin: 10px 0 0;
     color: var(--apk-copy);
     font-size: 14px;
     font-weight: 700;
@@ -239,6 +238,19 @@
      Drop it here. */
   .three-view-page .dashboard-mobile-sync {
     display: none;
+  }
+
+  /* 모바일/APK: 하단 내비바에 가리지 않게 소음 알림 토스트를 상단 중앙으로 */
+  .dashboard-alert-toast {
+    top: calc(max(env(safe-area-inset-top), 12px) + 8px);
+    bottom: auto;
+    left: 50%;
+    right: auto;
+    width: min(420px, calc(100vw - 24px));
+    transform: translate(-50%, -16px);
+  }
+  .dashboard-alert-toast.is-visible {
+    transform: translate(-50%, 0);
   }
 
   .dashboard-main-grid {
