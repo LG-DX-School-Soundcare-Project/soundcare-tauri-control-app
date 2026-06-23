@@ -21,11 +21,34 @@
         opacity: 0;
         pointer-events: none;
       }
-      #app-splash liquid-glass-loader {
-        display: block;
-        width: 58vmin;
-        height: 58vmin;
+      /* 중앙 정렬이 보장되는 순수 CSS 8점 스피너 (3D 오브는 모바일 웹뷰에서
+         캔버스 안에서 치우치는 문제가 있어 교체) */
+      #app-splash .splash-spinner {
+        position: relative;
+        width: 72px;
+        height: 72px;
+        animation: splash-spin 0.9s linear infinite;
       }
+      #app-splash .splash-spinner span {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 12px;
+        height: 12px;
+        margin-left: -6px;
+        border-radius: 50%;
+        background: #5b8def;
+        transform-origin: 6px 36px;
+      }
+      #app-splash .splash-spinner span:nth-child(1) { transform: rotate(0deg);   opacity: 1; }
+      #app-splash .splash-spinner span:nth-child(2) { transform: rotate(45deg);  opacity: 0.85; }
+      #app-splash .splash-spinner span:nth-child(3) { transform: rotate(90deg);  opacity: 0.72; }
+      #app-splash .splash-spinner span:nth-child(4) { transform: rotate(135deg); opacity: 0.6; }
+      #app-splash .splash-spinner span:nth-child(5) { transform: rotate(180deg); opacity: 0.48; }
+      #app-splash .splash-spinner span:nth-child(6) { transform: rotate(225deg); opacity: 0.38; }
+      #app-splash .splash-spinner span:nth-child(7) { transform: rotate(270deg); opacity: 0.28; }
+      #app-splash .splash-spinner span:nth-child(8) { transform: rotate(315deg); opacity: 0.2; }
+      @keyframes splash-spin { to { transform: rotate(360deg); } }
       /* orb 주변으로 퍼져나가는 파동 링 */
       #app-splash .splash-waves {
         position: absolute;
@@ -78,17 +101,17 @@
   </head>
   <body>
     <div id="app-splash" aria-label="앱 로딩 중" role="status">
-      <liquid-glass-loader></liquid-glass-loader>
+      <div class="splash-spinner" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+      </div>
       <div class="splash-waves" aria-hidden="true"><span></span><span></span><span></span></div>
     </div>
     <script>
-      // orb 모델이 화면에 나타나는 순간부터 파동 시작
+      // 스피너는 즉시 표시되므로 파동도 바로 시작
       (function () {
         var splash = document.getElementById('app-splash');
-        if (!splash) return;
-        splash.addEventListener('loader-ready', function () {
-          splash.classList.add('is-ready');
-        });
+        if (splash) splash.classList.add('is-ready');
       })();
     </script>
     <div id="root"></div>
