@@ -157,8 +157,9 @@ function deriveDashboard(status) {
     soundSource: noiseFresh ? (SERVICE_LABEL_KO[status.currentServiceLabel] ?? '--') : '--',
     relativeDb: noiseFresh ? formatMetric(status.decibelMax ?? status.decibelAvg) : '--',
     // 트리거 발동 기한 내면 무조건 "위험"으로 덮어쓴다(가전 소음 알림 = 트리거 발동).
+    // 부제 문구는 토스트 알림이 별도로 보여주므로 카드에선 비운다("위험"만 크게).
     noiseState: isDangerActive()
-      ? { title: '위험', sub: dangerSub }
+      ? { title: '위험', sub: '' }
       : (noiseFresh
           ? (NOISE_STATE_KO[status.currentNoiseState] ?? { title: '--', sub: '상태 정보 없음' })
           : { title: '안정', sub: '최근 소음 없음' }),
