@@ -357,6 +357,7 @@
 }
 
 .settings-sensitive-threshold-card .settings-list {
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  /* min(100%, 420px): 데스크톱은 2열(420px↑), 모바일은 카드 폭에 맞춰 1열로 접혀 넘침 방지 */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
   gap: var(--settings-suite-gap);
 }
