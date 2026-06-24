@@ -1,8 +1,13 @@
 import mockHomeStatus from '../data/mockHomeStatus.json';
-import { request, isMockApiEnabled, buildQuery, API_BASE_URL } from './client.js';
+import { request, isMockApiEnabled, isDemoMode, buildQuery, API_BASE_URL } from './client.js';
 import { defaultNotifications, withApiFallback } from './fallbacks.js';
 
+// 데모 웹 쇼케이스에서는 알림 종(UI)은 그대로 두되, 알림이 하나도 "뜨지" 않도록
+// 목록/뱃지를 항상 비워 둔다. (다른 데모/실행 모드에는 영향 없음)
 export async function getRecentNotifications(limit = 5) {
+  if (isDemoMode()) {
+    return [];
+  }
   if (isMockApiEnabled()) {
     return mockHomeStatus.notifications.slice(0, limit);
   }
@@ -11,6 +16,9 @@ export async function getRecentNotifications(limit = 5) {
 }
 
 export async function getNotifications(params = {}) {
+  if (isDemoMode()) {
+    return [];
+  }
   if (isMockApiEnabled()) {
     return mockHomeStatus.notifications;
   }
