@@ -12,10 +12,19 @@ let dashboardSceneController = null;
 let dashboardSceneMediaCleanup = null;
 let serverFailurePopupCleanup = null;
 let realtimeStop = null;
+// 트리거 알림은 별도의 빠른 폴러로 확인해 토스트가 즉시 뜨도록 한다(아래 NOTIFICATION_POLL_MS).
+// home-status(dB) 폴링은 백엔드 부담을 줄이려 기존 주기를 유지한다.
+let notificationPollStop = null;
 // 라이브 알림 토스트 상태. 마운트 시점에 이미 존재하던 알림은 baseline 으로 묶어
 // 다시 띄우지 않고, 이후 새로 들어온 가전 소음 알림만 토스트로 노출한다.
 let seenNotificationIds = null;
 let notificationToastTimer = null;
+// 트리거 알림 토스트가 빨리 뜨도록 알림 전용 폴링 주기(ms). VITE_NOTIFICATION_POLL_INTERVAL_MS
+// 로 덮어쓸 수 있으나, 기본값을 짧게 둬(700ms) 알림 지연을 최소화한다.
+const NOTIFICATION_POLL_MS = (() => {
+  const raw = Number(import.meta.env?.VITE_NOTIFICATION_POLL_INTERVAL_MS);
+  return Number.isFinite(raw) && raw >= 300 && raw <= 3000 ? raw : 700;
+})();
 
 // serviceLabel/기기명 → 3D GLB 키. 등록된 가전만 3D 홈에 노출한다.
 const GLB_KEY_BY_LABEL = {
@@ -293,8 +302,11 @@ export function mountHomeDashboardPage({ navigate } = {}) {
     const status = await getCurrentHomeStatus().catch(() => null);
     if (status) lastStatus = status;
     updateDashboardDom(lastStatus ?? {});
-    await pollNotifications();
   });
+
+  // 트리거(가전 소음) 알림은 home-status 주기와 분리한 빠른 전용 폴러로 확인해, 백엔드가
+  // 알림을 만든 직후 거의 바로 토스트가 뜨도록 한다.
+  notificationPollStop = startRealtimePoll(pollNotifications, NOTIFICATION_POLL_MS);
 
   const container = document.querySelector('#dashboard-home-scene');
   if (!container) return;
@@ -362,6 +374,8 @@ export function mountHomeDashboardPage({ navigate } = {}) {
 export function cleanupHomeDashboardPage() {
   realtimeStop?.();
   realtimeStop = null;
+  notificationPollStop?.();
+  notificationPollStop = null;
   if (notificationToastTimer) {
     window.clearTimeout(notificationToastTimer);
     notificationToastTimer = null;
