@@ -134,9 +134,10 @@ function showNotificationToast(notification) {
     <strong>${escapeHtml(notification.title ?? '가전 소음 임계값 초과')}</strong>
     <p>${escapeHtml(notification.message ?? '')}</p>
   `;
+  // 토스트 클릭 시에는 닫기만 한다. (이전엔 존재하지 않는 #/notifications 로 이동해
+  // matchRoute 가 로그인으로 폴백하던 버그가 있었다.)
   toast.addEventListener('click', () => {
     toast.remove();
-    window.location.hash = '#/notifications';
   });
   document.body.appendChild(toast);
   // 강제 reflow 후 표시 클래스로 슬라이드 인.
