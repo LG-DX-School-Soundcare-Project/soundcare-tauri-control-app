@@ -59,7 +59,7 @@ export async function renderSensitiveApplianceSettingsPage() {
         <p>가전별 소음 임계값(기본 dB 기준)을 조절합니다. 저장하면 디바이스 트리거에 반영됩니다.</p>
       </header>
 
-      <div class="settings-layout">
+      <div class="settings-layout settings-threshold-layout">
         <aside class="settings-category-panel" aria-label="설정 카테고리">
           ${renderSettingsTabs('sensitive')}
         </aside>

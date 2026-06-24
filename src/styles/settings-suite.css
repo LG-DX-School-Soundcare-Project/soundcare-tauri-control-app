@@ -348,3 +348,15 @@
       "log";
   }
 }
+
+/* 임계값(민감 가전) 설정: 단일 카드를 전폭으로 펼치고, 가전 카드는 반응형 2열 그리드로
+   배치해 빈 오른쪽 공간 없이 채운다. 탭은 다른 설정 페이지와 동일하게 우상단에 뜬다. */
+.settings-threshold-layout {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: none;
+}
+
+.settings-sensitive-threshold-card .settings-list {
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: var(--settings-suite-gap);
+}
