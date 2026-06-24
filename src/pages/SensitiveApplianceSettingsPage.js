@@ -1,4 +1,5 @@
 import { getSensitiveAppliances, saveSensitiveAppliances } from '../api/settingsApi.js';
+import { bindSettingsTabs, renderSettingsTabs } from '../components/settingsTabs.js';
 import { escapeHtml } from '../utils/html.js';
 
 const policyDescriptions = {
@@ -52,19 +53,32 @@ function applianceRow(item) {
 export async function renderSensitiveApplianceSettingsPage() {
   const settings = await getSensitiveAppliances();
   return `
-    <section class="page">
-      <div class="page-header">
-        <div>
-          <p class="eyebrow">Sensitive Appliances</p>
-          <h1>민감 가전 설정</h1>
-          <p>저장한 설정은 Spring Boot를 통해 Flutter IoT Hub Mode와 User Device Mode로 동기화됩니다.</p>
-        </div>
-        <button id="save-sensitive-settings" class="primary-button">설정 저장</button>
+    <section class="page settings-page" aria-label="민감 가전 임계값 설정">
+      <header class="settings-page-header">
+        <h1>임계값 설정</h1>
+        <p>가전별 소음 임계값(기본 dB 기준)을 조절합니다. 저장하면 디바이스 트리거에 반영됩니다.</p>
+      </header>
+
+      <div class="settings-layout">
+        <aside class="settings-category-panel" aria-label="설정 카테고리">
+          ${renderSettingsTabs('sensitive')}
+        </aside>
+
+        <section class="settings-card settings-sensitive-threshold-card">
+          <div class="page-header">
+            <div>
+              <p class="eyebrow">Sensitive Appliances</p>
+              <h2>민감 가전 설정</h2>
+              <p>저장한 설정은 Spring Boot를 통해 Flutter IoT Hub Mode와 User Device Mode로 동기화됩니다.</p>
+            </div>
+            <button id="save-sensitive-settings" class="primary-button">설정 저장</button>
+          </div>
+          <form id="sensitive-settings-form" class="settings-list">
+            ${settings.map(applianceRow).join('')}
+          </form>
+          <p id="settings-save-result" class="save-result" aria-live="polite"></p>
+        </section>
       </div>
-      <form id="sensitive-settings-form" class="settings-list">
-        ${settings.map(applianceRow).join('')}
-      </form>
-      <p id="settings-save-result" class="save-result" aria-live="polite"></p>
     </section>
   `;
 }
@@ -86,7 +100,8 @@ function collectSettings() {
   });
 }
 
-export function mountSensitiveApplianceSettingsPage() {
+export function mountSensitiveApplianceSettingsPage({ navigate } = {}) {
+  bindSettingsTabs(navigate);
   document.querySelector('#save-sensitive-settings')?.addEventListener('click', async () => {
     const resultEl = document.querySelector('#settings-save-result');
     resultEl.textContent = '저장 중...';
